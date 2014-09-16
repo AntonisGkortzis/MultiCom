@@ -148,17 +148,17 @@ public class Client extends javax.swing.JFrame {
         new Thread() {
              public void run() {
                 try {
-		    socketClient= new Socket(getHostName(),getPort());
-		    System.out.println("Client: "+"Connection Established");
-                    setServerStatus("Connection Established!",true); 
-                    
-		    BufferedReader reader = new BufferedReader(new InputStreamReader(socketClient.getInputStream()));
-		    BufferedWriter writer= new BufferedWriter(new OutputStreamWriter(socketClient.getOutputStream()));
-		    String serverMsg;
-                    
-                    while ((serverMsg = reader.readLine()) != null) {
-                        AddTextToMainPanel(serverMsg);
-                    }
+				    socketClient= new Socket(getHostName(),getPort());
+				    System.out.println("Client: "+"Connection Established");
+		                    setServerStatus("Connection Established!",true); 
+		                    
+				    BufferedReader reader = new BufferedReader(new InputStreamReader(socketClient.getInputStream()));
+				    BufferedWriter writer= new BufferedWriter(new OutputStreamWriter(socketClient.getOutputStream()));
+				    String serverMsg;
+		                    
+		            while ((serverMsg = reader.readLine()) != null) {
+		                AddTextToMainPanel(serverMsg);
+		            }
                     
                 } catch(Exception e){
                     e.printStackTrace();

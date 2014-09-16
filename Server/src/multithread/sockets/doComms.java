@@ -8,10 +8,16 @@ import java.net.Socket;
 class doComms implements Runnable {
     private Socket server;
     private String line,input;
+    private ConnectClientsList clients; //angor
 
     doComms(Socket server) {
       this.server=server;
     }
+    
+    doComms(Socket server, ConnectClientsList clients) { //angor
+        this.server=server;
+        this.clients = clients; //angor
+      }
 
     public void run () {
 
@@ -23,9 +29,11 @@ class doComms implements Runnable {
         PrintStream out = new PrintStream(server.getOutputStream());
         System.out.println("\tServer: new message received!");
         while((line = in.readLine()) != null && !line.equals(".")) {
-          input=input + line;
-          out.println("Server: I got:" + line);
-          System.out.println("\tI got:" + input);
+          //input=input + line; //angor
+          //out.println("Server: I got:" + line);
+          System.out.println("\tI got:" + line);
+          clients.updateClients(line); //angor
+          //clients.printClientAddresses(); //angor
         }
 
         // Now write to the client

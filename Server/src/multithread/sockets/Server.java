@@ -16,15 +16,16 @@ import java.util.List;
  * @version 1.0
  */
 
-public class SampleServer {
+public class Server {
 
   private static int port=4444, maxConnections=10; //TODO set port by selecting free port in range [START_PORT, START_PORT+PORT_AMOUNT)
   private static boolean isMaster = true; // TODO Must be set by election process
   private static List<doComms> connections = new ArrayList<doComms>();
+  private static ConnectClientsList clients = new ConnectClientsList(); //angor
   // Listen for incoming connections and handle them
   public static void main(String[] args) {
     int i=0;
-    System.out.println("SampleServer Running...");
+    System.out.println("Server Running...");
     
     if(isMaster) hostFinder();
     
@@ -36,9 +37,13 @@ public class SampleServer {
         doComms connection;
 
         server = listener.accept();
-        doComms conn_c= new doComms(server);
-        Thread t = new Thread(conn_c);
         System.out.println("\tIncoming connection accepted. [connection: " + i + "]");
+        ConnectedClient newclient = new ConnectedClient(server, server.getInetAddress().toString(), "client name"); //angor
+        clients.addClient(newclient); //angor
+        System.out.println("\tClient added to list. [connection: " + i + "]"); //angor
+//        doComms conn_c= new doComms(server); //angor
+        doComms conn_c= new doComms(server, clients); //angor
+        Thread t = new Thread(conn_c);
         t.start();
         
         if(isMaster) { // this host is the master host
