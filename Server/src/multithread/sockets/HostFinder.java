@@ -7,8 +7,8 @@ import java.util.List;
 
 class HostFinder extends Thread {
 	
-	private static final int PORT_AMOUNT = 10;
-	private static final int START_PORT = 4444;
+	public static final int PORT_AMOUNT = 4;
+	public static final int START_PORT = 4444;
 	
 	private static List<Integer> hosts = new ArrayList<Integer>();
 	
@@ -31,17 +31,16 @@ class HostFinder extends Thread {
     	int port;
     	boolean existed;
     	
-    	for(int i=0; i<PORT_AMOUNT;i++) {
+    	for(int i=START_PORT; i<START_PORT+PORT_AMOUNT;i++) {
     		existed = false;
-    		port = START_PORT+i;
     		ServerSocket socket = null;
     	    try {
-	            socket = new ServerSocket(port);
+	            socket = new ServerSocket(i);
             } catch (IOException e) {
             	existed = true;
-            	System.out.println("Port: " + port + " in use already");
-	            if(!hosts.contains(port)) {
-	            	hosts.add(port);
+            	System.out.println("Port: " + i + " in use already");
+	            if(!hosts.contains(i)) {
+	            	hosts.add(i);
 	            } 
             }
     	    
@@ -54,8 +53,8 @@ class HostFinder extends Thread {
 	                    e.printStackTrace();
                     }
     	    	}
-    	    	if(hosts.contains(port)) {
-    	    		hosts.remove(port);
+    	    	if(hosts.contains(i)) {
+    	    		hosts.remove((Object) i);
     	    	}
     	    } 
 
