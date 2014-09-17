@@ -10,10 +10,12 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 
+import sharedresources.Message;
 /**
  *
  * @author angor
@@ -152,12 +154,15 @@ public class Client extends javax.swing.JFrame {
 				    socketClient= new Socket(getHostName(),getPort());
 				    System.out.println("Client: "+"Connection Established");
 		                    setServerStatus("Connection Established!",true); 
-		                    
 				    BufferedReader reader = new BufferedReader(new InputStreamReader(socketClient.getInputStream()));
-				    BufferedWriter writer= new BufferedWriter(new OutputStreamWriter(socketClient.getOutputStream()));
+				    //BufferedWriter writer= new BufferedWriter(new OutputStreamWriter(socketClient.getOutputStream()));
+				    ObjectOutputStream objectWriter = new ObjectOutputStream(socketClient.getOutputStream());
 				    String serverMsg;
 				    String hostname = InetAddress.getLocalHost().getHostName();
-				 	System.out.println("hostname: " + hostname);
+				    Message message = new Message(true, "hostname;"+hostname);
+				    objectWriter.writeObject(message);
+				    
+				 	System.out.println("hostname: " + hostname); //DEBUG
 				    
 		            while ((serverMsg = reader.readLine()) != null) {
 		                AddTextToMainPanel(serverMsg);

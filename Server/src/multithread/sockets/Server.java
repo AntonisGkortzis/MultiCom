@@ -1,9 +1,15 @@
 package multithread.sockets;
 
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+
+import sharedresources.Message;
+
+
 
 public class Server {
 
@@ -12,7 +18,7 @@ public class Server {
                                                          // in range
                                                          // [START_PORT,
                                                          // START_PORT+PORT_AMOUNT)
-    private static boolean isMaster = true; // TODO Must be set by election
+    private static boolean isMaster = false; // TODO Must be set by election
                                             // process
     private static List<doComms> connections = new ArrayList<doComms>();
     private static ConnectClientsList clients = new ConnectClientsList();
@@ -55,8 +61,9 @@ public class Server {
     /**
      * Listen for clients
      * @param listener the server socket
+     * @throws  
      */
-    private static void listen(ServerSocket listener) {
+    private static void listen(ServerSocket listener)  {
         Socket server;
         int i=0;
         while ((i++ < maxConnections) || (maxConnections == 0)) {
@@ -69,6 +76,13 @@ public class Server {
                 ConnectedClient newclient = new ConnectedClient(server, server
                         .getInetAddress().toString(), "client name"); // angor
                 clients.addClient(newclient); // angor
+                ObjectInputStream inStream = new ObjectInputStream(server.getInputStream());
+                Message message = new Message();
+                message = (Message)inStream.readObject();
+                if(message.isCommand()){
+                	System.out.println("Command: " +message.getMessage());
+                }
+                
                 System.out.println("\tClient added to list. [connection: " + i
                         + "]"); // angor
                 // doComms conn_c= new doComms(server); //angor
@@ -82,7 +96,7 @@ public class Server {
                     /* A new connection is added now notify other hosts */
     
                 }
-            } catch(IOException e) {
+            } catch(IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }
