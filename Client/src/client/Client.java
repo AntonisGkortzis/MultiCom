@@ -11,6 +11,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.InetAddress;
 import java.net.Socket;
 
 /**
@@ -155,7 +156,9 @@ public class Client extends javax.swing.JFrame {
 				    BufferedReader reader = new BufferedReader(new InputStreamReader(socketClient.getInputStream()));
 				    BufferedWriter writer= new BufferedWriter(new OutputStreamWriter(socketClient.getOutputStream()));
 				    String serverMsg;
-		                    
+				    String hostname = InetAddress.getLocalHost().getHostName();
+				 	System.out.println("hostname: " + hostname);
+				    
 		            while ((serverMsg = reader.readLine()) != null) {
 		                AddTextToMainPanel(serverMsg);
 		            }
@@ -187,7 +190,9 @@ public class Client extends javax.swing.JFrame {
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         // TODO add your handling code here:
         try {
-            socketClient.close();
+        	if(socketClient != null) {
+        		socketClient.close();
+        	}
         } catch (IOException ex) {
             ex.printStackTrace();
         }

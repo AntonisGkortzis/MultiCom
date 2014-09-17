@@ -8,6 +8,7 @@ public class ConnectedClient {
 	private Socket socket;
 	private String address;
 	private String user;
+	private String hostname;
 	
 	public ConnectedClient(){}
 	
@@ -41,12 +42,20 @@ public class ConnectedClient {
 		this.user = user;
 	}
 	
+	public void setHostname(String hostname){
+		this.hostname = hostname;
+	}
+	
 	public String getUser(){
 		return this.user;
 	}
 	
 	public String getAddress(){
 		return this.address;
+	}
+	
+	public String getHostname(){
+		return this.hostname;
 	}
 	
 	
