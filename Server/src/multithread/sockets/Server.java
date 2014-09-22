@@ -1,53 +1,30 @@
 package multithread.sockets;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
-
-import sharedresources.Message;
-
-
 
 public class Server {
 
-    private static int maxConnections = 10; // TODO set port by
-                                                         // selecting free port
-                                                         // in range
-                                                         // [START_PORT,
-                                                         // START_PORT+PORT_AMOUNT)
-    private static boolean isMaster = false; // TODO Must be set by election
-                                            // process
-    private static List<doComms> connections = new ArrayList<doComms>();
-    private static ConnectClientsList clients = new ConnectClientsList();
+
+    public static boolean isMaster = false; // TODO Must be set by election process
+    public static int port;
 
     // Listen for incoming connections and handle them
     public static void main(String[] args) {
-        int i = 0;
         System.out.println("Server Running...");
 
         //start the thread for host discovery if this is the master
-        if (isMaster) hostFinder();
+        if (isMaster) hostFinder(); //TODO change to Multicast broadcast and then listen
         
-        ServerSocket listener = null;
-        boolean success = false;
-        for(i = HostFinder.START_PORT; i<HostFinder.START_PORT + HostFinder.PORT_AMOUNT; i++ ) {
-            try {
-                listener = new ServerSocket(i);
-            } catch (IOException ioe) {
-                continue;
-            }
-            success = true;
-            break;
-        }
-        if(!success) {
-            System.out.println("No hosts available, exiting now...");
-        } else {
-            System.out.println("Listening for clients on port: " + i);
-            listen(listener);
-        }
+
+        //One to one communication between host and client
+        HostToClient hostToClient = new HostToClient();
+        hostToClient.start();
+        
+        //One to many communication between host and its clients
+        HostToMClient hostToMClient = new HostToMClient();
+        hostToMClient.start();
+
+        HostToMHost hostToMHost = new HostToMHost();
+        hostToMHost.start();
     }
 
     /**
@@ -58,47 +35,5 @@ public class Server {
         t.start();
     }
     
-    /**
-     * Listen for clients
-     * @param listener the server socket
-     * @throws  
-     */
-    private static void listen(ServerSocket listener)  {
-        Socket server;
-        int i=0;
-        while ((i++ < maxConnections) || (maxConnections == 0)) {
-            //doComms connection;
-            try {
-                server = listener.accept();
-                System.out
-                        .println("\tIncoming connection accepted. [connection: "
-                                + i + "]");
-                ConnectedClient newclient = new ConnectedClient(server, server
-                        .getInetAddress().toString(), "client name"); // angor
-                clients.addClient(newclient); // angor
-                ObjectInputStream inStream = new ObjectInputStream(server.getInputStream());
-                Message message = new Message();
-                message = (Message)inStream.readObject();
-                if(message.isCommand()){
-                	System.out.println("Command: " +message.getMessage());
-                }
-                
-                System.out.println("\tClient added to list. [connection: " + i
-                        + "]"); // angor
-                // doComms conn_c= new doComms(server); //angor
-                doComms conn_c = new doComms(server, clients); // angor
-                Thread t = new Thread(conn_c);
-                t.start();
-    
-                if (isMaster) { // this host is the master host
-                    connections.add(conn_c);
-    
-                    /* A new connection is added now notify other hosts */
-    
-                }
-            } catch(IOException | ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+   
 }

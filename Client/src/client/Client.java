@@ -159,7 +159,7 @@ public class Client extends javax.swing.JFrame {
 				    ObjectOutputStream objectWriter = new ObjectOutputStream(socketClient.getOutputStream());
 				    String serverMsg;
 				    String hostname = InetAddress.getLocalHost().getHostName();
-				    Message message = new Message(true, "hostname;"+hostname);
+				    Message message = new Message(false, false, false, false, "hostname;"+hostname, "addfds");
 				    objectWriter.writeObject(message);
 				    
 				 	System.out.println("hostname: " + hostname); //DEBUG
@@ -175,6 +175,10 @@ public class Client extends javax.swing.JFrame {
                 }
             }
         }.start();
+        
+        MClientListener mClientListener = new MClientListener(this);
+        mClientListener.start();
+        
     }//GEN-LAST:event_ConnectToServerButtonActionPerformed
 
     private void SendMessageButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SendMessageButtonActionPerformed
