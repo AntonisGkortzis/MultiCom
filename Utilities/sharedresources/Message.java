@@ -11,7 +11,7 @@ public class Message implements Serializable {
 	private boolean multipleReceivers; 	//TRUE if the message should be delivered to a group of listeners.
 	private boolean command;			//TRUE if the message contains a command. FALSE if the message is ..just a message!
 	private String text;				//The text of the message
-	private int timestamp;				//The time that the message was sent
+	private long timestamp;				//The time that the message was sent
 	private String user;				//The name of the user sending the message.
 	private int id=0;					//An incrementing number as an id
 	
@@ -55,7 +55,12 @@ public class Message implements Serializable {
 		return this.id;
 	}
 	
-	public int getTimestamp(){
+	public long getTimestamp(){
 		return this.timestamp;
 	}
+	
+	public void setTimestamp(long timestamp){
+		this.timestamp = timestamp;
+	}
+	
 }

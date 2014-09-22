@@ -13,7 +13,8 @@ public class MessageQueue{
 	 */
 	public boolean push(Message newMessage){
 		boolean flag = false;
-		for(int i=0; i<size(); i++){
+		int size = size();
+		for(int i=0; i<size; i++){
 			if(newMessage.getTimestamp() <= queue.get(i).getTimestamp()){
 				queue.add(i, newMessage);
 			}
@@ -47,7 +48,7 @@ public class MessageQueue{
 	}
 	
 	public int size(){
-		return this.size();
+		return this.queue.size();
 	}
 	
 	public boolean isEmpty(){
