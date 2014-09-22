@@ -1,4 +1,6 @@
 package multithread.sockets;
+import sharedresources.Message;
+import sharedresources.MessageQueue;
 
 
 public class Server {
@@ -6,6 +8,7 @@ public class Server {
 
     public static boolean isMaster = false; // TODO Must be set by election process
     public static int port;
+    private static MessageQueue queue = new MessageQueue();
 
     // Listen for incoming connections and handle them
     public static void main(String[] args) {
@@ -33,6 +36,14 @@ public class Server {
     private static void hostFinder() {
         Thread t = new HostFinder();
         t.start();
+    }
+    
+    public static void addMessageToQueue(Message message){
+    	queue.push(message);
+    }
+    
+    public static MessageQueue getQueue(){
+    	return queue;
     }
     
    

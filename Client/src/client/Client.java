@@ -184,12 +184,17 @@ public class Client extends javax.swing.JFrame {
     private void SendMessageButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SendMessageButtonActionPerformed
         // TODO add your handling code here:
         try {
+        	/*
             BufferedWriter writer= new BufferedWriter(new OutputStreamWriter(socketClient.getOutputStream()));
             String input = this.EnterTextArea.getText();
             writer.write(input + "\r\n");
             writer.flush();
             System.out.println("Client sends: " + input);
             this.EnterTextArea.setText("");
+            */
+            ObjectOutputStream outputStream = new ObjectOutputStream(socketClient.getOutputStream());
+            Message message = new Message(true, false, false, false, "user1", this.EnterTextArea.getText());
+            outputStream.writeObject(message);
         } catch(IOException ex) {
             ex.printStackTrace();
         }

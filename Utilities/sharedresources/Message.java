@@ -63,4 +63,8 @@ public class Message implements Serializable {
 		this.timestamp = timestamp;
 	}
 	
+	public void setText(String text){
+		this.text = text;
+	}
+	
 }

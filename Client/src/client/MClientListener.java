@@ -1,16 +1,20 @@
 package client;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+
+import sharedresources.Message;
 
 public class MClientListener implements Runnable {
     
     private InetAddress group;
     private MulticastSocket socket;
     private Client client;
-    private String mcAddress = "224.0.0.10";
+    private String mcAddress = "192.168.1.255";
     public MClientListener(Client client) {
         this.client = client;
         try {
@@ -32,15 +36,31 @@ public class MClientListener implements Runnable {
         try {
             DatagramPacket packet;
             while(true) {
-                System.out.println("Receiving....");
-                byte[] buf = new byte[256];
-                packet = new DatagramPacket(buf, buf.length);
-                socket.receive(packet);
-                System.out.println("Received packet");
+//                System.out.println("Receiving....");
+//                byte[] buf = new byte[256];
+//                packet = new DatagramPacket(buf, buf.length);
+//                socket.receive(packet);
+//                System.out.println("Received packet");
+//
+//                String received = new String(packet.getData());
+//                System.out.println("Msg received: " + received);
+                
+                /* receiving message-objects instead of strings START */
+                byte[] incomingData = new byte[1024];
+                DatagramPacket incomingPacket = new DatagramPacket(incomingData, incomingData.length);
+                socket.receive(incomingPacket);
+                byte[] data = incomingPacket.getData();
+                ByteArrayInputStream in = new ByteArrayInputStream(data);
+                ObjectInputStream is = new ObjectInputStream(in);
+                try{
+                	Message received = (Message)is.readObject();  
+                	System.out.println("Client received: " + received.getText());
+                	client.AddTextToMainPanel(received.getText());
+                } catch(ClassNotFoundException ex) {
+                	ex.printStackTrace();
+                }
+                /* receiving message-objects instead of strings END */
 
-                String received = new String(packet.getData());
-                System.out.println("Msg received: " + received);
-                client.AddTextToMainPanel(received);
             }
 
         } catch (IOException e) {
