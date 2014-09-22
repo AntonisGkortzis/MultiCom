@@ -14,12 +14,18 @@ public class MessageQueue{
 	public boolean push(Message newMessage){
 		boolean flag = false;
 		int size = size();
-		for(int i=0; i<size; i++){
-			if(newMessage.getTimestamp() <= queue.get(i).getTimestamp()){
-				queue.add(i, newMessage);
+		if(!isEmpty()){
+			for(int i=0; i<size; i++){
+				if(newMessage.getTimestamp() <= queue.get(i).getTimestamp()){
+					queue.add(i, newMessage);
+					flag = true;
+				}
 			}
 		}
-		
+		if(!flag){
+			this.queue.add(newMessage);
+			flag = true;
+		}
 		return flag;
 	}
 	
