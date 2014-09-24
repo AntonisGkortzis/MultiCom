@@ -1,26 +1,15 @@
-package multithread.sockets;
+package sharedresources;
 
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.PrintStream;
 import java.net.Socket;
 
-import sharedresources.Message;
-
-class doComms implements Runnable {
+public class OneToOneListener implements Runnable {
     private Socket server;
-    private String line,input;
-    private ConnectClientsList clients; //angor
 
-    doComms(Socket server) {
+    public OneToOneListener(Socket server) {
       this.server=server;
     }
-    
-    doComms(Socket server, ConnectClientsList clients) { //angor
-        this.server=server;
-        this.clients = clients; //angor
-      }
 
     public void run () {
     	boolean flag=true;
@@ -28,7 +17,7 @@ class doComms implements Runnable {
     		try {
     			ObjectInputStream inStream = new ObjectInputStream(server.getInputStream());
     			Message message = (Message)inStream.readObject();
-			    Server.getQueue().push(message);
+			    Server.getQueue().push(message); // TODO import the Class..
 			    System.out.println("Server received: "+message.getText());
     		} catch (IOException | ClassNotFoundException ioe) {
     			System.out.println("IOException on socket listen: " + ioe);

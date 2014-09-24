@@ -19,8 +19,6 @@ import sharedresources.MessageQueue;
 public class HostToMClient implements Runnable {
 
     private final int DELAY = 100;
-//    List<String> messageList = new ArrayList<>();
-    //MessageQueue messageQueue;
     private DatagramSocket socket;
 //    private String mcAddress = "192.168.1.255";
     private String mcAddress = "0.0.0.0";
@@ -32,15 +30,16 @@ public class HostToMClient implements Runnable {
         
         Server.getQueue().push(message);
         Server.getQueue().push(message2);
-    }
-    
-    public void start() {
+        
         try {
             socket = new DatagramSocket(Server.port + 1000);
         } catch (SocketException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+    }
+    
+    public void start() {
         Thread t = new Thread(this);
         t.start();
     }
@@ -50,17 +49,10 @@ public class HostToMClient implements Runnable {
         try {
             while (true) {
                 byte[] buf = new byte[256];
-                // don't wait for request...just send a quote
-
-                //Message message = Server.getQueue().pop();
-                //message.setText(message.getText() + counter++);
                 
                 InetAddress group = InetAddress.getByName(mcAddress);
-//                buf = message.getText().getBytes();
-//                DatagramPacket packet = new DatagramPacket(buf, buf.length, group, 5555);
-                /* sending objects instead of strings START */
                 Message message = Server.getQueue().pop();
-                //Server.getQueue().push(message);
+                
                 if(message != null){
                 	System.out.println("Sending message: " + message.getText());
 	                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -68,7 +60,6 @@ public class HostToMClient implements Runnable {
 	                os.writeObject(message);
 	                byte[] data = outputStream.toByteArray();
 	                DatagramPacket packet = new DatagramPacket(data, data.length, group, 5555);
-	                /* sending objects instead of strings END */
 	                socket.send(packet);
                 }
                 

@@ -7,12 +7,13 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-import sharedresources.Message;
+//import sharedresources.Message;
+import sharedresources.*;
 
 public class HostToClient implements Runnable{
 
     private static int maxConnections = 10;
-    private static List<doComms> connections = new ArrayList<doComms>();
+    private static List<OneToOneListener> connections = new ArrayList<OneToOneListener>();
     private static ConnectClientsList clients = new ConnectClientsList();
     private ServerSocket listener;
     
@@ -51,34 +52,26 @@ public class HostToClient implements Runnable{
         Socket server;
         int i=0;
         while ((i++ < maxConnections) || (maxConnections == 0)) {
-            //doComms connection;
+        	// TODO decrease i when a client is disconnected
             try {
                 server = listener.accept();
-                System.out
-                        .println("\tIncoming connection accepted. [connection: "
-                                + i + "]");
-                ConnectedClient newclient = new ConnectedClient(server, server
-                        .getInetAddress().toString(), "client name"); // angor
+                System.out.println("\tIncoming connection accepted. [connection: " + i + "]");
+                ConnectedClient newclient = new ConnectedClient(server, server.getInetAddress().toString(), "client name"); // angor
                 clients.addClient(newclient); // angor
                 ObjectInputStream inStream = new ObjectInputStream(server.getInputStream());
                 Message message = new Message();
                 message = (Message)inStream.readObject();
-                if(message.isCommand()){
-                    System.out.println("Command: " +message.getText());
-                }
                 
-                System.out.println("\tClient added to list. [connection: " + i
-                        + "]"); // angor
-                // doComms conn_c= new doComms(server); //angor
+                
+                System.out.println("\tClient added to list. [connection: " + i + "]");  
                 // TODO remove
-                doComms conn_c = new doComms(server, clients); // angor
+                OneToOneListener conn_c = new OneToOneListener(server);                 
                 Thread t = new Thread(conn_c);
                 t.start();
-    
-//                if (isMaster) { // this host is the master host
+                
                 connections.add(conn_c);
                 // TODO end remove
-    
+                
             } catch(IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }

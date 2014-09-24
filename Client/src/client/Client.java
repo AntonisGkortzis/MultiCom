@@ -148,6 +148,7 @@ public class Client extends javax.swing.JFrame {
 
     private void ConnectToServerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ConnectToServerButtonActionPerformed
         // TODO add your handling code here:
+    	/*
         new Thread() {
              public void run() {
                 try {
@@ -175,7 +176,12 @@ public class Client extends javax.swing.JFrame {
                 }
             }
         }.start();
-        
+        */
+    	ClientToMHost clientToMHost = new ClientToMHost(this);
+    	
+    	ClientToHost clientToHost = new ClientToHost(this);
+    	clientToHost.start();
+    	
         MClientListener mClientListener = new MClientListener(this);
         mClientListener.start();
         

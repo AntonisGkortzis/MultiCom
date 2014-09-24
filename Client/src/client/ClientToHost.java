@@ -1,0 +1,61 @@
+package client;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
+import sharedresources.Message;
+
+public class ClientToHost implements Runnable {
+	
+	private Socket clientSocket;
+	private Client client;
+	
+	public ClientToHost(Client client) {
+		try {
+			this.client = client;
+			this.clientSocket = new Socket(client.getHostName(), client.getPort());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
+	public void start() {
+        if(clientSocket != null) {
+            Thread t = new Thread(this);
+            t.start();
+        }
+    }
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		try {
+		    BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+		    //BufferedWriter writer= new BufferedWriter(new OutputStreamWriter(socketClient.getOutputStream()));
+		    ObjectOutputStream objectWriter = new ObjectOutputStream(clientSocket.getOutputStream());
+		    String serverMsg;
+		    String hostname = InetAddress.getLocalHost().getHostName();
+		    Message message = new Message(false, false, false, false, "hostname;"+hostname, "addfds");
+		    objectWriter.writeObject(message);
+		    
+		 	System.out.println("hostname: " + hostname); //DEBUG
+		    
+            while ((serverMsg = reader.readLine()) != null) {
+            	client.AddTextToMainPanel(serverMsg);
+            }
+            
+        } catch(Exception e){
+            e.printStackTrace();
+            System.out.println("Client: "+"Connection failed..");
+            client.setServerStatus("Connection failed..", false);
+        }
+	}
+
+}
