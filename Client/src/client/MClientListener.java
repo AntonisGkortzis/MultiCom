@@ -14,7 +14,8 @@ public class MClientListener implements Runnable {
     private InetAddress group;
     private MulticastSocket socket;
     private Client client;
-    private String mcAddress = "192.168.1.255";
+//    private String mcAddress = "192.168.1.255";
+    private String mcAddress = "0.0.0.0";
     public MClientListener(Client client) {
         this.client = client;
         try {
@@ -36,16 +37,6 @@ public class MClientListener implements Runnable {
         try {
             DatagramPacket packet;
             while(true) {
-//                System.out.println("Receiving....");
-//                byte[] buf = new byte[256];
-//                packet = new DatagramPacket(buf, buf.length);
-//                socket.receive(packet);
-//                System.out.println("Received packet");
-//
-//                String received = new String(packet.getData());
-//                System.out.println("Msg received: " + received);
-                
-                /* receiving message-objects instead of strings START */
                 byte[] incomingData = new byte[1024];
                 DatagramPacket incomingPacket = new DatagramPacket(incomingData, incomingData.length);
                 socket.receive(incomingPacket);
@@ -59,7 +50,6 @@ public class MClientListener implements Runnable {
                 } catch(ClassNotFoundException ex) {
                 	ex.printStackTrace();
                 }
-                /* receiving message-objects instead of strings END */
 
             }
 

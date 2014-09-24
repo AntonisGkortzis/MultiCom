@@ -18,11 +18,12 @@ import sharedresources.MessageQueue;
  */
 public class HostToMClient implements Runnable {
 
-    private final int DELAY = 1000;
+    private final int DELAY = 100;
 //    List<String> messageList = new ArrayList<>();
     //MessageQueue messageQueue;
     private DatagramSocket socket;
-    private String mcAddress = "192.168.1.255";
+//    private String mcAddress = "192.168.1.255";
+    private String mcAddress = "0.0.0.0";
     public static int counter = 0;
 
     public HostToMClient() {
@@ -30,7 +31,7 @@ public class HostToMClient implements Runnable {
         Message message2 = new Message(false, true, true, false, "username2", " test 2");
         
         Server.getQueue().push(message);
-        //Server.getQueue().push(message2);
+        Server.getQueue().push(message2);
     }
     
     public void start() {
@@ -59,7 +60,7 @@ public class HostToMClient implements Runnable {
 //                DatagramPacket packet = new DatagramPacket(buf, buf.length, group, 5555);
                 /* sending objects instead of strings START */
                 Message message = Server.getQueue().pop();
-                Server.getQueue().push(message);
+                //Server.getQueue().push(message);
                 if(message != null){
                 	System.out.println("Sending message: " + message.getText());
 	                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
