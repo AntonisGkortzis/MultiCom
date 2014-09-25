@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sharedresources.Message;
+import sharedresources.MessageController;
 import sharedresources.MessageQueue;
 
 /**
@@ -28,8 +29,10 @@ public class HostToMClient implements Runnable {
         Message message = new Message(false, true, true, false, "username", " test ");
         Message message2 = new Message(false, true, true, false, "username2", " test 2");
         
-        Server.getQueue().push(message);
-        Server.getQueue().push(message2);
+//        MessageController.push(message);
+//        Message temp = MessageController.pop();
+//        System.out.println("Temp: " + temp.getText());
+//        MessageController.push(message2);
         
         try {
             socket = new DatagramSocket(Server.port + 1000);
@@ -51,7 +54,8 @@ public class HostToMClient implements Runnable {
                 byte[] buf = new byte[256];
                 
                 InetAddress group = InetAddress.getByName(mcAddress);
-                Message message = Server.getQueue().pop();
+                Message message = MessageController.pop();
+//                MessageController.push(message);
                 
                 if(message != null){
                 	System.out.println("Sending message: " + message.getText());

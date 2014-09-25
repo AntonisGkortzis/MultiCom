@@ -180,6 +180,7 @@ public class Client extends javax.swing.JFrame {
     	ClientToMHost clientToMHost = new ClientToMHost(this);
     	
     	ClientToHost clientToHost = new ClientToHost(this);
+    	socketClient = clientToHost.getSocket();
     	clientToHost.start();
     	
         MClientListener mClientListener = new MClientListener(this);
@@ -265,6 +266,10 @@ public class Client extends javax.swing.JFrame {
     
     public void AddTextToMainPanel(String text){
         this.MainPanelTextArea.setText(this.MainPanelTextArea.getText() + text + "\n");
+    }
+    
+    public String getTextFromMainPanel(){
+    	return this.MainPanelTextArea.getText();
     }
    
 

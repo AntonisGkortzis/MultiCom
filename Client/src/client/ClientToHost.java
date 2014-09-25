@@ -25,6 +25,9 @@ public class ClientToHost implements Runnable {
 		}
 		
 	}
+	public Socket getSocket(){
+		return this.clientSocket;
+	}
 
 	public void start() {
         if(clientSocket != null) {
@@ -42,7 +45,7 @@ public class ClientToHost implements Runnable {
 		    ObjectOutputStream objectWriter = new ObjectOutputStream(clientSocket.getOutputStream());
 		    String serverMsg;
 		    String hostname = InetAddress.getLocalHost().getHostName();
-		    Message message = new Message(false, false, false, false, "hostname;"+hostname, "addfds");
+		    Message message = new Message(false, false, false, false, "hostname;"+hostname, client.getTextFromMainPanel());
 		    objectWriter.writeObject(message);
 		    
 		 	System.out.println("hostname: " + hostname); //DEBUG
@@ -51,7 +54,7 @@ public class ClientToHost implements Runnable {
             	client.AddTextToMainPanel(serverMsg);
             }
             
-        } catch(Exception e){
+        } catch(Exception e) {
             e.printStackTrace();
             System.out.println("Client: "+"Connection failed..");
             client.setServerStatus("Connection failed..", false);

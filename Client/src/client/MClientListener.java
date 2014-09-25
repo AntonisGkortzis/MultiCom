@@ -35,7 +35,6 @@ public class MClientListener implements Runnable {
     @Override
     public void run() {
         try {
-            DatagramPacket packet;
             while(true) {
                 byte[] incomingData = new byte[1024];
                 DatagramPacket incomingPacket = new DatagramPacket(incomingData, incomingData.length);
