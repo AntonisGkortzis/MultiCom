@@ -3,6 +3,10 @@ package multithread.sockets;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class is used to maintain a list of connected clients to a host. 
+ * The purpose of this class is to know to which clients acknowledgments have to be send
+ */
 public class ConnectClientsList {
 	private List<ConnectedClient> clients = new ArrayList<>();
 	

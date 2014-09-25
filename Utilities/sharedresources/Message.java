@@ -17,15 +17,18 @@ public class Message implements Serializable {
 	private String text;				//The text of the message
 	private long timestamp;				//The time that the message was sent
 	private String user;				//The name of the user sending the message.
+	private String processID;            //The id of the process sending the message.
 	private int id=0;					//An incrementing number as an id
 	
 	public Message(){}
 	
-	public Message(boolean hostAsReceiver, boolean hostAsSender, boolean multipleReceivers, boolean command, String user, String text){
+	// TODO first three booleans can be replaced by an Enum class which is put in sharedresources
+	public Message(boolean hostAsReceiver, boolean hostAsSender, boolean multipleReceivers, boolean command, String processID, String user, String text){
 		this.hostAsReceiver = hostAsReceiver;
 		this.hostAsSender = hostAsSender;
 		this.multipleReceivers = multipleReceivers;
 		this.command = command;
+		this.processID = processID;
 		this.user = user;
 		this.id++;
 		this.text = text;
@@ -47,6 +50,10 @@ public class Message implements Serializable {
 		return this.command;
 	}
 	
+    public String getProcessID() {
+        return processID;
+    }
+
 	public String getUser(){
 		return this.user;
 	}
@@ -70,5 +77,5 @@ public class Message implements Serializable {
 	public void setText(String text){
 		this.text = text;
 	}
-	
+
 }

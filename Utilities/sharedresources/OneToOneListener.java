@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 
+/**
+ * This class is used for a listener of a one to one connection.
+ * 
+ */
 public class OneToOneListener implements Runnable {
     private Socket server;
 

@@ -10,6 +10,11 @@ import java.util.List;
 //import sharedresources.Message;
 import sharedresources.*;
 
+/**
+ * This class is used for one to one communication between a host and a client. 
+ * This communication is used for sending acknowledgments to clients that a message is deliverd.
+ *
+ */
 public class HostToClient implements Runnable{
 
     private static int maxConnections = 10;

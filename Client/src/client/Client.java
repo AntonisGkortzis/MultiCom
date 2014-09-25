@@ -17,8 +17,10 @@ import java.net.Socket;
 
 import sharedresources.Message;
 /**
- *
- * @author angor
+ * This class is used to create the Gui of the client and to start communication with the hosts. 
+ * The connections started are:
+ *  - Client to host communication
+ *  - Client to multiple hosts communication
  */
 public class Client extends javax.swing.JFrame {
     private Socket socketClient;
@@ -192,7 +194,7 @@ public class Client extends javax.swing.JFrame {
         // TODO add your handling code here:
         try {
             ObjectOutputStream outputStream = new ObjectOutputStream(socketClient.getOutputStream());
-            Message message = new Message(true, false, false, false, "user1", this.EnterTextArea.getText());
+            Message message = new Message(true, false, false, false, "processID1", "user1", this.EnterTextArea.getText());
             outputStream.writeObject(message);
             this.EnterTextArea.setText("");
         } catch(IOException ex) {

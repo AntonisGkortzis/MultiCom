@@ -15,7 +15,8 @@ import sharedresources.MessageController;
 import sharedresources.MessageQueue;
 
 /**
- * Multicasts the messages in the queue to the clients 
+ * This class is used for communication with a host and multiple clients.
+ * The host broadcasts the messages in the queue to its clients 
  */
 public class HostToMClient implements Runnable {
 
@@ -26,8 +27,8 @@ public class HostToMClient implements Runnable {
     public static int counter = 0;
 
     public HostToMClient() {
-        Message message = new Message(false, true, true, false, "username", " test ");
-        Message message2 = new Message(false, true, true, false, "username2", " test 2");
+        Message message = new Message(false, true, true, false, "processID1", "username1", " test 1");
+        Message message2 = new Message(false, true, true, false, "processID2", "username2", " test 2");
         
 //        MessageController.push(message);
 //        Message temp = MessageController.pop();

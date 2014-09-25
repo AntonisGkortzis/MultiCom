@@ -51,7 +51,7 @@ public class ClientToHost implements Runnable {
 		    ObjectOutputStream objectWriter = new ObjectOutputStream(clientSocket.getOutputStream());
 		    String serverMsg;
 		    String hostname = InetAddress.getLocalHost().getHostName();
-		    Message message = new Message(false, false, false, false, "hostname;"+hostname, client.getTextFromMainPanel());
+		    Message message = new Message(false, false, false, false,"processID;"+hostname, "username;"+hostname, client.getTextFromMainPanel());
 		    objectWriter.writeObject(message);
 		    
 		 	System.out.println("hostname: " + hostname); //DEBUG

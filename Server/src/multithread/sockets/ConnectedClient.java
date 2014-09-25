@@ -5,11 +5,19 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.Socket;
 
+
+/**
+ * This class is used to store information for a client of the type:
+ *  - socket,
+ *  - ip address,
+ *  - unique process id,
+ *  - username
+ */
 public class ConnectedClient {
 	private Socket socket;
 	private String address;
 	private String user;
-	private String hostname;
+    private String processID;
 	
 	public ConnectedClient(){}
 	
@@ -30,7 +38,6 @@ public class ConnectedClient {
 		
 	}
 	
-	
 	public void setSocket(Socket socket){
 		this.socket = socket;
 	}
@@ -42,12 +49,12 @@ public class ConnectedClient {
 	public void setUser(String user){
 		this.user = user;
 	}
-	
-	public void setHostname(String hostname){
-		this.hostname = hostname;
-	}
-	
-	public String getUser(){
+
+	public void setProcessID(String processID) {
+        this.processID = processID;
+    }
+
+    public String getUser(){
 		return this.user;
 	}
 	
@@ -55,9 +62,8 @@ public class ConnectedClient {
 		return this.address;
 	}
 	
-	public String getHostname(){
-		return this.hostname;
+	public String getProcessID() {
+	    return this.processID;
 	}
-	
 	
 }

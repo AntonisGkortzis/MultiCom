@@ -3,6 +3,10 @@ package sharedresources;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class is used for building a queue for the messages send over the network.
+ * 
+ */
 public class MessageQueue{
 	private List<Message> queue = new ArrayList<>();
 	

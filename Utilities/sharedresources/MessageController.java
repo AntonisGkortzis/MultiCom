@@ -1,5 +1,9 @@
 package sharedresources;
 
+/**
+ * This class is used for creating and using one MesssageQueue() object throughout the program.
+ * 
+ */
 public class MessageController {
 	private static MessageQueue queue = new MessageQueue();
 	

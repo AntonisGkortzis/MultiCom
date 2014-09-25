@@ -4,7 +4,14 @@ import sharedresources.MessageController;
 import sharedresources.MessageQueue;
 import sharedresources.OneToOneListener;
 
-
+/**
+ * This class is used to start a server and initiates all the connections.
+ * The types of connections created are:
+ *  - Host to client communication
+ *  - Host to multiple clients communication
+ *  - Host to multiple hosts communication
+ *
+ */
 public class Server {
 
 

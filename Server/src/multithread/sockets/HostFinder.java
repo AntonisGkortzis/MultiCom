@@ -5,6 +5,15 @@ import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class is used for discovering hosts. 
+ * Master hosts and normal hosts have to find other hosts:
+ *  - Master hosts need to detect a dead host and redirect its clients
+ *  - Other hosts need to check if the master is still alive and start an election process if this is not the case.
+ * 
+ * 
+ * TODO: Change to multicast
+ */
 class HostFinder extends Thread {
 	
 	public static final int PORT_AMOUNT = 4;
