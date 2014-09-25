@@ -7,6 +7,7 @@ import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 
+import sharedresources.Config;
 import sharedresources.Message;
 
 /**
@@ -24,10 +25,11 @@ public class ClientToHost implements Runnable {
 	public ClientToHost(Client client) {
 		try {
 			this.client = client;
-			this.clientSocket = new Socket(client.getHostName(), client.getPort());
+			this.clientSocket = new Socket(Config.hostName, client.getPort());
+            this.client.setServerStatus("Connection Established!",true); 
+
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			client.showErrorMessage("Failed to make a connection to '"+Config.hostName+"' on port "+client.getPort());
 		}
 		
 	}

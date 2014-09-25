@@ -10,6 +10,7 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
+import sharedresources.Config;
 import sharedresources.Message;
 import sharedresources.MessageController;
 import sharedresources.MessageQueue;
@@ -22,8 +23,7 @@ public class HostToMClient implements Runnable {
 
     private final int DELAY = 100;
     private DatagramSocket socket;
-//    private String mcAddress = "192.168.1.255";
-    private String mcAddress = "0.0.0.0";
+
     public static int counter = 0;
 
     public HostToMClient() {
@@ -54,7 +54,7 @@ public class HostToMClient implements Runnable {
             while (true) {
                 byte[] buf = new byte[256];
                 
-                InetAddress group = InetAddress.getByName(mcAddress);
+                InetAddress group = InetAddress.getByName(Config.multiCastAddress);
                 Message message = MessageController.pop();
 //                MessageController.push(message);
                 

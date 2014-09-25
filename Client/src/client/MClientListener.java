@@ -7,6 +7,7 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 
+import sharedresources.Config;
 import sharedresources.Message;
 
 /**
@@ -21,13 +22,11 @@ public class MClientListener implements Runnable {
     private InetAddress group;
     private MulticastSocket socket;
     private Client client;
-//    private String mcAddress = "192.168.1.255";
-    private String mcAddress = "0.0.0.0";
     public MClientListener(Client client) {
         this.client = client;
         try {
             socket = new MulticastSocket(5555);
-            group = InetAddress.getByName(mcAddress);
+            group = InetAddress.getByName(Config.multiCastAddress);
             socket.joinGroup(group);
         } catch (IOException e) {
             e.printStackTrace();

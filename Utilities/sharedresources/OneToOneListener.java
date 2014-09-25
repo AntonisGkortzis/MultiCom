@@ -16,18 +16,28 @@ public class OneToOneListener implements Runnable {
     }
 
     public void run () {
-    	boolean flag=true;
-    	while(flag){
-    		try {
-    			ObjectInputStream inStream = new ObjectInputStream(server.getInputStream());
-    			Message message = (Message)inStream.readObject();
-			    MessageController.push(message); // TODO import the Class..
-			    System.out.println("Server received: "+message.getText());
-    		} catch (IOException | ClassNotFoundException ioe) {
-    			System.out.println("IOException on socket listen: " + ioe);
-    			ioe.printStackTrace();
-    			flag=false;
-    		}
+    	ObjectInputStream inStream;
+    	Message message;
+    	boolean flag = true;
+    	while(flag) {
+	    	try {
+				while(server.getInputStream().available()>0){
+					try {
+						inStream = new ObjectInputStream(server.getInputStream());
+						message = (Message)inStream.readObject();
+					    MessageController.push(message); // TODO import the Class..
+					    System.out.println("Server received: "+message.getText());
+					} catch (IOException | ClassNotFoundException ioe) {
+						System.out.println("IOException on socket listen: " + ioe);
+						ioe.printStackTrace();
+						flag = false;
+					}
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				flag = false;
+			}
     	}
     }
 }

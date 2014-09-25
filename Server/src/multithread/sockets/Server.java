@@ -1,8 +1,5 @@
 package multithread.sockets;
-import sharedresources.Message;
 import sharedresources.MessageController;
-import sharedresources.MessageQueue;
-import sharedresources.OneToOneListener;
 
 /**
  * This class is used to start a server and initiates all the connections.
@@ -18,12 +15,11 @@ public class Server {
     public static boolean isMaster = false; // TODO Must be set by election process
     public static int port;
     //private static MessageQueue queue = new MessageQueue();
-    private static MessageController messageController = null;
+    private static MessageController messageController = new MessageController();
 
     // Listen for incoming connections and handle them
     public static void main(String[] args) {
         System.out.println("Server Running...");
-        messageController = new MessageController();
         
         //start the thread for host discovery if this is the master
         if (isMaster) hostFinder(); //TODO change to Multicast broadcast and then listen

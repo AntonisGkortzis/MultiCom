@@ -6,13 +6,9 @@
 package client;
 
 import java.awt.Color;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
-import java.io.OutputStreamWriter;
-import java.net.InetAddress;
+import java.lang.management.ManagementFactory;
 import java.net.Socket;
 
 import sharedresources.Message;
@@ -43,7 +39,7 @@ public class Client extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         ConnectToServerButton = new javax.swing.JButton();
-        HostnameTextField = new javax.swing.JTextField();
+        UsernameTextField = new javax.swing.JTextField();
         PortTextField = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         MainPanelTextArea = new javax.swing.JTextArea();
@@ -60,7 +56,7 @@ public class Client extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setText("Hostname:");
+        jLabel1.setText("Username:");
 
         jLabel2.setText("Port:");
 
@@ -71,7 +67,7 @@ public class Client extends javax.swing.JFrame {
             }
         });
 
-        HostnameTextField.setText("localhost");
+        UsernameTextField.setText("username");
 
         PortTextField.setText("4444");
 
@@ -105,7 +101,7 @@ public class Client extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(3, 3, 3)
-                        .addComponent(HostnameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE)
+                        .addComponent(UsernameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel2)
                         .addGap(6, 6, 6)
@@ -130,7 +126,7 @@ public class Client extends javax.swing.JFrame {
                     .addComponent(jLabel1)
                     .addComponent(jLabel2)
                     .addComponent(ConnectToServerButton)
-                    .addComponent(HostnameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(UsernameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(PortTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -191,10 +187,13 @@ public class Client extends javax.swing.JFrame {
     }//GEN-LAST:event_ConnectToServerButtonActionPerformed
 
     private void SendMessageButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SendMessageButtonActionPerformed
-        // TODO add your handling code here:
+    	if (socketClient == null) {
+            this.showErrorMessage("You are not connected.");
+            return;
+    	}
         try {
             ObjectOutputStream outputStream = new ObjectOutputStream(socketClient.getOutputStream());
-            Message message = new Message(true, false, false, false, "processID1", "user1", this.EnterTextArea.getText());
+            Message message = new Message(true, false, false, false, this.getProcessID(), this.getUserName(), this.EnterTextArea.getText());
             outputStream.writeObject(message);
             this.EnterTextArea.setText("");
         } catch(IOException ex) {
@@ -203,8 +202,8 @@ public class Client extends javax.swing.JFrame {
 
     }//GEN-LAST:event_SendMessageButtonActionPerformed
 
-    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        // TODO add your handling code here:
+	private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        // TODO tell the host that you closed?
         try {
         	if(socketClient != null) {
         		socketClient.close();
@@ -250,13 +249,26 @@ public class Client extends javax.swing.JFrame {
         });
     }
     
-    public String getHostName(){
-        return this.HostnameTextField.getText();
+    public String getUserName(){
+        return this.UsernameTextField.getText();
     }
     
+    /**
+     * @Deprecated
+     * must be replaced by the port number received from the Master Host
+     */
+    @Deprecated
     public int getPort(){
         return Integer.parseInt(PortTextField.getText());
     }
+    
+    /**
+     * The process ID will be used to identify as process in the distributed network
+     * @return an ID of the form "12345@hostname"
+     */
+    public String getProcessID() {
+		return ManagementFactory.getRuntimeMXBean().getName();
+	}
     
     public void setServerStatus(String status, boolean flag){
         this.ServerStatusLAbel.setText(status);
@@ -273,12 +285,16 @@ public class Client extends javax.swing.JFrame {
     public String getTextFromMainPanel(){
     	return this.MainPanelTextArea.getText();
     }
-   
+    
+    public void showErrorMessage(String msg) {
+    	javax.swing.JOptionPane.showMessageDialog(new javax.swing.JFrame(), msg, "Error",
+    	        javax.swing.JOptionPane.ERROR_MESSAGE);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton ConnectToServerButton;
     private javax.swing.JTextArea EnterTextArea;
-    private javax.swing.JTextField HostnameTextField;
+    private javax.swing.JTextField UsernameTextField;
     private javax.swing.JTextArea MainPanelTextArea;
     private javax.swing.JTextField PortTextField;
     private javax.swing.JButton SendMessageButton;
