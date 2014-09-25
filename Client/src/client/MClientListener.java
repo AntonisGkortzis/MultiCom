@@ -9,6 +9,13 @@ import java.net.MulticastSocket;
 
 import sharedresources.Message;
 
+/**
+ * This class is used for listening to messages send by MultiCast from a host.
+ * Information received is from the type:
+ *  - host information for creating the initial connection (messages not concerning the current client will be ignored)
+ *  - Chat messages
+ *
+ */
 public class MClientListener implements Runnable {
     
     private InetAddress group;

@@ -3,6 +3,10 @@ package sharedresources;
 
 import java.io.Serializable;
 
+/**
+ * This class is used for storing message information
+ *
+ */
 public class Message implements Serializable {
 
 	private static final long serialVersionUID = 1L;

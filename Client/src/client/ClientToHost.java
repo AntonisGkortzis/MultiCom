@@ -6,9 +6,15 @@ import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 import sharedresources.Message;
+
+/**
+ * Used for sending one to one information to one specific host.
+ * This information is of the types:
+ *  - Chat messages to distributed by the host
+ *  - Metadata information
+ */
 
 public class ClientToHost implements Runnable {
 	
