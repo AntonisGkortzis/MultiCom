@@ -12,6 +12,7 @@ import java.lang.management.ManagementFactory;
 import java.net.Socket;
 
 import sharedresources.Message;
+import sharedresources.OneToManyListener;
 /**
  * This class is used to create the Gui of the client and to start communication with the hosts. 
  * The connections started are:
@@ -47,7 +48,7 @@ public class Client extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         EnterTextArea = new javax.swing.JTextArea();
         SendMessageButton = new javax.swing.JButton();
-        ServerStatusLAbel = new javax.swing.JLabel();
+        ServerStatusLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -88,7 +89,7 @@ public class Client extends javax.swing.JFrame {
             }
         });
 
-        ServerStatusLAbel.setText("Server status...");
+        ServerStatusLabel.setText("Server status: Not connected");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -113,7 +114,7 @@ public class Client extends javax.swing.JFrame {
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(jScrollPane2)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(ServerStatusLAbel)
+                        .addComponent(ServerStatusLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(SendMessageButton)))
                 .addContainerGap())
@@ -137,7 +138,7 @@ public class Client extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(SendMessageButton)
-                    .addComponent(ServerStatusLAbel))
+                    .addComponent(ServerStatusLabel))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -145,7 +146,7 @@ public class Client extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void ConnectToServerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ConnectToServerButtonActionPerformed
-        // TODO add your handling code here:
+        // TODO remove code?
     	/*
         new Thread() {
              public void run() {
@@ -175,8 +176,20 @@ public class Client extends javax.swing.JFrame {
             }
         }.start();
         */
+    	if(socketClient !=null) {
+    		this.showErrorMessage("You are already connected.");
+    		return;
+    	}
+    	//Multicast to join network
     	ClientToMHost clientToMHost = new ClientToMHost(this);
     	
+    	//Listen for response of previous request (or should this be place before clientomhost?
+    	OneToManyListener oneToManyListener = new OneToManyListener();
+    	
+    	//Implement mechanism to block until correct response is found 
+    	//with information to join network or resend after certain amount of time
+    	
+    	//TODO Use info obtained from clientToMHost/oneToManyListener
     	ClientToHost clientToHost = new ClientToHost(this);
     	socketClient = clientToHost.getSocket();
     	clientToHost.start();
@@ -197,7 +210,9 @@ public class Client extends javax.swing.JFrame {
             outputStream.writeObject(message);
             this.EnterTextArea.setText("");
         } catch(IOException ex) {
-            ex.printStackTrace();
+            this.showErrorMessage("Connection closed, is the server running?\n"+ex.getMessage());
+            this.closeSocket();
+//            ex.printStackTrace();
         }
 
     }//GEN-LAST:event_SendMessageButtonActionPerformed
@@ -249,6 +264,18 @@ public class Client extends javax.swing.JFrame {
         });
     }
     
+    private void closeSocket() {
+    	if(socketClient != null) {
+    		try {
+				socketClient.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
+        setServerStatus("Connection failed..", false);
+
+    }
     public String getUserName(){
         return this.UsernameTextField.getText();
     }
@@ -271,11 +298,11 @@ public class Client extends javax.swing.JFrame {
 	}
     
     public void setServerStatus(String status, boolean flag){
-        this.ServerStatusLAbel.setText(status);
+        this.ServerStatusLabel.setText(status);
         if(flag) 
-            this.ServerStatusLAbel.setForeground(Color.green);
+            this.ServerStatusLabel.setForeground(Color.green);
         else
-            this.ServerStatusLAbel.setForeground(Color.red);
+            this.ServerStatusLabel.setForeground(Color.red);
     }
     
     public void AddTextToMainPanel(String text){
@@ -298,7 +325,7 @@ public class Client extends javax.swing.JFrame {
     private javax.swing.JTextArea MainPanelTextArea;
     private javax.swing.JTextField PortTextField;
     private javax.swing.JButton SendMessageButton;
-    private javax.swing.JLabel ServerStatusLAbel;
+    private javax.swing.JLabel ServerStatusLabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

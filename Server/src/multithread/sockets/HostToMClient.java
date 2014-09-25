@@ -27,8 +27,8 @@ public class HostToMClient implements Runnable {
     public static int counter = 0;
 
     public HostToMClient() {
-        Message message = new Message(false, true, true, false, "processID1", "username1", " test 1");
-        Message message2 = new Message(false, true, true, false, "processID2", "username2", " test 2");
+//        Message message = new Message(false, true, true, false, "processID1", "username1", " test 1");
+//        Message message2 = new Message(false, true, true, false, "processID2", "username2", " test 2");
         
 //        MessageController.push(message);
 //        Message temp = MessageController.pop();
@@ -36,7 +36,7 @@ public class HostToMClient implements Runnable {
 //        MessageController.push(message2);
         
         try {
-            socket = new DatagramSocket(Server.port + 1000);
+            socket = new DatagramSocket(Server.port + 1000); //TODO change to 0
         } catch (SocketException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

@@ -52,11 +52,10 @@ public class ClientToHost implements Runnable {
 		    //BufferedWriter writer= new BufferedWriter(new OutputStreamWriter(socketClient.getOutputStream()));
 		    ObjectOutputStream objectWriter = new ObjectOutputStream(clientSocket.getOutputStream());
 		    String serverMsg;
-		    String hostname = InetAddress.getLocalHost().getHostName();
-		    Message message = new Message(false, false, false, false,"processID;"+hostname, "username;"+hostname, client.getTextFromMainPanel());
+		    Message message = new Message(false, false, false, false,client.getProcessID(), client.getUserName(), client.getTextFromMainPanel());
 		    objectWriter.writeObject(message);
-		    
-		 	System.out.println("hostname: " + hostname); //DEBUG
+		    		    
+		 	System.out.println("hostname: " + InetAddress.getLocalHost().getHostName()); //DEBUG
 		    
             while ((serverMsg = reader.readLine()) != null) {
             	client.AddTextToMainPanel(serverMsg);

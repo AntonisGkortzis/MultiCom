@@ -12,4 +12,6 @@ public class Config {
 	
 	public final static String hostName = "localhost";
 	
+	public final static int hostMultiCastGroup = 5000;
+	
 }

@@ -1,5 +1,6 @@
 package multithread.sockets;
 import sharedresources.MessageController;
+import sharedresources.OneToManyListener;
 
 /**
  * This class is used to start a server and initiates all the connections.
@@ -24,7 +25,10 @@ public class Server {
         //start the thread for host discovery if this is the master
         if (isMaster) hostFinder(); //TODO change to Multicast broadcast and then listen
         
-
+        
+        OneToManyListener oneToManyListener = new OneToManyListener();
+        oneToManyListener.start();
+        
         //One to one communication between host and client
         HostToClient hostToClient = new HostToClient();
         hostToClient.start();       

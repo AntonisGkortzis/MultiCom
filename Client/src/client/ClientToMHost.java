@@ -1,6 +1,15 @@
 package client;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import sharedresources.Commands;
+import sharedresources.Config;
+import sharedresources.Message;
 
 /**
  * This class is used when starting a client which wants to connect to a host.
@@ -12,16 +21,41 @@ import java.net.DatagramSocket;
 public class ClientToMHost {
 	
 	private DatagramSocket socket;
+	private Client client;
 
 	public ClientToMHost(Client client) {
-//        try {
-//            socket = new DatagramSocket(Server.port + 1000);
-//        } catch (SocketException e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
+		this.client = client;
+		
+        try {
+            socket = new DatagramSocket(0); //FIXME is this correct?
+        } catch (SocketException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        this.sendConnectRequest();
 	}
-	
+
+	private void sendConnectRequest(){
+		InetAddress group;
+		try {
+			group = InetAddress.getByName(Config.multiCastAddress);
+			
+			String command = Commands.constructCommand(Commands.connectRequest);
+	        Message message = new Message(false, false, true, true, client.getProcessID(), client.getUserName(), command);
+	    	System.out.println("Sending connect request message to MHosts: " + message.getText());
+	    	
+	        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+	        ObjectOutputStream os = new ObjectOutputStream(outputStream);
+	        os.writeObject(message);
+	        byte[] data = outputStream.toByteArray();
+	        DatagramPacket packet = new DatagramPacket(data, data.length, group, Config.hostMultiCastGroup);
+	        socket.send(packet);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	
 }
