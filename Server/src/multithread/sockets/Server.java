@@ -13,7 +13,7 @@ import sharedresources.OneToManyListener;
 public class Server {
 
 
-    public static boolean isMaster = false; // TODO Must be set by election process
+    public static boolean master = false; // TODO Must be set by election process
     public static int port;
     //private static MessageQueue queue = new MessageQueue();
     private static MessageController messageController = new MessageController();
@@ -23,7 +23,7 @@ public class Server {
         System.out.println("Server Running...");
         
         //start the thread for host discovery if this is the master
-        if (isMaster) hostFinder(); //TODO change to Multicast broadcast and then listen
+        if (master) hostFinder(); //TODO change to Multicast broadcast and then listen
         
         
         OneToManyListener oneToManyListener = new OneToManyListener();

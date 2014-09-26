@@ -9,6 +9,7 @@ import java.net.Socket;
 
 import sharedresources.Config;
 import sharedresources.Message;
+import sharedresources.Misc;
 import sharedresources.Misc.MessageType;
 
 /**
@@ -53,7 +54,7 @@ public class ClientToHost implements Runnable {
 		    //BufferedWriter writer= new BufferedWriter(new OutputStreamWriter(socketClient.getOutputStream()));
 		    ObjectOutputStream objectWriter = new ObjectOutputStream(clientSocket.getOutputStream());
 		    String serverMsg;
-		    Message message = new Message(MessageType.hostAsReceiver, false,client.getProcessID(), client.getUserName(), client.getTextFromMainPanel());
+		    Message message = new Message(MessageType.hostAsReceiver, false,Misc.getProcessID(), client.getUserName(), client.getTextFromMainPanel());
 		    objectWriter.writeObject(message);
 		    		    
 		 	System.out.println("hostname: " + InetAddress.getLocalHost().getHostName()); //DEBUG

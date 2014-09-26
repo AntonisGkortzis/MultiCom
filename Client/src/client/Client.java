@@ -208,7 +208,7 @@ public class Client extends javax.swing.JFrame {
     	}
         try {
             ObjectOutputStream outputStream = new ObjectOutputStream(socketClient.getOutputStream());
-            Message message = new Message(MessageType.hostAsReceiver, false, this.getProcessID(), this.getUserName(), this.EnterTextArea.getText());
+            Message message = new Message(MessageType.hostAsReceiver, false, Misc.getProcessID(), this.getUserName(), this.EnterTextArea.getText());
             outputStream.writeObject(message);
             this.EnterTextArea.setText("");
         } catch(IOException ex) {
@@ -290,14 +290,6 @@ public class Client extends javax.swing.JFrame {
     public int getPort(){
         return Integer.parseInt(PortTextField.getText());
     }
-    
-    /**
-     * The process ID will be used to identify as process in the distributed network
-     * @return an ID of the form "12345@hostname"
-     */
-    public String getProcessID() {
-		return ManagementFactory.getRuntimeMXBean().getName();
-	}
     
     public void setServerStatus(String status, boolean flag){
         this.ServerStatusLabel.setText(status);

@@ -11,6 +11,7 @@ import java.net.SocketException;
 import sharedresources.Commands;
 import sharedresources.Config;
 import sharedresources.Message;
+import sharedresources.Misc;
 import sharedresources.Misc.MessageType;
 
 /**
@@ -44,7 +45,7 @@ public class ClientToMHost {
 			group = InetAddress.getByName(Config.multiCastAddress);
 			
 			String command = Commands.constructCommand(Commands.connectRequest);
-	        Message message = new Message(MessageType.multipleReceivers, true, client.getProcessID(), client.getUserName(), command);
+	        Message message = new Message(MessageType.multipleReceivers, true, Misc.getProcessID(), client.getUserName(), command);
 	    	System.out.println("Sending connect request message to MHosts: " + message.getText());
 	    	
 	        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

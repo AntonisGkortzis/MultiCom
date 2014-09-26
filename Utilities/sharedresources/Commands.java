@@ -11,8 +11,21 @@ public class Commands {
 
 	private final static String delimiter = ";"; //Character used to separate keywords in commands
 	
-	//Client to Multiple Hosts
+	/**
+	 * Client needs to connect. Send to hosts group
+	 */
 	public final static String connectRequest = "connect";
+
+	/**
+	 * Master needs to ping other hosts to see if they are still alive
+	 * TODO just to be sure I made two pings, but maybe one is enough so we can remove one in the future
+	 */
+	public static String masterPing = "master-ping";
+	
+	/**
+	 * Host needs to ping other hosts to see if master is alive
+	 */
+	public static String hostPing = "host-ping";
 	
 	
 	public static String constructCommand(String command) {
