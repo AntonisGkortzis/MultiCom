@@ -7,9 +7,11 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+
 import sharedresources.Commands;
 import sharedresources.Config;
 import sharedresources.Message;
+import sharedresources.Misc.MessageType;
 
 /**
  * This class is used when starting a client which wants to connect to a host.
@@ -42,7 +44,7 @@ public class ClientToMHost {
 			group = InetAddress.getByName(Config.multiCastAddress);
 			
 			String command = Commands.constructCommand(Commands.connectRequest);
-	        Message message = new Message(false, false, true, true, client.getProcessID(), client.getUserName(), command);
+	        Message message = new Message(MessageType.multipleReceivers, true, client.getProcessID(), client.getUserName(), command);
 	    	System.out.println("Sending connect request message to MHosts: " + message.getText());
 	    	
 	        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

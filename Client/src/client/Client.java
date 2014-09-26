@@ -12,6 +12,8 @@ import java.lang.management.ManagementFactory;
 import java.net.Socket;
 
 import sharedresources.Message;
+import sharedresources.Misc;
+import sharedresources.Misc.MessageType;
 import sharedresources.OneToManyListener;
 /**
  * This class is used to create the Gui of the client and to start communication with the hosts. 
@@ -206,7 +208,7 @@ public class Client extends javax.swing.JFrame {
     	}
         try {
             ObjectOutputStream outputStream = new ObjectOutputStream(socketClient.getOutputStream());
-            Message message = new Message(true, false, false, false, this.getProcessID(), this.getUserName(), this.EnterTextArea.getText());
+            Message message = new Message(MessageType.hostAsReceiver, false, this.getProcessID(), this.getUserName(), this.EnterTextArea.getText());
             outputStream.writeObject(message);
             this.EnterTextArea.setText("");
         } catch(IOException ex) {

@@ -52,11 +52,10 @@ public class OneToManyListener implements Runnable {
                 ObjectInputStream is = new ObjectInputStream(in);
                 try{
                 	Message received = (Message)is.readObject();  
-                	System.out.println("OneToManyListener received: " + received.getText());
+                	handleMessage(received);
                 } catch(ClassNotFoundException ex) {
                 	ex.printStackTrace();
                 }
-
             }
 
         } catch (IOException e) {
@@ -70,5 +69,9 @@ public class OneToManyListener implements Runnable {
             e.printStackTrace();
         }
         socket.close();		
+	}
+	
+	private void handleMessage(Message message) {
+    	System.out.println("OneToManyListener received: " + message.getText());
 	}
 }
