@@ -9,10 +9,10 @@ import java.net.Socket;
  * 
  */
 public class OneToOneListener implements Runnable {
-    private Socket server;
+    private Socket socket;
 
     public OneToOneListener(Socket server) {
-      this.server=server;
+      this.socket=server;
     }
 
     public void run () {
@@ -21,9 +21,9 @@ public class OneToOneListener implements Runnable {
     	boolean flag = true;
     	while(flag) {
 	    	try {
-				while(server.getInputStream().available()>0){
+				while(socket.getInputStream().available()>0){
 					try {
-						inStream = new ObjectInputStream(server.getInputStream());
+						inStream = new ObjectInputStream(socket.getInputStream());
 						message = (Message)inStream.readObject();
 					    MessageController.push(message); // TODO import the Class..
 					    System.out.println("Server received: "+message.getText());

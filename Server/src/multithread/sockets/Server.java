@@ -1,4 +1,5 @@
 package multithread.sockets;
+import sharedresources.Config;
 import sharedresources.MessageController;
 import sharedresources.OneToManyListener;
 
@@ -12,8 +13,6 @@ import sharedresources.OneToManyListener;
  */
 public class Server {
 
-
-    public static boolean master = false; // TODO Must be set by election process
     public static int port;
     //private static MessageQueue queue = new MessageQueue();
     private static MessageController messageController = new MessageController();
@@ -23,7 +22,7 @@ public class Server {
         System.out.println("Server Running...");
         
         //start the thread for host discovery if this is the master
-        if (master) hostFinder(); //TODO change to Multicast broadcast and then listen
+        if (Config.master) hostFinder(); //TODO change to Multicast broadcast and then listen
         
         
         OneToManyListener oneToManyListener = new OneToManyListener();

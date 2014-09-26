@@ -25,6 +25,7 @@ public class HostToClient implements Runnable{
     public HostToClient() {
         int i = 0;
         boolean success = false;
+        //TODO change to port 0 and save it somewhere so it can be send with messages
         for(i = HostFinder.START_PORT; i<HostFinder.START_PORT + HostFinder.PORT_AMOUNT; i++ ) {
             try {
                 listener = new ServerSocket(i);

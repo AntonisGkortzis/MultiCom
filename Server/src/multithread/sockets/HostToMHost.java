@@ -46,7 +46,7 @@ public class HostToMHost implements Runnable{
                 InetAddress group = InetAddress.getByName(Config.multiCastAddress);
                 Message message;
                 String command;
-                if(Server.master) {
+                if(Config.master) {
                 	command = Commands.masterPing;
                 } else {
                 	command = Commands.hostPing;

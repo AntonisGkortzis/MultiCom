@@ -12,29 +12,27 @@ import sharedresources.Misc.MessageType;
 public class Message implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private MessageType type;
+	private MessageType messageType;			// Different kinds of messages
 	private boolean command;			//TRUE if the message contains a command. FALSE if the message is ..just a message!
 	private String text;				//The text of the message
 	private long timestamp;				//The time that the message was sent
-	private String user;				//The name of the user sending the message.
+	private String username;				//The name of the user sending the message.
 	private String processID;            //The id of the process sending the message.
 	private int id=0;					//An incrementing number as an id
 	
 	public Message(){}
 	
-	// TODO first three booleans can be replaced by an Enum class which is put in sharedresources
-//	boolean hostAsReceiver, boolean hostAsSender, boolean multipleReceivers
-	public Message(MessageType type, boolean command, String processID, String user, String text){
-		this.type = type;
+	public Message(MessageType type, boolean command, String processID, String username, String text){
+		this.messageType = type;
 		this.command = command;
 		this.processID = processID;
-		this.user = user;
+		this.username = username;
 		this.id++;
 		this.text = text;
 	}
 		
-	public MessageType getType() {
-		return this.type;
+	public MessageType getMessageType() {
+		return this.messageType;
 	}
 
 	public boolean isCommand(){
@@ -45,8 +43,8 @@ public class Message implements Serializable {
         return processID;
     }
 
-	public String getUser(){
-		return this.user;
+	public String getUsername(){
+		return this.username;
 	}
 	
 	public String getText(){

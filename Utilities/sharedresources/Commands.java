@@ -11,6 +11,8 @@ public class Commands {
 
 	private final static String delimiter = ";"; //Character used to separate keywords in commands
 	
+	/********KEYWORDS********/
+	
 	/**
 	 * Client needs to connect. Send to hosts group
 	 */
@@ -28,7 +30,17 @@ public class Commands {
 	public static String hostPing = "host-ping";
 	
 	
+	/**
+	 * Constructs commands from keywords
+	 * @param command keyword
+	 * @return command
+	 */
 	public static String constructCommand(String command) {
 		return command + delimiter ; //more?
+	}
+	
+	public static boolean messageIsOfCommand(Message message, String command) {
+		String[] messageParts = message.getText().split(delimiter);
+		return messageParts[0].equals(command);
 	}
 }

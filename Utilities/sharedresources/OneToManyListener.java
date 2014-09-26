@@ -73,5 +73,17 @@ public class OneToManyListener implements Runnable {
 	
 	private void handleMessage(Message message) {
     	System.out.println("OneToManyListener received: " + message.getText());
+    	if(Config.master) {
+    		if(Commands.messageIsOfCommand(message, Commands.connectRequest)) {
+    			System.out.println("Hello " +message.getUsername() + " with process ID " + message.getProcessID() 
+    					+ "\nI will find a suitable host to connect to, wait a minute...");
+    		} else if(Commands.messageIsOfCommand(message, Commands.hostPing)) {
+    			//TODO broadcast alive signal
+    		}
+    	} else {
+    		if(Commands.messageIsOfCommand(message, Commands.hostPing) || Commands.messageIsOfCommand(message, Commands.masterPing)) {
+    			//TODO broadcast alive signal
+    		}
+    	}
 	}
 }

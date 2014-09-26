@@ -23,12 +23,13 @@ public final class Config {
 	 */
 	public final static int hostMultiCastGroup = 5000;
 	
-	
+    public static boolean master = true; // TODO Must be set by election process
+
 	//DELAYS
 	
 	/**
 	 * Delay for pinging other hosts 
 	 */
-	public final static long DELAY = 500;
+	public final static long DELAY = 1000; //TODO set to correct delay
 
 }

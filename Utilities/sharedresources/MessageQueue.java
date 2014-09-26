@@ -49,7 +49,7 @@ public class MessageQueue{
 	public void remove(String user, int id){
 		if(!isEmpty()){
 			for(int i=0; i<size(); i++){
-				if(this.queue.get(i).getUser().equals(user) 
+				if(this.queue.get(i).getUsername().equals(user) 
 						&& this.queue.get(i).getId() == id){
 					this.queue.remove(i);
 				}
