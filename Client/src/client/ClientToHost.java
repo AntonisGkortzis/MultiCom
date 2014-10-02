@@ -17,6 +17,7 @@ import sharedresources.Misc.MessageType;
  * This information is of the types:
  *  - Chat messages to distributed by the host
  *  - Metadata information
+ *  - Send ping to check Host status 
  */
 
 public class ClientToHost implements Runnable {

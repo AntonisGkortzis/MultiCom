@@ -13,6 +13,13 @@ public class Commands {
 	
 	/********KEYWORDS********/
 	
+	/********ClientToMHost**/
+	public final static String initConnection = "AskingPermissionToJoinNetwork";
+	
+	/****ClientToHost*******/
+	public final static String chatMessage = "SendChatMessage";
+	public final static String ackForReceive = "SendAckForReceiveMessage";
+	
 	/**
 	 * Client needs to connect. Send to hosts group
 	 */
