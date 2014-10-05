@@ -20,4 +20,21 @@ public class Misc {
     public static String getProcessID() {
 		return ManagementFactory.getRuntimeMXBean().getName();
 	}
+    
+    public static final Object monitor = new Object();
+    public static void waitForPort() {
+        while (Config.connectToPortFromHost==-1) {
+            synchronized (monitor) {
+                try {
+                    monitor.wait(); // wait until notified
+                } catch (Exception e) {}
+            }
+        }
+    }
+    
+    public static void unlockWaiter() {
+        synchronized (monitor) {
+            monitor.notifyAll(); // unlock again
+        }
+    }
 }

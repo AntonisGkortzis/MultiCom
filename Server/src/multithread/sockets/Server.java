@@ -12,10 +12,14 @@ import sharedresources.OneToManyListener;
  */
 public class Server {
 
-    public static int port; //TODO store host port
+    public static int port; //port for one to one connections with clients
+    public static int mPort; // port for multicast message to clients
+    
+    public static String address;
     //private static MessageQueue queue = new MessageQueue();
     public static MessageController messageControllerMClient = new MessageController();
     public static MessageController messageControllerMHost = new MessageController();
+    public static ConnectClientsList clients = new ConnectClientsList();
 
     // Listen for incoming connections and handle them
     public static void main(String[] args) {
@@ -24,9 +28,6 @@ public class Server {
         //start the thread for host discovery if this is the master
 //        if (Config.master) hostFinder(); //TODO change to Multicast broadcast and then listen
         
-        
-        OneToManyListener oneToManyListener = new OneToManyListener();
-        oneToManyListener.start();
         
         //One to one communication between host and client
         HostToClient hostToClient = new HostToClient();
@@ -38,6 +39,9 @@ public class Server {
 
         HostToMHost hostToMHost = new HostToMHost();
         hostToMHost.start();
+        
+        OneToManyListener oneToManyListener = new OneToManyListener(messageControllerMHost, true);
+        oneToManyListener.start();
     }
 
     /**

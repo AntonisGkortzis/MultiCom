@@ -11,6 +11,7 @@ import java.io.ObjectOutputStream;
 import java.lang.management.ManagementFactory;
 import java.net.Socket;
 
+import sharedresources.Config;
 import sharedresources.Message;
 import sharedresources.Misc;
 import sharedresources.Misc.MessageType;
@@ -43,7 +44,7 @@ public class Client extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         ConnectToServerButton = new javax.swing.JButton();
         UsernameTextField = new javax.swing.JTextField();
-        PortTextField = new javax.swing.JTextField();
+//        PortTextField = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         MainPanelTextArea = new javax.swing.JTextArea();
         jLabel3 = new javax.swing.JLabel();
@@ -72,7 +73,7 @@ public class Client extends javax.swing.JFrame {
 
         UsernameTextField.setText("username");
 
-        PortTextField.setText("4444");
+//        PortTextField.setText("4444");
 
         MainPanelTextArea.setColumns(20);
         MainPanelTextArea.setRows(5);
@@ -108,7 +109,7 @@ public class Client extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(jLabel2)
                         .addGap(6, 6, 6)
-                        .addComponent(PortTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+//                        .addComponent(PortTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(ConnectToServerButton))
                     .addGroup(layout.createSequentialGroup()
@@ -129,8 +130,8 @@ public class Client extends javax.swing.JFrame {
                     .addComponent(jLabel1)
                     .addComponent(jLabel2)
                     .addComponent(ConnectToServerButton)
-                    .addComponent(UsernameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(PortTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(UsernameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+//                    .addComponent(PortTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -185,13 +186,14 @@ public class Client extends javax.swing.JFrame {
     	//Multicast to join network
     	ClientToMHost clientToMHost = new ClientToMHost(this);
     	
-    	//Listen for response of previous request (or should this be place before clientomhost?
-    	OneToManyListener oneToManyListener = new OneToManyListener();
-    	
+    	//Listen for response of previous request (or should this be placed before clientomhost?
+    	OneToManyListener oneToManyListener = new OneToManyListener(null, false); //TODO messageController CLient??
+    	oneToManyListener.start();
     	//Implement mechanism to block until correct response is found 
     	//with information to join network or resend after certain amount of time
     	
-    	//TODO Use info obtained from clientToMHost/oneToManyListener
+//    	TODO Use info obtained from clientToMHost/oneToManyListener
+    	Misc.waitForPort();
     	ClientToHost clientToHost = new ClientToHost(this);
     	socketClient = clientToHost.getSocket();
     	clientToHost.start();
@@ -200,7 +202,7 @@ public class Client extends javax.swing.JFrame {
         mClientListener.start();
         
     }//GEN-LAST:event_ConnectToServerButtonActionPerformed
-
+ 
     private void SendMessageButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SendMessageButtonActionPerformed
     	if (socketClient == null) {
             this.showErrorMessage("You are not connected.");
@@ -282,14 +284,14 @@ public class Client extends javax.swing.JFrame {
         return this.UsernameTextField.getText();
     }
     
-    /**
-     * @Deprecated
-     * must be replaced by the port number received from the Master Host
-     */
-    @Deprecated
-    public int getPort(){
-        return Integer.parseInt(PortTextField.getText());
-    }
+//    /**
+//     * @Deprecated
+//     * must be replaced by the port number received from the Master Host
+//     */
+//    @Deprecated
+//    public int getPort(){
+//        return Integer.parseInt(PortTextField.getText());
+//    }
     
     public void setServerStatus(String status, boolean flag){
         this.ServerStatusLabel.setText(status);
@@ -317,7 +319,7 @@ public class Client extends javax.swing.JFrame {
     private javax.swing.JTextArea EnterTextArea;
     private javax.swing.JTextField UsernameTextField;
     private javax.swing.JTextArea MainPanelTextArea;
-    private javax.swing.JTextField PortTextField;
+//    private javax.swing.JTextField PortTextField;
     private javax.swing.JButton SendMessageButton;
     private javax.swing.JLabel ServerStatusLabel;
     private javax.swing.JLabel jLabel1;

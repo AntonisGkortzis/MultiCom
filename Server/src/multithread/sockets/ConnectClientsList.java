@@ -38,5 +38,9 @@ public class ConnectClientsList {
 			client.updateClient(message);
 		}
 	}
+	
+	public int size() {
+	    return this.clients.size();
+	}
 
 }

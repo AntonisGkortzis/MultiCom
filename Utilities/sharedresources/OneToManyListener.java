@@ -7,6 +7,8 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 
+import sharedresources.Misc.MessageType;
+
 /**
  * This class is used to listen for messages send with Multicast to multiple hosts
  * Messages are of type:
@@ -23,8 +25,13 @@ public class OneToManyListener implements Runnable {
 	
 	private MulticastSocket socket;
 	private InetAddress group;
+    private MessageController messageController;
+    private boolean isHost;
 
-	public OneToManyListener() {
+	public OneToManyListener(MessageController messageController, boolean isHost) {
+	    this.messageController = messageController;
+	    this.isHost = isHost;
+	    
         try {
             socket = new MulticastSocket(Config.hostMultiCastGroup);
             group = InetAddress.getByName(Config.multiCastAddress);
@@ -71,19 +78,42 @@ public class OneToManyListener implements Runnable {
         socket.close();		
 	}
 	
-	private void handleMessage(Message message) {
-    	System.out.println("OneToManyListener received: " + message.getText());
-    	if(Config.master) {
-    		if(Commands.messageIsOfCommand(message, Commands.connectRequest)) {
-    			System.out.println("Hello " +message.getUsername() + " with process ID " + message.getProcessID() 
-    					+ "\nI will find a suitable host to connect to, wait a minute...");
-    		} else if(Commands.messageIsOfCommand(message, Commands.hostPing)) {
-    			//TODO broadcast alive signal
+	private void handleMessage(Message receivedMessage) {
+//    	System.out.println("OneToManyListener received: " + receivedMessage.getText());
+    	if(isHost && Config.master) {
+    		if(Commands.messageIsOfCommand(receivedMessage, Commands.connectRequest)) {
+//    			System.out.println("Hello " +receivedMessage.getUsername() + " with process ID " + receivedMessage.getProcessID() 
+//    					+ "\nI will find a suitable host to connect to, wait a minute...");
+//    			String command = Commands.constructCommand(Commands.findHost);
+//    			Message message = new Message(MessageType.multipleReceivers, true, Misc.getProcessID(), "master", command);
+//    			this.messageController.push(message);
+    			AvailableHost suitableHost = AvailableHostsList.findSuitableHost();
+    			if(suitableHost!=null) { //TODO search again if null?
+//    			    System.out.println(suitableHost.toString());
+    			    String command = Commands.constructCommand(Commands.hostFound, Commands.constructHostFound(suitableHost, receivedMessage.getProcessID()));
+    			    Message message = new Message(MessageType.multipleReceivers, true, Misc.getProcessID(), "master", command);
+    			    this.messageController.push(message);
+    			    System.out.println("Pushed " + message.getText());
+    			}
     		}
-    	} else {
-    		if(Commands.messageIsOfCommand(message, Commands.hostPing) || Commands.messageIsOfCommand(message, Commands.masterPing)) {
-    			//TODO broadcast alive signal
-    		}
+    	}
+    	if(isHost && Commands.messageIsOfCommand(receivedMessage, Commands.statusUpdate)) {
+    	    AvailableHost availableHost = Commands.getStatus(receivedMessage);
+    	    if(!AvailableHostsList.hostExists(availableHost)) {
+    	        AvailableHostsList.addHost(availableHost);
+    	    }
+//    	    System.out.println("handle status update: ");
+//    	    AvailableHostsList.printHostAddresses();
+    	} else if(!isHost && Commands.messageIsOfCommand(receivedMessage, Commands.hostFound)) {
+    	    System.out.println(" HOST IS FOUND " + receivedMessage.getText() + " " + Misc.getProcessID());
+    	    String[] messageParts = Commands.splitMessage(receivedMessage);
+    	    if(Misc.getProcessID().equals(messageParts[1])) { //This client requested a connection
+    	        Config.connectToPortFromHost = Integer.parseInt(messageParts[3]);
+    	        System.out.println("Connect to port: " + Config.connectToPortFromHost);
+    	        Misc.unlockWaiter();
+    	        
+    	    }
+
     	}
 	}
 }

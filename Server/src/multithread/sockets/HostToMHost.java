@@ -10,6 +10,7 @@ import java.net.SocketException;
 
 import sharedresources.Config;
 import sharedresources.Message;
+import sharedresources.MessageController;
 
 /**
  * This class is used for communication between a host and multiple hosts.
@@ -22,14 +23,14 @@ public class HostToMHost implements Runnable{
 
     private DatagramSocket socket;
 
-	public HostToMHost() {
+	public HostToMHost() {	    
         try {
             socket = new DatagramSocket(0);
         } catch (SocketException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        SendPing sendPing = new SendPing();
+        SendStatusUpdate sendPing = new SendStatusUpdate();
         sendPing.start();
     }
     
@@ -57,7 +58,7 @@ public class HostToMHost implements Runnable{
                 }
                 
                 try {
-                    Thread.sleep(Config.DELAY);
+                    Thread.sleep(500); //TODO Must be faster than push from ping for now
                 } 
                 catch (InterruptedException e) { 
                     e.printStackTrace();

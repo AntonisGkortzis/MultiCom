@@ -12,35 +12,25 @@ import sharedresources.*;
 
 /**
  * This class is used for one to one communication between a host and a client. 
- * This communication is used for sending acknowledgments to clients that a message is deliverd.
+ * This communication is used for sending acknowledgments to clients that a message is delivered.
  *
  */
 public class HostToClient implements Runnable{
 
     private static int maxConnections = 10;
     private static List<OneToOneListener> connections = new ArrayList<OneToOneListener>();
-    private static ConnectClientsList clients = new ConnectClientsList();
     private ServerSocket listener;
     
     public HostToClient() {
-        int i = 0;
-        boolean success = false;
-        //TODO change to port 0 and save it somewhere so it can be send with messages
-        for(i = HostFinder.START_PORT; i<HostFinder.START_PORT + HostFinder.PORT_AMOUNT; i++ ) {
-            try {
-                listener = new ServerSocket(i);
-            } catch (IOException ioe) {
-                continue;
-            }
-            success = true;
-            break;
+        try {
+            listener = new ServerSocket(0);
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
         }
-        if(!success) {
-            System.out.println("No hosts available, exiting now...");
-        } else {
-            Server.port = i;
-            System.out.println("Listening for clients on port: " + i);
-        }
+        Server.port = listener.getLocalPort();
+        Server.address = listener.getInetAddress().getHostAddress();
+        System.out.println("Listening for clients on port: " + Server.port);
+        
     }
     
     public void start() {
@@ -63,7 +53,7 @@ public class HostToClient implements Runnable{
                 server = listener.accept();
                 System.out.println("\tIncoming connection accepted. [connection: " + i + "]");
                 ConnectedClient newclient = new ConnectedClient(server, server.getInetAddress().toString(), "client name"); // angor
-                clients.addClient(newclient); // angor
+                Server.clients.addClient(newclient); // angor
                 ObjectInputStream inStream = new ObjectInputStream(server.getInputStream());
 //                Message message = new Message();
                 Message message = (Message)inStream.readObject();
