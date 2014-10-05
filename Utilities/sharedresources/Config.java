@@ -30,6 +30,6 @@ public final class Config {
 	/**
 	 * Delay for pinging other hosts 
 	 */
-	public final static long DELAY = 1000; //TODO set to correct delay
+	public final static long DELAY = 3000; //TODO set to correct delay
 
 }

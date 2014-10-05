@@ -23,8 +23,9 @@ public class Commands {
 	/**
 	 * Client needs to connect. Send to hosts group
 	 */
-	public final static String connectRequest = "connect";
+	public final static String connectRequest = "SendConnectRequest";
 
+	/******HostToMHost ********/
 	/**
 	 * Master needs to ping other hosts to see if they are still alive
 	 * TODO just to be sure I made two pings, but maybe one is enough so we can remove one in the future
@@ -36,7 +37,10 @@ public class Commands {
 	 */
 	public static String hostPing = "host-ping";
 	
-	
+	/**
+	 * Masters needs to find a suitable host for the client
+	 */
+	public static String findHost = "FindSuitableHost";
 	/**
 	 * Constructs commands from keywords
 	 * @param command keyword

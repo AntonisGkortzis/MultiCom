@@ -8,11 +8,8 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 
-import sharedresources.Commands;
 import sharedresources.Config;
 import sharedresources.Message;
-import sharedresources.Misc;
-import sharedresources.Misc.MessageType;
 
 /**
  * This class is used for communication between a host and multiple hosts.
@@ -32,6 +29,8 @@ public class HostToMHost implements Runnable{
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        SendPing sendPing = new SendPing();
+        sendPing.start();
     }
     
     public void start() {
@@ -44,16 +43,9 @@ public class HostToMHost implements Runnable{
         try {
             while (true) {
                 InetAddress group = InetAddress.getByName(Config.multiCastAddress);
-                Message message;
-                String command;
-                if(Config.master) {
-                	command = Commands.masterPing;
-                } else {
-                	command = Commands.hostPing;
-                }
-            	command = Commands.constructCommand(command);
-            	message = new Message(MessageType.multipleReceivers,true,Misc.getProcessID(), "host", command);
-                
+      
+                Message message = Server.messageControllerMHost.pop();
+
                 if(message != null){
                 	System.out.println("Sending message: " + message.getText());
 	                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

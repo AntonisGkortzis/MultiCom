@@ -10,9 +10,11 @@ import java.net.Socket;
  */
 public class OneToOneListener implements Runnable {
     private Socket socket;
+    private MessageController messageController;
 
-    public OneToOneListener(Socket server) {
-      this.socket=server;
+    public OneToOneListener(Socket socket, MessageController messageController) {
+        this.socket=socket;
+        this.messageController = messageController;
     }
 
     public void run () {
@@ -25,7 +27,7 @@ public class OneToOneListener implements Runnable {
 					try {
 						inStream = new ObjectInputStream(socket.getInputStream());
 						message = (Message)inStream.readObject();
-					    MessageController.push(message); // TODO import the Class..
+					    messageController.push(message);
 					    System.out.println("Server received: "+message.getText());
 					} catch (IOException | ClassNotFoundException ioe) {
 						System.out.println("IOException on socket listen: " + ioe);

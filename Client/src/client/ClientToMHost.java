@@ -30,7 +30,7 @@ public class ClientToMHost {
 		this.client = client;
 		
         try {
-            socket = new DatagramSocket(0); //FIXME is this correct?
+            socket = new DatagramSocket(0);
         } catch (SocketException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -46,7 +46,7 @@ public class ClientToMHost {
 			
 			String command = Commands.constructCommand(Commands.connectRequest);
 	        Message message = new Message(MessageType.multipleReceivers, true, Misc.getProcessID(), client.getUserName(), command);
-	    	System.out.println("Sending connect request message to MHosts: " + message.getText());
+	    	System.out.println("Message " + message.getText());
 	    	
 	        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 	        ObjectOutputStream os = new ObjectOutputStream(outputStream);

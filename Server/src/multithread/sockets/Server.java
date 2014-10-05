@@ -1,5 +1,4 @@
 package multithread.sockets;
-import sharedresources.Config;
 import sharedresources.MessageController;
 import sharedresources.OneToManyListener;
 
@@ -13,16 +12,17 @@ import sharedresources.OneToManyListener;
  */
 public class Server {
 
-    public static int port;
+    public static int port; //TODO store host port
     //private static MessageQueue queue = new MessageQueue();
-    private static MessageController messageController = new MessageController();
+    public static MessageController messageControllerMClient = new MessageController();
+    public static MessageController messageControllerMHost = new MessageController();
 
     // Listen for incoming connections and handle them
     public static void main(String[] args) {
         System.out.println("Server Running...");
         
         //start the thread for host discovery if this is the master
-        if (Config.master) hostFinder(); //TODO change to Multicast broadcast and then listen
+//        if (Config.master) hostFinder(); //TODO change to Multicast broadcast and then listen
         
         
         OneToManyListener oneToManyListener = new OneToManyListener();
@@ -43,7 +43,8 @@ public class Server {
     /**
      * Host discovery
      */
-    private static void hostFinder() {
+    @SuppressWarnings("unused")
+    private static void hostFinder() { //TODO remove and remove HostFinder()
         Thread t = new HostFinder();
         t.start();
     }    

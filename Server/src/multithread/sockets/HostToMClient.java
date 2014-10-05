@@ -7,13 +7,8 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
-import java.util.ArrayList;
-import java.util.List;
-
 import sharedresources.Config;
 import sharedresources.Message;
-import sharedresources.MessageController;
-import sharedresources.MessageQueue;
 
 /**
  * This class is used for communication with a host and multiple clients.
@@ -51,11 +46,9 @@ public class HostToMClient implements Runnable {
     @Override
     public void run() {
         try {
-            while (true) {
-                byte[] buf = new byte[256];
-                
+            while (true) {                
                 InetAddress group = InetAddress.getByName(Config.multiCastAddress);
-                Message message = MessageController.pop();
+                Message message = Server.messageControllerMClient.pop();
 //                MessageController.push(message);
                 
                 if(message != null){
