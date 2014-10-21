@@ -64,6 +64,5 @@ public class MessageQueue{
 	public boolean isEmpty(){
 		return this.queue.isEmpty();
 	}
-	
-	
+
 }

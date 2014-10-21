@@ -11,6 +11,7 @@ import java.net.SocketException;
 import sharedresources.Config;
 import sharedresources.Message;
 import sharedresources.MessageController;
+import sharedresources.Misc.MessageType;
 
 /**
  * This class is used for communication between a host and multiple hosts.
@@ -48,7 +49,7 @@ public class HostToMHost implements Runnable{
                 Message message = Server.messageControllerMHost.pop();
 
                 if(message != null){
-                	System.out.println("Sending message: " + message.getText());
+                	System.out.println("@HostToMultipleHosts\n\tSending message: " + message.getText());
 	                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 	                ObjectOutputStream os = new ObjectOutputStream(outputStream);
 	                os.writeObject(message);
@@ -58,7 +59,7 @@ public class HostToMHost implements Runnable{
                 }
                 
                 try {
-                    Thread.sleep(500); //TODO Must be faster than push from ping for now
+                    Thread.sleep(10000); //TODO Must be faster than push from ping for now
                 } 
                 catch (InterruptedException e) { 
                     e.printStackTrace();

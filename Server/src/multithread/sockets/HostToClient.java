@@ -51,15 +51,15 @@ public class HostToClient implements Runnable{
         	// TODO decrease i when a client is disconnected
             try {
                 server = listener.accept();
+                System.out.println("@HostToClient");
                 System.out.println("\tIncoming connection accepted. [connection: " + i + "]");
                 ConnectedClient newclient = new ConnectedClient(server, server.getInetAddress().toString(), "client name"); // angor
-                Server.clients.addClient(newclient); // angor
+                Server.clients.addClient(newclient); 
                 ObjectInputStream inStream = new ObjectInputStream(server.getInputStream());
-//                Message message = new Message();
                 Message message = (Message)inStream.readObject();
                 
                 
-                System.out.println("\tClient added to list. [connection: " + i + "]");  
+                //System.out.println("\tClient added to list. [connection: " + i + "]");  
                 // TODO remove
                 OneToOneListener conn_c = new OneToOneListener(server, Server.messageControllerMClient);                 
                 Thread t = new Thread(conn_c);

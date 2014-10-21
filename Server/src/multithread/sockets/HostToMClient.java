@@ -44,7 +44,7 @@ public class HostToMClient implements Runnable {
 //                MessageController.push(message);
                 
                 if(message != null){
-                	System.out.println("Sending message: " + message.getText());
+                	System.out.println("@HostToMultipleClients\n\tSending message: " + message.getText());
 	                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 	                ObjectOutputStream os = new ObjectOutputStream(outputStream);
 	                os.writeObject(message);

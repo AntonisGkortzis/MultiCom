@@ -187,7 +187,7 @@ public class Client extends javax.swing.JFrame {
     	ClientToMHost clientToMHost = new ClientToMHost(this);
     	
     	//Listen for response of previous request (or should this be placed before clientomhost?
-    	OneToManyListener oneToManyListener = new OneToManyListener(null, false); //TODO messageController CLient??
+    	OneToManyListener oneToManyListener = new OneToManyListener(null, null, false); //TODO messageController CLient??
     	oneToManyListener.start();
     	//Implement mechanism to block until correct response is found 
     	//with information to join network or resend after certain amount of time

@@ -19,6 +19,7 @@ public class Server {
     //private static MessageQueue queue = new MessageQueue();
     public static MessageController messageControllerMClient = new MessageController();
     public static MessageController messageControllerMHost = new MessageController();
+    public static MessageController messageControllerForStatusUpdates = new MessageController();
     public static ConnectClientsList clients = new ConnectClientsList();
 
     // Listen for incoming connections and handle them
@@ -40,7 +41,7 @@ public class Server {
         HostToMHost hostToMHost = new HostToMHost();
         hostToMHost.start();
         
-        OneToManyListener oneToManyListener = new OneToManyListener(messageControllerMHost, true);
+        OneToManyListener oneToManyListener = new OneToManyListener(messageControllerMHost, messageControllerForStatusUpdates, true);
         oneToManyListener.start();
     }
 

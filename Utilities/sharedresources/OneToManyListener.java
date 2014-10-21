@@ -26,10 +26,12 @@ public class OneToManyListener implements Runnable {
 	private MulticastSocket socket;
 	private InetAddress group;
     private MessageController messageController;
+    private MessageController statusUpdatesMessageController;
     private boolean isHost;
 
-	public OneToManyListener(MessageController messageController, boolean isHost) {
+	public OneToManyListener(MessageController messageController, MessageController statusUpdatesMessageController, boolean isHost) {
 	    this.messageController = messageController;
+	    this.statusUpdatesMessageController = statusUpdatesMessageController;
 	    this.isHost = isHost;
 	    
         try {
@@ -60,6 +62,7 @@ public class OneToManyListener implements Runnable {
                 try{
                 	Message received = (Message)is.readObject();  
                 	handleMessage(received);
+                	
                 } catch(ClassNotFoundException ex) {
                 	ex.printStackTrace();
                 }
@@ -79,6 +82,10 @@ public class OneToManyListener implements Runnable {
 	}
 	
 	private void handleMessage(Message receivedMessage) {
+		//Do not parse your own Messages
+		if(receivedMessage.getProcessID().equals(Misc.getProcessID())){
+			return;
+		}
 //    	System.out.println("OneToManyListener received: " + receivedMessage.getText());
     	if(isHost && Config.master) {
     		if(Commands.messageIsOfCommand(receivedMessage, Commands.connectRequest)) {
@@ -93,11 +100,14 @@ public class OneToManyListener implements Runnable {
     			    String command = Commands.constructCommand(Commands.hostFound, Commands.constructHostFound(suitableHost, receivedMessage.getProcessID()));
     			    Message message = new Message(MessageType.multipleReceivers, true, Misc.getProcessID(), "master", command);
     			    this.messageController.push(message);
-    			    System.out.println("Pushed " + message.getText());
+    			    System.out.println("@OneToManyListener\n\tPushed " + message.getText());
     			}
     		}
     	}
     	if(isHost && Commands.messageIsOfCommand(receivedMessage, Commands.statusUpdate)) {
+    		System.out.println("@OneToManyListener\n\tStatus update received from host " +receivedMessage.getProcessID());
+    		statusUpdatesMessageController.push(receivedMessage);
+    		
     	    AvailableHost availableHost = Commands.getStatus(receivedMessage);
     	    if(!AvailableHostsList.hostExists(availableHost)) {
     	        AvailableHostsList.addHost(availableHost);

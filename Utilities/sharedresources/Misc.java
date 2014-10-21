@@ -26,6 +26,7 @@ public class Misc {
         while (Config.connectToPortFromHost==-1) {
             synchronized (monitor) {
                 try {
+                	System.out.println("@Misc\n\tWaiting for Port");
                     monitor.wait(); // wait until notified
                 } catch (Exception e) {}
             }
@@ -34,6 +35,7 @@ public class Misc {
     
     public static void unlockWaiter() {
         synchronized (monitor) {
+        	System.out.println("@Misc\n\tUnlocking Waiter");
             monitor.notifyAll(); // unlock again
         }
     }

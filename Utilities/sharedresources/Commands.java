@@ -44,10 +44,17 @@ public class Commands {
 	
 	public final static String hostFound = "HostIsFoundForClient";
 	
+	public final static String forwardMessage = "forwardedMessageReceivedFromClient";
+	
+	/**
+	 * Hosts sending ping request on their connection to the cluster
+	 */
+	public final static String isAnyoneOutThere = "requestingPingResponce";
+	
+	public final static String imAlive = "respondToIsAnyoneAlive";
 	
 	public static String[] splitMessage(Message message) {
 	    return message.getText().split(delimiter);
-
 	}
 	/**
 	 * Masters needs to find a suitable host for the client
