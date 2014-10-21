@@ -17,9 +17,13 @@ public class Server {
     
     public static String address;
     //private static MessageQueue queue = new MessageQueue();
-    public static MessageController messageControllerMClient = new MessageController();
-    public static MessageController messageControllerMHost = new MessageController();
-    public static MessageController messageControllerForStatusUpdates = new MessageController();
+    
+    
+    public static MessageController messageController = new MessageController();
+//    public static MessageController messageControllerMHost = new MessageController();
+//    public static MessageController messageControllerForStatusUpdates = new MessageController();
+    
+    
     public static ConnectClientsList clients = new ConnectClientsList();
 
     // Listen for incoming connections and handle them
@@ -41,17 +45,17 @@ public class Server {
         HostToMHost hostToMHost = new HostToMHost();
         hostToMHost.start();
         
-        OneToManyListener oneToManyListener = new OneToManyListener(messageControllerMHost, messageControllerForStatusUpdates, true);
+        OneToManyListener oneToManyListener = new OneToManyListener(messageController, true);
         oneToManyListener.start();
     }
 
     /**
      * Host discovery
      */
-    @SuppressWarnings("unused")
-    private static void hostFinder() { //TODO remove and remove HostFinder()
-        Thread t = new HostFinder();
-        t.start();
-    }    
+//    @SuppressWarnings("unused")
+//    private static void hostFinder() { //TODO remove and remove HostFinder()
+//        Thread t = new HostFinder();
+//        t.start();
+//    }    
    
 }

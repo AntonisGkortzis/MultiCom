@@ -11,8 +11,10 @@ import java.io.ObjectOutputStream;
 import java.lang.management.ManagementFactory;
 import java.net.Socket;
 
+import sharedresources.Commands;
 import sharedresources.Config;
 import sharedresources.Message;
+import sharedresources.MessageController;
 import sharedresources.Misc;
 import sharedresources.Misc.MessageType;
 import sharedresources.OneToManyListener;
@@ -24,6 +26,7 @@ import sharedresources.OneToManyListener;
  */
 public class Client extends javax.swing.JFrame {
     private Socket socketClient;
+    public static MessageController messageController = new MessageController();
     /**
      * Creates new form ChatClient
      */
@@ -149,36 +152,6 @@ public class Client extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void ConnectToServerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ConnectToServerButtonActionPerformed
-        // TODO remove code?
-    	/*
-        new Thread() {
-             public void run() {
-                try {
-				    socketClient= new Socket(getHostName(),getPort());
-				    System.out.println("Client: "+"Connection Established");
-		                    setServerStatus("Connection Established!",true); 
-				    BufferedReader reader = new BufferedReader(new InputStreamReader(socketClient.getInputStream()));
-				    //BufferedWriter writer= new BufferedWriter(new OutputStreamWriter(socketClient.getOutputStream()));
-				    ObjectOutputStream objectWriter = new ObjectOutputStream(socketClient.getOutputStream());
-				    String serverMsg;
-				    String hostname = InetAddress.getLocalHost().getHostName();
-				    Message message = new Message(false, false, false, false, "hostname;"+hostname, "addfds");
-				    objectWriter.writeObject(message);
-				    
-				 	System.out.println("hostname: " + hostname); //DEBUG
-				    
-		            while ((serverMsg = reader.readLine()) != null) {
-		                AddTextToMainPanel(serverMsg);
-		            }
-                    
-                } catch(Exception e){
-                    e.printStackTrace();
-                    System.out.println("Client: "+"Connection failed..");
-                    setServerStatus("Connection failed..", false);
-                }
-            }
-        }.start();
-        */
     	if(socketClient !=null) {
     		this.showErrorMessage("You are already connected.");
     		return;
@@ -187,13 +160,26 @@ public class Client extends javax.swing.JFrame {
     	ClientToMHost clientToMHost = new ClientToMHost(this);
     	
     	//Listen for response of previous request (or should this be placed before clientomhost?
-    	OneToManyListener oneToManyListener = new OneToManyListener(null, null, false); //TODO messageController CLient??
+    	OneToManyListener oneToManyListener = new OneToManyListener(messageController, false);
     	oneToManyListener.start();
-    	//Implement mechanism to block until correct response is found 
-    	//with information to join network or resend after certain amount of time
+    	
+    	boolean flag = true;
+    	while(flag) {
+        	Message message = messageController.queueMClientCommand.pop();
+        	if(message!=null && Commands.messageIsOfCommand(message, Commands.hostFound)) {
+                String[] messageParts = Commands.splitMessage(message);
+                if(Misc.getProcessID().equals(messageParts[1])) { //This client requested a connection
+                    System.out.println(" HOST IS FOUND " + message.getText() + " " + Misc.getProcessID());
+                    Config.connectToPortFromHost = Integer.parseInt(messageParts[3]);
+                    System.out.println("Connect to port: " + Config.connectToPortFromHost);
+//                    Misc.unlockWaiter();
+                    flag=false;
+                }
+        	}
+        }
     	
 //    	TODO Use info obtained from clientToMHost/oneToManyListener
-    	Misc.waitForPort();
+//    	Misc.waitForPort();
     	ClientToHost clientToHost = new ClientToHost(this);
     	socketClient = clientToHost.getSocket();
     	clientToHost.start();
@@ -210,7 +196,7 @@ public class Client extends javax.swing.JFrame {
     	}
         try {
             ObjectOutputStream outputStream = new ObjectOutputStream(socketClient.getOutputStream());
-            Message message = new Message(MessageType.hostAsReceiver, false, Misc.getProcessID(), this.getUserName(), this.EnterTextArea.getText());
+            Message message = new Message(MessageType.hostChat, false, Misc.getProcessID(), this.getUserName(), this.EnterTextArea.getText());
             outputStream.writeObject(message);
             this.EnterTextArea.setText("");
         } catch(IOException ex) {

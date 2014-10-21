@@ -26,12 +26,10 @@ public class OneToManyListener implements Runnable {
 	private MulticastSocket socket;
 	private InetAddress group;
     private MessageController messageController;
-    private MessageController statusUpdatesMessageController;
     private boolean isHost;
 
-	public OneToManyListener(MessageController messageController, MessageController statusUpdatesMessageController, boolean isHost) {
+	public OneToManyListener(MessageController messageController, boolean isHost) {
 	    this.messageController = messageController;
-	    this.statusUpdatesMessageController = statusUpdatesMessageController;
 	    this.isHost = isHost;
 	    
         try {
@@ -86,44 +84,17 @@ public class OneToManyListener implements Runnable {
 		if(receivedMessage.getProcessID().equals(Misc.getProcessID())){
 			return;
 		}
-//    	System.out.println("OneToManyListener received: " + receivedMessage.getText());
-    	if(isHost && Config.master) {
-    		if(Commands.messageIsOfCommand(receivedMessage, Commands.connectRequest)) {
-//    			System.out.println("Hello " +receivedMessage.getUsername() + " with process ID " + receivedMessage.getProcessID() 
-//    					+ "\nI will find a suitable host to connect to, wait a minute...");
-//    			String command = Commands.constructCommand(Commands.findHost);
-//    			Message message = new Message(MessageType.multipleReceivers, true, Misc.getProcessID(), "master", command);
-//    			this.messageController.push(message);
-    			AvailableHost suitableHost = AvailableHostsList.findSuitableHost();
-    			if(suitableHost!=null) { //TODO search again if null?
-//    			    System.out.println(suitableHost.toString());
-    			    String command = Commands.constructCommand(Commands.hostFound, Commands.constructHostFound(suitableHost, receivedMessage.getProcessID()));
-    			    Message message = new Message(MessageType.multipleReceivers, true, Misc.getProcessID(), "master", command);
-    			    this.messageController.push(message);
-    			    System.out.println("@OneToManyListener\n\tPushed " + message.getText());
-    			}
-    		}
-    	}
-    	if(isHost && Commands.messageIsOfCommand(receivedMessage, Commands.statusUpdate)) {
-    		System.out.println("@OneToManyListener\n\tStatus update received from host " +receivedMessage.getProcessID());
-    		statusUpdatesMessageController.push(receivedMessage);
-    		
-    	    AvailableHost availableHost = Commands.getStatus(receivedMessage);
-    	    if(!AvailableHostsList.hostExists(availableHost)) {
-    	        AvailableHostsList.addHost(availableHost);
-    	    }
-//    	    System.out.println("handle status update: ");
-//    	    AvailableHostsList.printHostAddresses();
-    	} else if(!isHost && Commands.messageIsOfCommand(receivedMessage, Commands.hostFound)) {
-    	    System.out.println(" HOST IS FOUND " + receivedMessage.getText() + " " + Misc.getProcessID());
-    	    String[] messageParts = Commands.splitMessage(receivedMessage);
-    	    if(Misc.getProcessID().equals(messageParts[1])) { //This client requested a connection
-    	        Config.connectToPortFromHost = Integer.parseInt(messageParts[3]);
-    	        System.out.println("Connect to port: " + Config.connectToPortFromHost);
-    	        Misc.unlockWaiter();
-    	        
-    	    }
-
-    	}
+   
+    
+    	if(receivedMessage.getMessageType().equals(MessageType.mHostCommand)) {
+    	    messageController.queueMHostsCommand.push(receivedMessage);
+    	} else if(receivedMessage.getMessageType().equals(MessageType.mHostChat))  {
+    	    messageController.queueMHostsChat.push(receivedMessage);
+    	} else if(receivedMessage.getMessageType().equals(MessageType.mHostVote)) {
+    	    messageController.queueMHostsVote.push(receivedMessage);
+    	} else if(receivedMessage.getMessageType().equals(MessageType.mClientCommand)) {
+    	    System.out.println("One to many: mClientCommand");
+    	    messageController.queueMClientCommand.push(receivedMessage);
+    	} 
 	}
 }

@@ -7,8 +7,11 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+
+import sharedresources.Commands;
 import sharedresources.Config;
 import sharedresources.Message;
+import sharedresources.Misc;
 
 /**
  * This class is used for communication with a host and multiple clients.
@@ -37,35 +40,40 @@ public class HostToMClient implements Runnable {
 
     @Override
     public void run() {
-        try {
-            while (true) {                
-                InetAddress group = InetAddress.getByName(Config.multiCastAddress);
-                Message message = Server.messageControllerMClient.pop();
-//                MessageController.push(message);
-                
-                if(message != null){
-                	System.out.println("@HostToMultipleClients\n\tSending message: " + message.getText());
-	                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-	                ObjectOutputStream os = new ObjectOutputStream(outputStream);
-	                os.writeObject(message);
-	                byte[] data = outputStream.toByteArray();
-	                DatagramPacket packet = new DatagramPacket(data, data.length, group, 5555);
-	                socket.send(packet);
-                }
-                
-                try {
-                    Thread.sleep(DELAY);
-                } 
-                catch (InterruptedException e) { 
-                    e.printStackTrace();
-                }
+        boolean flag = true;
+        while (flag) {                
+            Message message = Server.messageController.queueMHostsChat.pop();
+            
+            flag = sendMessage(message);
+            try {
+                Thread.sleep(DELAY);
+            } 
+            catch (InterruptedException e) { 
+                e.printStackTrace();
+                flag = false;
             }
-        }
-        catch (IOException e) {
-            e.printStackTrace();
         }
         
         socket.close();        
+    }
+    
+    private boolean sendMessage(Message message) {
+        if(message != null){             
+            try {
+                InetAddress group = InetAddress.getByName(Config.multiCastAddress);
+                System.out.println("@HostToMultipleClients\n\tSending message: " + message.getText());
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                ObjectOutputStream os = new ObjectOutputStream(outputStream);
+                os.writeObject(message);
+                byte[] data = outputStream.toByteArray();
+                DatagramPacket packet = new DatagramPacket(data, data.length, group, 5555);
+                socket.send(packet);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        return true;
     }
 
 }

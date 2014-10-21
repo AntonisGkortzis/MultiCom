@@ -56,12 +56,12 @@ public class HostToClient implements Runnable{
                 ConnectedClient newclient = new ConnectedClient(server, server.getInetAddress().toString(), "client name"); // angor
                 Server.clients.addClient(newclient); 
                 ObjectInputStream inStream = new ObjectInputStream(server.getInputStream());
-                Message message = (Message)inStream.readObject();
+                Message message = (Message)inStream.readObject(); //TODO why not used?
                 
                 
                 //System.out.println("\tClient added to list. [connection: " + i + "]");  
                 // TODO remove
-                OneToOneListener conn_c = new OneToOneListener(server, Server.messageControllerMClient);                 
+                OneToOneListener conn_c = new OneToOneListener(server, Server.messageController);                 
                 Thread t = new Thread(conn_c);
                 t.start();
                 

@@ -1,16 +1,9 @@
 package client;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.ObjectOutputStream;
-import java.net.InetAddress;
 import java.net.Socket;
 
 import sharedresources.Config;
-import sharedresources.Message;
-import sharedresources.Misc;
-import sharedresources.Misc.MessageType;
 
 /**
  * Used for sending one to one information to one specific host.
@@ -48,27 +41,27 @@ public class ClientToHost implements Runnable {
     }
 
 	@Override
-	public void run() {
+	public void run() { //TODO Test if this is used? If not put code from Client.java SendMessageButtonActionPerformed in here
 		// TODO Auto-generated method stub
-		try {
-		    BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-		    //BufferedWriter writer= new BufferedWriter(new OutputStreamWriter(socketClient.getOutputStream()));
-		    ObjectOutputStream objectWriter = new ObjectOutputStream(clientSocket.getOutputStream());
-		    String serverMsg;
-		    Message message = new Message(MessageType.hostAsReceiver, false,Misc.getProcessID(), client.getUserName(), client.getTextFromMainPanel());
-		    objectWriter.writeObject(message);
-		    		    
-		 	System.out.println("hostname: " + InetAddress.getLocalHost().getHostName()); //DEBUG
-		    
-            while ((serverMsg = reader.readLine()) != null) {
-            	client.AddTextToMainPanel(serverMsg);
-            }
-            
-        } catch(Exception e) {
-            e.printStackTrace();
-            System.out.println("Client: "+"Connection failed..");
-            client.setServerStatus("Connection failed..", false);
-        }
+//		try {
+//		    BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+//		    //BufferedWriter writer= new BufferedWriter(new OutputStreamWriter(socketClient.getOutputStream()));
+//		    ObjectOutputStream objectWriter = new ObjectOutputStream(clientSocket.getOutputStream());
+//		    String serverMsg;
+//		    Message message = new Message(MessageType.hostAsReceiver, false,Misc.getProcessID(), client.getUserName(), client.getTextFromMainPanel());
+//		    objectWriter.writeObject(message);
+//		    		    
+//		 	System.out.println("hostname: " + InetAddress.getLocalHost().getHostName()); //DEBUG
+//		    
+//            while ((serverMsg = reader.readLine()) != null) {
+//            	client.AddTextToMainPanel(serverMsg);
+//            }
+//            
+//        } catch(Exception e) {
+//            e.printStackTrace();
+//            System.out.println("Client: "+"Connection failed..");
+//            client.setServerStatus("Connection failed..", false);
+//        }
 	}
 
 }

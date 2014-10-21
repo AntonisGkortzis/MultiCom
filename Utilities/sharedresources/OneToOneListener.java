@@ -27,7 +27,7 @@ public class OneToOneListener implements Runnable {
 					try {
 						inStream = new ObjectInputStream(socket.getInputStream());
 						message = (Message)inStream.readObject();
-					    messageController.push(message);
+					    messageController.queueHostChat.push(message);
 					    System.out.println("Server received: "+message.getText());
 					} catch (IOException | ClassNotFoundException ioe) {
 						System.out.println("IOException on socket listen: " + ioe);

@@ -8,9 +8,15 @@ public class Misc {
 	 * @author mark
 	 */
 	public static enum MessageType {
-		hostAsReceiver, // if the message's destination is a host.
-		hostAsSender,  // if the message's sender is a host.
-		multipleReceivers // if the message should be delivered to a group of listeners.
+//		hostAsReceiver, // if the message's destination is a host.
+//		hostAsSender,  // if the message's sender is a host.
+//		multipleReceivers // if the message should be delivered to a group of listeners.
+	    mHostCommand,
+	    mHostChat,
+	    mHostVote,
+	    clientChat,
+	    mClientCommand,
+	    hostChat //
 	}
 	
     /**
@@ -21,7 +27,9 @@ public class Misc {
 		return ManagementFactory.getRuntimeMXBean().getName();
 	}
     
+    @Deprecated
     public static final Object monitor = new Object();
+    @Deprecated
     public static void waitForPort() {
         while (Config.connectToPortFromHost==-1) {
             synchronized (monitor) {
@@ -33,6 +41,7 @@ public class Misc {
         }
     }
     
+    @Deprecated
     public static void unlockWaiter() {
         synchronized (monitor) {
         	System.out.println("@Misc\n\tUnlocking Waiter");
