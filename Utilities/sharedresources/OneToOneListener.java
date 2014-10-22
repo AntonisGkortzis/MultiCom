@@ -25,7 +25,7 @@ public class OneToOneListener implements Runnable {
     	boolean flag = true;
     	while(flag) {
 	    	try {
-				while(socket.getInputStream().available()>0){
+//				while(socket.getInputStream().available()>0){
 					try {
 						inStream = new ObjectInputStream(socket.getInputStream());
 						message = (Message)inStream.readObject();
@@ -39,9 +39,9 @@ public class OneToOneListener implements Runnable {
 						ioe.printStackTrace();
 						flag = false;
 					}
-				}
+//				}
 				Thread.sleep(250);
-			} catch (IOException | InterruptedException e) {
+			} catch (/*IOException |*/InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				flag = false;

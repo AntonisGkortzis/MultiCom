@@ -1,5 +1,6 @@
 package multithread.sockets;
 import sharedresources.MessageController;
+import sharedresources.Misc;
 import sharedresources.OneToManyListener;
 
 /**
@@ -28,7 +29,7 @@ public class Server {
 
     // Listen for incoming connections and handle them
     public static void main(String[] args) {
-        System.out.println("Server Running...");
+        System.out.println("Server Running with processID " + Misc.getProcessID() + " and port " + port + " ...");
         
         //start the thread for host discovery if this is the master
 //        if (Config.master) hostFinder(); //TODO change to Multicast broadcast and then listen

@@ -65,7 +65,7 @@ public class HostToMHost implements Runnable{
             message = Server.messageController.queueMHostsCommand.pop();
             if(message != null) {
                 if(Config.master) {
-                    if(Commands.messageIsOfCommand(message, Commands.connectRequest)) {
+                	if(Commands.messageIsOfCommand(message, Commands.connectRequest)) {
                         AvailableHost suitableHost = AvailableHostsList.findSuitableHost();
                         if(suitableHost!=null) { //TODO search again if null?
                             String command = Commands.constructCommand(Commands.hostFound, Commands.constructHostFound(suitableHost, message.getProcessID()));
@@ -77,7 +77,7 @@ public class HostToMHost implements Runnable{
                 }
                 
                 if(Commands.messageIsOfCommand(message, Commands.statusUpdate)) { //Receive status updates
-                    System.out.println("@HostToMHost\n\tStatus update received from host " + message.getProcessID());
+                    System.out.println("@HostToMHost\n\tStatus update is going to be sent from host " + message.getProcessID());
     //                messageController.queueMHostsCommand.push(message);
                     //TODO add respond on request for status update
                     AvailableHost availableHost = Commands.getStatus(message);

@@ -178,16 +178,15 @@ public class Client extends javax.swing.JFrame {
 				e.printStackTrace();
 			}
         	Message message = messageController.queueMClientCommand.pop();
-        	System.out.println("Popopopop");
         	if(message!=null && Commands.messageIsOfCommand(message, Commands.hostFound)) {
                 String[] messageParts = Commands.splitMessage(message);
                 if(Misc.getProcessID().equals(messageParts[1])) { //This client requested a connection
-                    System.out.println("client received: HOST IS FOUND " + message.getText() + " " + Misc.getProcessID());
+//                    System.out.println("client received: HOST IS FOUND " + message.getText() + " " + Misc.getProcessID());
                     Config.connectToPortFromHost = Integer.parseInt(messageParts[3]);
-                    System.out.println("client received: Connect to port: " + Config.connectToPortFromHost);
+                    System.out.println("HOST IS FOUND Connect to port: " + Config.connectToPortFromHost);
 //                    Misc.unlockWaiter();
                     flag=false;
-                    oneToManyListener.stop();
+//                    oneToManyListener.stop();
                     break;
                 }
         	}
@@ -216,6 +215,7 @@ public class Client extends javax.swing.JFrame {
         // TODO tell the host that you closed?
         try {
         	if(socketClient != null) {
+        		// TODO Close everything here!
         		socketClient.close();
         	}
         } catch (IOException ex) {

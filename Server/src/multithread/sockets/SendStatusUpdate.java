@@ -21,7 +21,7 @@ public class SendStatusUpdate implements Runnable {
 	    while(true) {
             String command = Commands.constructCommand(Commands.statusUpdate, constructStatus());
 
-          	Message message = new Message(MessageType.mHostCommand,true,Misc.getProcessID(), "host", command); 
+          	Message message = new Message(MessageType.mHostCommand,true,Misc.getProcessID(), null, command); 
           	Server.messageController.queueMHostsCommand.push(message);
             try {
                 Thread.sleep(Config.DELAY);

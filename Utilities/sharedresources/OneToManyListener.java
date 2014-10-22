@@ -49,7 +49,18 @@ public class OneToManyListener implements Runnable {
     }
     
     public void stop(){
+    	try {
+    		if(socket != null){
+				socket.leaveGroup(group);
+				socket.close();
+				socket = null;
+    		}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     	t.stop();
+    	
     }
 	@Override
 	public void run() {
@@ -61,7 +72,7 @@ public class OneToManyListener implements Runnable {
                 byte[] data = incomingPacket.getData();
                 ByteArrayInputStream in = new ByteArrayInputStream(data);
                 ObjectInputStream is = new ObjectInputStream(in);
-                try{
+                try {
                 	Message received = (Message)is.readObject();  
                 	handleMessage(received);
                 	
@@ -73,17 +84,11 @@ public class OneToManyListener implements Runnable {
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        }
-        try {
-            socket.leaveGroup(group);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        socket.close();		
+        } 
 	}
 	
 	private void handleMessage(Message receivedMessage) {
+		System.out.println("Process ID: " + Misc.getProcessID() + ", messagePID: "+receivedMessage.getProcessID());
 		//Do not parse your own Messages
 		if(receivedMessage.getProcessID().equals(Misc.getProcessID())){
 			return;
