@@ -67,4 +67,14 @@ public class Message implements Serializable {
 		this.text = text;
 	}
 
+	public void setMessageType(MessageType type) {
+		this.messageType = type;
+		
+	}
+
+	public void setProcessId(String processID) {
+		this.processID = processID;
+		
+	}
+
 }

@@ -55,10 +55,10 @@ public class MClientListener implements Runnable {
                 } catch(ClassNotFoundException ex) {
                 	ex.printStackTrace();
                 }
-
+                Thread.sleep(250);
             }
 
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }

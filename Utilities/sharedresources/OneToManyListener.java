@@ -27,6 +27,7 @@ public class OneToManyListener implements Runnable {
 	private InetAddress group;
     private MessageController messageController;
     private boolean isHost;
+    private Thread t = null;
 
 	public OneToManyListener(MessageController messageController, boolean isHost) {
 	    this.messageController = messageController;
@@ -43,10 +44,13 @@ public class OneToManyListener implements Runnable {
 
     
     public void start() {
-        Thread t = new Thread(this);
+        t = new Thread(this);
         t.start();
     }
     
+    public void stop(){
+    	t.stop();
+    }
 	@Override
 	public void run() {
         try {
@@ -93,7 +97,6 @@ public class OneToManyListener implements Runnable {
     	} else if(receivedMessage.getMessageType().equals(MessageType.mHostVote)) {
     	    messageController.queueMHostsVote.push(receivedMessage);
     	} else if(receivedMessage.getMessageType().equals(MessageType.mClientCommand)) {
-    	    System.out.println("One to many: mClientCommand");
     	    messageController.queueMClientCommand.push(receivedMessage);
     	} 
 	}

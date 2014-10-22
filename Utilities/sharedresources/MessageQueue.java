@@ -16,6 +16,7 @@ public class MessageQueue{
 	 * Adds a new message in the queue sorted by it's timestamp.
 	 */
 	public boolean push(Message newMessage){
+		System.out.println("## Message pushed: " + newMessage.getText());
 		boolean flag = false;
 		int size = size();
 		if(!isEmpty()){

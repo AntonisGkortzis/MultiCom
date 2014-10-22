@@ -1,9 +1,16 @@
 package client;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
+import java.net.InetAddress;
 import java.net.Socket;
 
 import sharedresources.Config;
+import sharedresources.Message;
+import sharedresources.Misc;
+import sharedresources.Misc.MessageType;
 
 /**
  * Used for sending one to one information to one specific host.
@@ -13,7 +20,7 @@ import sharedresources.Config;
  *  - Send ping to check Host status 
  */
 
-public class ClientToHost implements Runnable {
+public class ClientToHost {
 	
 	private Socket clientSocket;
 	private Client client;
@@ -33,22 +40,22 @@ public class ClientToHost implements Runnable {
 		return this.clientSocket;
 	}
 
-	public void start() {
-        if(clientSocket != null) {
-            Thread t = new Thread(this);
-            t.start();
-        }
-    }
+//	public void start() {
+//        if(clientSocket != null) {
+//            Thread t = new Thread(this);
+//            t.start();
+//        }
+//    }
 
-	@Override
-	public void run() { //TODO Test if this is used? If not put code from Client.java SendMessageButtonActionPerformed in here
-		// TODO Auto-generated method stub
+//	@Override
+//	public void run() { //TODO Test if this is used? If not put code from Client.java SendMessageButtonActionPerformed in here
+//		// TODO Auto-generated method stub
 //		try {
 //		    BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 //		    //BufferedWriter writer= new BufferedWriter(new OutputStreamWriter(socketClient.getOutputStream()));
 //		    ObjectOutputStream objectWriter = new ObjectOutputStream(clientSocket.getOutputStream());
 //		    String serverMsg;
-//		    Message message = new Message(MessageType.hostAsReceiver, false,Misc.getProcessID(), client.getUserName(), client.getTextFromMainPanel());
+//		    Message message = new Message(MessageType.hostChat, false,Misc.getProcessID(), client.getUserName(), client.getTextFromMainPanel());
 //		    objectWriter.writeObject(message);
 //		    		    
 //		 	System.out.println("hostname: " + InetAddress.getLocalHost().getHostName()); //DEBUG
@@ -62,6 +69,23 @@ public class ClientToHost implements Runnable {
 //            System.out.println("Client: "+"Connection failed..");
 //            client.setServerStatus("Connection failed..", false);
 //        }
+//	}
+	public void sendMessage(String text) {
+		if (clientSocket == null) {
+            client.showErrorMessage("You are not connected.");
+            return;
+    	}
+        try {
+            ObjectOutputStream outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
+            Message message = new Message(MessageType.hostChat, false, Misc.getProcessID(), client.getUserName(), text);
+            outputStream.writeObject(message);
+            System.out.println("@@ Client to Host--> send message: " + message.getText());
+        } catch(IOException ex) {
+            client.showErrorMessage("Connection closed, is the server running?\n"+ex.getMessage());
+            client.closeSocket();
+//            ex.printStackTrace();
+        }
+		
 	}
 
 }

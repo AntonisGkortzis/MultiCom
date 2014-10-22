@@ -19,14 +19,14 @@ import sharedresources.Misc;
  */
 public class HostToMClient implements Runnable {
 
-    private final int DELAY = 100;
+    private final int DELAY = 250;
     private DatagramSocket socket;
 
     public static int counter = 0;
 
     public HostToMClient() {
         try {
-            socket = new DatagramSocket(Server.port + 1000); //TODO change to 0
+            socket = new DatagramSocket(); //port is random
         } catch (SocketException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -42,7 +42,7 @@ public class HostToMClient implements Runnable {
     public void run() {
         boolean flag = true;
         while (flag) {                
-            Message message = Server.messageController.queueMHostsChat.pop();
+            Message message = Server.messageController.queueHostChat.pop();
             
             flag = sendMessage(message);
             try {

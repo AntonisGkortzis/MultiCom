@@ -26,6 +26,7 @@ import sharedresources.OneToManyListener;
  */
 public class Client extends javax.swing.JFrame {
     private Socket socketClient;
+    private ClientToHost clientToHost;
     public static MessageController messageController = new MessageController();
     /**
      * Creates new form ChatClient
@@ -156,54 +157,58 @@ public class Client extends javax.swing.JFrame {
     		this.showErrorMessage("You are already connected.");
     		return;
     	}
-    	//Multicast to join network
-    	ClientToMHost clientToMHost = new ClientToMHost(this);
     	
     	//Listen for response of previous request (or should this be placed before clientomhost?
     	OneToManyListener oneToManyListener = new OneToManyListener(messageController, false);
     	oneToManyListener.start();
     	
+    	//Multicast to join network
+    	ClientToMHost clientToMHost = new ClientToMHost(this);
+    	
     	boolean flag = true;
     	while(flag) {
+    		try {
+    			/*
+    			 * It doesn't receive/pop a connection response without this Thread.sleep
+    			 * Probably because this Thread is consuming all processing power
+    			 */
+				Thread.sleep(500); //TODO Find an explanation for that
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         	Message message = messageController.queueMClientCommand.pop();
+        	System.out.println("Popopopop");
         	if(message!=null && Commands.messageIsOfCommand(message, Commands.hostFound)) {
                 String[] messageParts = Commands.splitMessage(message);
                 if(Misc.getProcessID().equals(messageParts[1])) { //This client requested a connection
-                    System.out.println(" HOST IS FOUND " + message.getText() + " " + Misc.getProcessID());
+                    System.out.println("client received: HOST IS FOUND " + message.getText() + " " + Misc.getProcessID());
                     Config.connectToPortFromHost = Integer.parseInt(messageParts[3]);
-                    System.out.println("Connect to port: " + Config.connectToPortFromHost);
+                    System.out.println("client received: Connect to port: " + Config.connectToPortFromHost);
 //                    Misc.unlockWaiter();
                     flag=false;
+                    oneToManyListener.stop();
+                    break;
                 }
         	}
         }
     	
+    	MClientListener mClientListener = new MClientListener(this);
+    	mClientListener.start();
+
+    	
 //    	TODO Use info obtained from clientToMHost/oneToManyListener
 //    	Misc.waitForPort();
-    	ClientToHost clientToHost = new ClientToHost(this);
+    	clientToHost = new ClientToHost(this);
     	socketClient = clientToHost.getSocket();
-    	clientToHost.start();
+//    	clientToHost.start();
     	
-        MClientListener mClientListener = new MClientListener(this);
-        mClientListener.start();
         
     }//GEN-LAST:event_ConnectToServerButtonActionPerformed
  
     private void SendMessageButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SendMessageButtonActionPerformed
-    	if (socketClient == null) {
-            this.showErrorMessage("You are not connected.");
-            return;
-    	}
-        try {
-            ObjectOutputStream outputStream = new ObjectOutputStream(socketClient.getOutputStream());
-            Message message = new Message(MessageType.hostChat, false, Misc.getProcessID(), this.getUserName(), this.EnterTextArea.getText());
-            outputStream.writeObject(message);
-            this.EnterTextArea.setText("");
-        } catch(IOException ex) {
-            this.showErrorMessage("Connection closed, is the server running?\n"+ex.getMessage());
-            this.closeSocket();
-//            ex.printStackTrace();
-        }
+    	clientToHost.sendMessage(this.EnterTextArea.getText());
+    	this.EnterTextArea.setText("");
 
     }//GEN-LAST:event_SendMessageButtonActionPerformed
 
@@ -222,11 +227,7 @@ public class Client extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
+
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -243,8 +244,6 @@ public class Client extends javax.swing.JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(Client.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -254,7 +253,7 @@ public class Client extends javax.swing.JFrame {
         });
     }
     
-    private void closeSocket() {
+    public void closeSocket() {
     	if(socketClient != null) {
     		try {
 				socketClient.close();
