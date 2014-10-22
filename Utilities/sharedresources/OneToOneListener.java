@@ -31,8 +31,9 @@ public class OneToOneListener implements Runnable {
 						message = (Message)inStream.readObject();
 					    message.setProcessId(Misc.getProcessID());
 					    messageController.queueHostChat.push(message); //to send it to the clients connected on this host
-					    message.setMessageType(MessageType.mHostChat); 
-					    messageController.queueMHostsChat.push(message); //to send it to other Hosts
+					    String command = Commands.constructCommand(Commands.forwardMessage, message.getText());
+					    Message newmessage = new Message(MessageType.mHostChat,true,Misc.getProcessID(),message.getUsername(), command);
+					    messageController.queueMHostsChat.push(newmessage); //to send it to other Hosts
 					    System.out.println("Server received: "+message.getText());
 					} catch (IOException | ClassNotFoundException ioe) {
 						System.out.println("IOException on socket listen: " + ioe);

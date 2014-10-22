@@ -88,17 +88,18 @@ public class OneToManyListener implements Runnable {
 	}
 	
 	private void handleMessage(Message receivedMessage) {
-		System.out.println("Process ID: " + Misc.getProcessID() + ", messagePID: "+receivedMessage.getProcessID());
-		//Do not parse your own Messages
+		//Ignore your own Messages
 		if(receivedMessage.getProcessID().equals(Misc.getProcessID())){
 			return;
 		}
-   
-    
+		
+		System.out.println("@OneToManyListener\n\tReceived Message [" + receivedMessage.getMessageType()+"] " + receivedMessage.getText());
     	if(receivedMessage.getMessageType().equals(MessageType.mHostCommand)) {
     	    messageController.queueMHostsCommand.push(receivedMessage);
     	} else if(receivedMessage.getMessageType().equals(MessageType.mHostChat))  {
     	    messageController.queueMHostsChat.push(receivedMessage);
+    	} else if(receivedMessage.getMessageType().equals(MessageType.mHostStatus))  {
+    	    messageController.queueMHostsStatus.push(receivedMessage);
     	} else if(receivedMessage.getMessageType().equals(MessageType.mHostVote)) {
     	    messageController.queueMHostsVote.push(receivedMessage);
     	} else if(receivedMessage.getMessageType().equals(MessageType.mClientCommand)) {

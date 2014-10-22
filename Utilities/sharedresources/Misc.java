@@ -12,6 +12,7 @@ public class Misc {
 //		hostAsSender,  // if the message's sender is a host.
 //		multipleReceivers // if the message should be delivered to a group of listeners.
 	    mHostCommand,
+	    mHostStatus,
 	    mHostChat,
 	    mHostVote,
 	    clientChat,

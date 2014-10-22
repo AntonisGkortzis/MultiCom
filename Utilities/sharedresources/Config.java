@@ -11,7 +11,6 @@ public final class Config {
 	 * Address used for multicast
 	 */
 	public final static String multiCastAddress = "224.0.0.251"; //Mark
-//	public final static multiCastAddress = "stub"; //Antonis
 	
 	/**
 	 * Name of the host

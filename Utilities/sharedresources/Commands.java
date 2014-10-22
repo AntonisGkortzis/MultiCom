@@ -40,7 +40,9 @@ public class Commands {
 	/**
 	 * Hosts send status updates to other hosts
 	 */
-	public final static String statusUpdate = "SendStatusUpdate";
+	public final static String requestStatusUpdate = "RequestStatusUpdate";
+	
+	public final static String statusUpdate = "HereIsMyStatusUpdate";
 	
 	public final static String hostFound = "HostIsFoundForClient";
 	

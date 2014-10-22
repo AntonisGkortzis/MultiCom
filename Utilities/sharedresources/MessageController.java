@@ -6,6 +6,7 @@ package sharedresources;
  */
 public class MessageController {
 	public MessageQueue queueMHostsCommand = new MessageQueue();
+	public MessageQueue queueMHostsStatus = new MessageQueue();
 	public MessageQueue queueMHostsChat = new MessageQueue();
 	public MessageQueue queueMHostsVote = new MessageQueue();
 	public MessageQueue queueHostChat = new MessageQueue();
@@ -15,7 +16,7 @@ public class MessageController {
 	
 	
 	public MessageController(){
-		System.out.println("Creating message controller..");
+//		System.out.println("Creating message controller..");
 	}
 	
 //	public MessageQueue getQueue(){
