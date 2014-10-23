@@ -74,12 +74,11 @@ public class HostToMHost implements Runnable{
             	if(Commands.messageIsOfCommand(message, Commands.connectRequest)) {
             		if(Config.master) {
                         AvailableHost suitableHost = AvailableHostsList.findSuitableHost();
-                        if(suitableHost!=null) { //TODO search again if null?
+                        	//TODO search again if null?
                             String command = Commands.constructCommand(Commands.hostFound, Commands.constructHostFound(suitableHost, message.getProcessID()));
                             Message newMessage = new Message(MessageType.mClientCommand, true, Misc.getProcessID(), "master", command);
+                            newMessage.setClientAsReceiver(true);//In order not to be stored by other hosts
                             Server.messageController.queueMClientCommand.push(newMessage);
-                            System.out.println("@HostToMHost\n\tPushed " + newMessage.getText());
-                        }
                     }
             	//If you parse a received message that requests a status update then send a status update
                 } else if(Commands.messageIsOfCommand(message, Commands.requestStatusUpdate)) { 

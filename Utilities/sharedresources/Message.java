@@ -19,6 +19,7 @@ public class Message implements Serializable {
 	private String username;				//The name of the user sending the message.
 	private String processID;            //The id of the process sending the message.
 	private int id=0;					//An incrementing number as an id
+	private boolean clientAsReceiver;
 	
 	public Message(){}
 	
@@ -29,6 +30,7 @@ public class Message implements Serializable {
 		this.username = username;
 		this.id++;
 		this.text = text;
+		this.clientAsReceiver = false;
 	}
 		
 	public MessageType getMessageType() {
@@ -69,12 +71,17 @@ public class Message implements Serializable {
 
 	public void setMessageType(MessageType type) {
 		this.messageType = type;
-		
 	}
 
 	public void setProcessId(String processID) {
 		this.processID = processID;
-		
+	}
+	
+	public void setClientAsReceiver(boolean flag){
+		this.clientAsReceiver = flag;
+	}
+	public boolean getClientAsReceiver(){
+		return this.clientAsReceiver;
 	}
 
 }

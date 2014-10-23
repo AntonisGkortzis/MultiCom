@@ -1,4 +1,7 @@
 package multithread.sockets;
+import sharedresources.AvailableHost;
+import sharedresources.AvailableHostsList;
+import sharedresources.Config;
 import sharedresources.MessageController;
 import sharedresources.Misc;
 import sharedresources.OneToManyListener;
@@ -45,6 +48,9 @@ public class Server {
 
         HostToMHost hostToMHost = new HostToMHost();
         hostToMHost.start();
+        
+        //Adding yourself in the AvailableHosts list
+        AvailableHostsList.addHost(new AvailableHost(Server.clients.size(), Server.address, Server.port, Config.master, Misc.getProcessID()));
         
         OneToManyListener oneToManyListener = new OneToManyListener(messageController, true);
         oneToManyListener.start();
