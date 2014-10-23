@@ -281,7 +281,7 @@ public class Client extends javax.swing.JFrame {
     public void setServerStatus(String status, boolean flag){
         this.ServerStatusLabel.setText(status);
         if(flag) 
-            this.ServerStatusLabel.setForeground(Color.green);
+            this.ServerStatusLabel.setForeground(Color.black);
         else
             this.ServerStatusLabel.setForeground(Color.red);
     }

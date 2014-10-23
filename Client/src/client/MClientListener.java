@@ -51,7 +51,7 @@ public class MClientListener implements Runnable {
                 try{
                 	Message received = (Message)is.readObject();  
                 	System.out.println("Client received: " + received.getText());
-                	client.AddTextToMainPanel(received.getText());
+                	client.AddTextToMainPanel(received.getTimestamp() + "| " + received.getUsername() + ": " + received.getText());
                 } catch(ClassNotFoundException ex) {
                 	ex.printStackTrace();
                 }

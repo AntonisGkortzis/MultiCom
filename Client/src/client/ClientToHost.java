@@ -29,7 +29,7 @@ public class ClientToHost {
 		try {
 			this.client = client;
 			this.clientSocket = new Socket(Config.hostName, Config.connectToPortFromHost);
-            this.client.setServerStatus("Connection Established!",true); 
+            this.client.setServerStatus("Connection Established on port: " + Config.connectToPortFromHost,true); 
 
 		} catch (IOException e) {
 			client.showErrorMessage("Failed to make a connection to '"+Config.hostName+"' on port "+Config.connectToPortFromHost);
