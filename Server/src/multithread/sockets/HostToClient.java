@@ -40,25 +40,6 @@ public class HostToClient implements Runnable{
     	return socket;
 	
     }
-    
-    
-    
-//    /**
-//     * Listen for clients
-//     * @param listener the server socket
-//     * @throws  
-//     */
-//    private void listen(ServerSocket listener)  {
-//        OneToOneListener conn_c;
-//		try {
-//			conn_c = new OneToOneListener(listener.accept(), Server.messageController);
-//			Thread t = new Thread(conn_c);
-//			t.start();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}                 
-//    }
 
     @Override
     public void run() {

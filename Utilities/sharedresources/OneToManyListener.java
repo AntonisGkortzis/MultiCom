@@ -24,7 +24,7 @@ public class OneToManyListener implements Runnable {
 	private MulticastSocket socket;
 	private InetAddress group;
     private MessageController messageController;
-    private boolean isHost;
+    private boolean isHost, flag = true;
     private Thread t = null;
 
 	public OneToManyListener(MessageController messageController, boolean isHost) {
@@ -57,32 +57,28 @@ public class OneToManyListener implements Runnable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    	t.stop();
+//    	t.stop();
+    	flag = false;
     	
     }
 	@Override
 	public void run() {
-        try {
-            while(true) {
-                byte[] incomingData = new byte[1024];
-                DatagramPacket incomingPacket = new DatagramPacket(incomingData, incomingData.length);
-                socket.receive(incomingPacket);
-                byte[] data = incomingPacket.getData();
-                ByteArrayInputStream in = new ByteArrayInputStream(data);
-                ObjectInputStream is = new ObjectInputStream(in);
-                try {
-                	Message received = (Message)is.readObject();  
-                	handleMessage(received);
-                	
-                } catch(ClassNotFoundException ex) {
-                	ex.printStackTrace();
-                }
+        while(flag) {
+        	try {
+	            byte[] incomingData = new byte[1024];
+	            DatagramPacket incomingPacket = new DatagramPacket(incomingData, incomingData.length);
+	            socket.receive(incomingPacket);
+	            byte[] data = incomingPacket.getData();
+	            ByteArrayInputStream in = new ByteArrayInputStream(data);
+	            ObjectInputStream is = new ObjectInputStream(in);
+            	Message received = (Message)is.readObject();  
+            	handleMessage(received);
+            } catch(ClassNotFoundException | IOException ex) {
+            	ex.printStackTrace();
+            	flag = false;
             }
+        }
 
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } 
 	}
 	
 	private void handleMessage(Message receivedMessage) {

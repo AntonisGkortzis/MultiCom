@@ -22,7 +22,7 @@ public class SendStatusUpdate implements Runnable {
 	    while(true) {
             String command = Commands.constructCommand(Commands.requestStatusUpdate, constructStatus());
 
-          	Message message = new Message(MessageType.mHostStatus,true,Misc.getProcessID(), null, command); 
+          	Message message = new Message(MessageType.mHostStatus,true,Misc.getProcessID(), command); 
           	Server.messageController.queueMHostsCommand.push(message);
             try {
 //                Thread.sleep(Config.DELAY);
@@ -40,7 +40,7 @@ public class SendStatusUpdate implements Runnable {
 	
 	public static Message getStatusMessage() {
         String command = Commands.constructCommand(Commands.requestStatusUpdate, constructStatus()); 
-		return new Message(MessageType.mHostStatus,true,Misc.getProcessID(), null, command);
+		return new Message(MessageType.mHostStatus,true,Misc.getProcessID(), command);
 //	    return Commands.constructStatus(Server.clients.size(), Server.address, Server.port, Config.master, Misc.getProcessID());
 	}
 }

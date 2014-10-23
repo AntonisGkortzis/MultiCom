@@ -75,7 +75,7 @@ public class HostToMHost implements Runnable{
                         Host suitableHost = HostsList.findSuitableHost();
                         	//TODO search again if null?
                             String command = Commands.constructCommand(Commands.hostFound, Commands.constructHostFound(suitableHost, message.getProcessID()));
-                            Message newMessage = new Message(MessageType.mClientCommand, true, Misc.getProcessID(), "master", command);
+                            Message newMessage = new Message(MessageType.mClientCommand, true, Misc.getProcessID(), command);
                             newMessage.setClientAsReceiver(true);//In order not to be stored by other hosts
                             Server.messageController.queueMClientCommand.push(newMessage);
                     }

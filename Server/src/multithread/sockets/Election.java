@@ -32,7 +32,7 @@ public class Election implements Runnable {
     public void startElection() {
     	try {
     		String command = Commands.constructCommand(Commands.startElection);
-    		Message message = new Message(MessageType.mHostVote, true, Misc.getProcessID(), null, command );
+    		Message message = new Message(MessageType.mHostVote, true, Misc.getProcessID(), command );
     		hostToMHost.sendMessage(message);
     		//Wait to receive as many status updates as possible
             Thread.sleep(5000); 
@@ -41,7 +41,7 @@ public class Election implements Runnable {
             Host preferredCandidate = getPreferredCandidate();
             //Create the voting message
             command = Commands.constructCommand(Commands.vote, preferredCandidate.getProcessID());
-            Message vote = new Message(MessageType.mHostVote, true, Misc.getProcessID(), "",command);
+            Message vote = new Message(MessageType.mHostVote, true, Misc.getProcessID(),command);
             // Go into the voted state
             Server.electionState = Server.ElectionStates.voted; 
             //Wait to receive as many votes as possible
@@ -58,23 +58,21 @@ public class Election implements Runnable {
 
     }
     
-    /*
-     * Returns the host with the lowest number of connected clients from the HostsList
+    /**
+     * Returns the host with the lowest number of connected clients from the HostsList 
+     * or the one with the lowest port number if the number of clients is equal
      */
     public Host getPreferredCandidate(){
     	//initialize the preferred candidate and the minimum (his) number of connected clients
     	Host preferredCandidate = HostsList.getHostsList().get(0);
     	int leastClients = preferredCandidate.getNrOfClients();
         for(Host host : HostsList.getHostsList()){
-        	//if the last update of the host is older than the election timestamp ignore him
+        	//if the last update of the host is older than the election timestamp ignore him, because he is not part of the election
         	if(host.getLastUpdate().before(this.electionStart)){
         		continue;
         	}
-        	if(host.getNrOfClients() < leastClients) {
-        		preferredCandidate = host;
-        		//Merge if-else if with ||
-        	} else if (host.getNrOfClients() == leastClients 
-        			&& host.getPort() < preferredCandidate.getPort()) {
+        	if(host.getNrOfClients() < leastClients || (host.getNrOfClients() == leastClients 
+        			&& host.getPort() < preferredCandidate.getPort())) {
         		preferredCandidate = host;
         	}
         }
