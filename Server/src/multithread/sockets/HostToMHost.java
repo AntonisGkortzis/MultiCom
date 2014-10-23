@@ -7,7 +7,6 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.util.Date;
 
 import sharedresources.Host;
@@ -15,7 +14,6 @@ import sharedresources.HostsList;
 import sharedresources.Commands;
 import sharedresources.Config;
 import sharedresources.Message;
-import sharedresources.MessageController;
 import sharedresources.Misc;
 import sharedresources.Misc.MessageType;
 

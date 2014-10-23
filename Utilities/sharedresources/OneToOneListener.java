@@ -2,6 +2,7 @@ package sharedresources;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.net.ServerSocket;
 import java.net.Socket;
 
 import sharedresources.Misc.MessageType;
@@ -13,45 +14,52 @@ import sharedresources.Misc.MessageType;
 public class OneToOneListener implements Runnable {
     private Socket socket;
     private MessageController messageController;
-
-    public OneToOneListener(Socket socket, MessageController messageController) {
-        this.socket=socket;
+    private Thread t;
+	private ServerSocket serverSocket;
+    
+    public OneToOneListener(ServerSocket serverSocket, MessageController messageController) {
+    	this.serverSocket = serverSocket;
         this.messageController = messageController;
     }
 
+    public void start() {
+		t = new Thread(this);
+		t.start();
+    }
+    
     public void run () {
     	ObjectInputStream inStream;
     	Message message;
     	boolean flag = true;
+		
+    	//Accepts a connection. This blocks until a connection is accepted
+    	try {
+			this.socket = this.serverSocket.accept();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
     	while(flag) {
 	    	try {
-//				while(socket.getInputStream().available()>0){
-					try {
-						inStream = new ObjectInputStream(socket.getInputStream());
-						message = (Message)inStream.readObject();
-						
-		                addNewClient(message.getProcessID(), message.getUsername());
-						
-						
-					    message.setProcessId(Misc.getProcessID());
-					    messageController.queueHostChat.push(message); //to send it to the clients connected on this host
-					    String command = Commands.constructCommand(Commands.forwardMessage, message.getText());
-					    Message newmessage = new Message(MessageType.mHostChat,true,Misc.getProcessID(),message.getUsername(), command);
-					    messageController.queueMHostsChat.push(newmessage); //to send it to other Hosts
-					    System.out.println("Server received: "+message.getText());
-					} catch (IOException | ClassNotFoundException ioe) {
-						System.out.println("IOException on socket listen: " + ioe);
-						ioe.printStackTrace();
-						flag = false;
-					}
-//				}
+				inStream = new ObjectInputStream(socket.getInputStream());
+				message = (Message)inStream.readObject();
+				
+                addNewClient(message.getProcessID(), message.getUsername());
+				
+			    message.setProcessId(Misc.getProcessID());
+			    messageController.queueHostChat.push(message); //to send it to the clients connected on this host
+			    String command = Commands.constructCommand(Commands.forwardMessage, message.getText());
+			    Message newmessage = new Message(MessageType.mHostChat,true,Misc.getProcessID(),message.getUsername(), command);
+			    messageController.queueMHostsChat.push(newmessage); //to send it to other Hosts
+			    System.out.println("Server received: "+message.getText());
+
 				Thread.sleep(250);
-			} catch (/*IOException |*/InterruptedException e) {
+			} catch (IOException | ClassNotFoundException | InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				flag = false;
 			}
-	    	
     	}
     }
     

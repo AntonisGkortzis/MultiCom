@@ -7,8 +7,6 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 
-import sharedresources.Misc.MessageType;
-
 /**
  * This class is used to listen for messages send with Multicast to multiple hosts
  * Messages are of type:

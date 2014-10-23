@@ -8,10 +8,8 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 
-import sharedresources.Commands;
 import sharedresources.Config;
 import sharedresources.Message;
-import sharedresources.Misc;
 
 /**
  * This class is used for communication with a host and multiple clients.
