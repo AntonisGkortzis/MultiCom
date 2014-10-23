@@ -64,6 +64,8 @@ public class Commands {
 	 */
 	public final static String startElection = "startElection";
 	
+	public final static String vote = "voteFor";
+	
 	
 	/**
 	 * Masters needs to find a suitable host for the client

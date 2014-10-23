@@ -84,4 +84,8 @@ public  class HostsList {
     public static int size() {
         return hosts.size();
     }
+    
+    public static List<Host> getHostsList(){
+    	return hosts;
+    }
 }
