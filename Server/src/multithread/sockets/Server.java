@@ -1,6 +1,9 @@
 package multithread.sockets;
-import sharedresources.AvailableHost;
-import sharedresources.AvailableHostsList;
+import java.util.Date;
+
+import sharedresources.ConnectedClientsList;
+import sharedresources.Host;
+import sharedresources.HostsList;
 import sharedresources.Config;
 import sharedresources.MessageController;
 import sharedresources.Misc;
@@ -28,8 +31,17 @@ public class Server {
 //    public static MessageController messageControllerForStatusUpdates = new MessageController();
     
     
-    public static ConnectClientsList clients = new ConnectClientsList();
+//    public static ConnectClientsList clients = new ConnectClientsList();
 
+    public static enum ElectionStates {
+    	normal, // when no election is taking place
+    	voting, //upon receiving the "startElection" command
+    	voted, // Once a vote is made
+    	finished // The election is finished and a new leader is born
+    }
+    
+    public static ElectionStates electionState = ElectionStates.normal;
+    
     // Listen for incoming connections and handle them
     public static void main(String[] args) {
         System.out.println("Server Running with processID " + Misc.getProcessID() + " and port " + port + " ...");
@@ -37,6 +49,8 @@ public class Server {
         //start the thread for host discovery if this is the master
 //        if (Config.master) hostFinder(); //TODO change to Multicast broadcast and then listen
         
+        //Adding yourself in the AvailableHosts list
+
         
         //One to one communication between host and client
         HostToClient hostToClient = new HostToClient();
@@ -49,8 +63,6 @@ public class Server {
         HostToMHost hostToMHost = new HostToMHost();
         hostToMHost.start();
         
-        //Adding yourself in the AvailableHosts list
-        AvailableHostsList.addHost(new AvailableHost(Server.clients.size(), Server.address, Server.port, Config.master, Misc.getProcessID()));
         
         OneToManyListener oneToManyListener = new OneToManyListener(messageController, true);
         oneToManyListener.start();

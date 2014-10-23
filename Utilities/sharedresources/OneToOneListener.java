@@ -29,6 +29,10 @@ public class OneToOneListener implements Runnable {
 					try {
 						inStream = new ObjectInputStream(socket.getInputStream());
 						message = (Message)inStream.readObject();
+						
+		                addNewClient(message.getProcessID(), message.getUsername());
+						
+						
 					    message.setProcessId(Misc.getProcessID());
 					    messageController.queueHostChat.push(message); //to send it to the clients connected on this host
 					    String command = Commands.constructCommand(Commands.forwardMessage, message.getText());
@@ -48,6 +52,14 @@ public class OneToOneListener implements Runnable {
 				flag = false;
 			}
 	    	
+    	}
+    }
+    
+    private void addNewClient(String processID, String username) {
+    	if(!ConnectedClientsList.clientExists(processID)) {
+	    	ConnectedClient newclient = new ConnectedClient(processID, username);
+	        ConnectedClientsList.addClient(newclient); 
+	        HostsList.updateHost(Misc.getProcessID(), ConnectedClientsList.size(), Config.master);
     	}
     }
 }

@@ -5,7 +5,9 @@ import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
 
 //import sharedresources.Message;
 import sharedresources.*;
@@ -31,6 +33,11 @@ public class HostToClient implements Runnable{
         Server.address = listener.getInetAddress().getHostAddress();
         System.out.println("Listening for clients on port: " + Server.port);
         
+        // Add yourselves to the list of hosts
+        Host newHost = new Host(ConnectedClientsList.size(), Server.address, Server.port, Config.master, Misc.getProcessID());
+        newHost.setLastUpdate(new Date());
+        HostsList.addHost(newHost);
+        
     }
     
     public void start() {
@@ -45,33 +52,42 @@ public class HostToClient implements Runnable{
      * @throws  
      */
     private void listen(ServerSocket listener)  {
-        Socket server;
-        int i=0;
-        while ((i++ < maxConnections) || (maxConnections == 0)) {
+//        Socket server;
+//        int i=0;
+//        while ((i++ < maxConnections) || (maxConnections == 0)) {
         	// TODO decrease i when a client is disconnected
-            try {
-                server = listener.accept();
-                System.out.println("@HostToClient");
-                System.out.println("\tIncoming connection accepted. [connection: " + i + "]");
-                ConnectedClient newclient = new ConnectedClient(server, server.getInetAddress().toString(), "client name"); // angor
-                Server.clients.addClient(newclient); 
-                ObjectInputStream inStream = new ObjectInputStream(server.getInputStream());
-                Message message = (Message)inStream.readObject(); //TODO why not used?
-                
-                
+//            try {
+//                server = listener.accept();
+//                System.out.println("@HostToClient");
+//                System.out.println("\tIncoming connection accepted. [connection: " + i + "]");
+//                ConnectedClient newclient = new ConnectedClient(server, server.getInetAddress().toString(), "client name"); // angor
+//                Server.clients.addClient(newclient); 
+//                HostsList.updateHost(Misc.getProcessID(), Server.clients.size(), Config.master);
+//                System.out.println("@@ I have how many clients? " + Server.clients.size());
+//
+//                while(server.getInputStream().available() > 0) {
+//                	ObjectInputStream inStream = new ObjectInputStream(server.getInputStream());
+//                	Message message = (Message)inStream.readObject(); //TODO why not used?
+//                }
                 //System.out.println("\tClient added to list. [connection: " + i + "]");  
                 // TODO remove
-                OneToOneListener conn_c = new OneToOneListener(server, Server.messageController);                 
-                Thread t = new Thread(conn_c);
-                t.start();
+            OneToOneListener conn_c;
+			try {
+				conn_c = new OneToOneListener(listener.accept(), Server.messageController);
+				Thread t = new Thread(conn_c);
+				t.start();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}                 
                 
-                connections.add(conn_c);
+//                connections.add(conn_c);
                 // TODO end remove
                 
-            } catch(IOException | ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
+//            } catch(IOException | ClassNotFoundException e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 
     @Override

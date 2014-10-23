@@ -2,6 +2,7 @@ package multithread.sockets;
 
 import sharedresources.Commands;
 import sharedresources.Config;
+import sharedresources.ConnectedClientsList;
 import sharedresources.Message;
 import sharedresources.Misc;
 import sharedresources.Misc.MessageType;
@@ -34,7 +35,7 @@ public class SendStatusUpdate implements Runnable {
 	}
 	
 	private static String constructStatus() {
-	    return Commands.constructStatus(Server.clients.size(), Server.address, Server.port, Config.master, Misc.getProcessID());
+	    return Commands.constructStatus(ConnectedClientsList.size(), Server.address, Server.port, Config.master, Misc.getProcessID());
 	}
 	
 	public static Message getStatusMessage() {

@@ -1,20 +1,23 @@
 package sharedresources;
 
+import java.util.Date;
+
 /**
  * Information about host
  * @author mark
  *
  */
-public class AvailableHost {
+public class Host {
     private String address;
     private int port;
     private String processID;
     private boolean isMaster;
     private int nrOfClients;
+    private Date lastUpdate;
     
-    public AvailableHost(){}
+    public Host(){}
     
-    public AvailableHost(int nrOfClients, String address, int port, boolean isMaster, String processID){
+    public Host(int nrOfClients, String address, int port, boolean isMaster, String processID){
         this.setNrOfClients(nrOfClients);
         this.setAddress(address);
         this.setPort(port);
@@ -66,6 +69,14 @@ public class AvailableHost {
     public String toString() {
         return "-- HostINFO: " + this.nrOfClients  + " " + this.address + " " + this.port + " " + this.isMaster + " " + this.processID;
     }
+
+	public Date getLastUpdate() {
+		return lastUpdate;
+	}
+
+	public void setLastUpdate(Date lastUpdate) {
+		this.lastUpdate = lastUpdate;
+	}
 
         
 }

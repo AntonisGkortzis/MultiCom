@@ -79,7 +79,7 @@ public class Commands {
 	 * @param processID ProcessID of the client wanting to connect.
 	 * @return
 	 */
-	public static String constructHostFound(AvailableHost host, String processID ) {
+	public static String constructHostFound(Host host, String processID ) {
 	    return processID + delimiter + host.getAddress() + delimiter + host.getPort();
 	}
 	
@@ -99,7 +99,7 @@ public class Commands {
 		String[] messageParts = message.getText().split(delimiter);
 		return messageParts[0].equals(command);
 	}
-    public static AvailableHost getStatus(Message message) {
+    public static Host getStatus(Message message) {
         String[] messageParts = message.getText().split(delimiter);
         int nrOfClients = Integer.parseInt(messageParts[1]);
         String address = messageParts[2];
@@ -107,6 +107,6 @@ public class Commands {
         boolean isMaster = Boolean.parseBoolean(messageParts[4]);
         String processID = messageParts[5];
 
-        return new AvailableHost(nrOfClients, address, port, isMaster, processID);
+        return new Host(nrOfClients, address, port, isMaster, processID);
     }
 }

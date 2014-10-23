@@ -10,6 +10,8 @@ public class Election implements Runnable {
     private HostToMHost hostToMHost;
     public Election(HostToMHost hostToMHost) {
         this.hostToMHost = hostToMHost;
+        
+        Server.electionState = Server.ElectionStates.voting; // Go into the voting state
     }
     
     public void start() {

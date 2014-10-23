@@ -8,9 +8,10 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.Date;
 
-import sharedresources.AvailableHost;
-import sharedresources.AvailableHostsList;
+import sharedresources.Host;
+import sharedresources.HostsList;
 import sharedresources.Commands;
 import sharedresources.Config;
 import sharedresources.Message;
@@ -73,7 +74,7 @@ public class HostToMHost implements Runnable{
             if(message != null) {
             	if(Commands.messageIsOfCommand(message, Commands.connectRequest)) {
             		if(Config.master) {
-                        AvailableHost suitableHost = AvailableHostsList.findSuitableHost();
+                        Host suitableHost = HostsList.findSuitableHost();
                         	//TODO search again if null?
                             String command = Commands.constructCommand(Commands.hostFound, Commands.constructHostFound(suitableHost, message.getProcessID()));
                             Message newMessage = new Message(MessageType.mClientCommand, true, Misc.getProcessID(), "master", command);
@@ -86,7 +87,10 @@ public class HostToMHost implements Runnable{
                 	Message statusMessage = SendStatusUpdate.getStatusMessage();
                 	sendMessage(statusMessage);
                 } else if(Commands.messageIsOfCommand(message, Commands.startElection)) {
-                    Election election = new Election(this);
+                	if(Server.electionState.equals(Server.ElectionStates.normal)) {
+                		Election election = new Election(this);
+                		election.start();
+                	}
                 }
             }
             
@@ -94,10 +98,14 @@ public class HostToMHost implements Runnable{
             message = Server.messageController.queueMHostsStatus.pop();
             if(message != null){
 //            	System.out.println("@HostToMHost\n\tParsing status update sent from host " + message.getProcessID());
-                AvailableHost availableHost = Commands.getStatus(message);
-                if(!AvailableHostsList.hostExists(availableHost)) {
-                    AvailableHostsList.addHost(availableHost);
+                Host host = Commands.getStatus(message);
+                if(!HostsList.hostExists(host)) {
+                    host.setLastUpdate(new Date());
+                	HostsList.addHost(host);
+                } else {
+                	HostsList.updateHost(host);
                 }
+                HostsList.printHostAddresses(Server.port);
             }
             
             
