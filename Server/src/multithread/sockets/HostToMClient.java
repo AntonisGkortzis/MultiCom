@@ -10,6 +10,7 @@ import java.net.SocketException;
 
 import sharedresources.Config;
 import sharedresources.Message;
+import sharedresources.Misc;
 
 /**
  * This class is used for communication with a host and multiple clients.
@@ -59,7 +60,7 @@ public class HostToMClient implements Runnable {
         if(message != null){             
             try {
                 InetAddress group = InetAddress.getByName(Config.multiCastAddress);
-                System.out.println("@HostToMultipleClients\n\tSending message: " + message.getText());
+//                System.out.println("@HostToMultipleClients\n\tSending message: " + message.getText());
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                 ObjectOutputStream os = new ObjectOutputStream(outputStream);
                 os.writeObject(message);

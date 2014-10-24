@@ -9,6 +9,8 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.Date;
 
+import javax.swing.text.MaskFormatter;
+
 import sharedresources.Host;
 import sharedresources.HostsList;
 import sharedresources.Commands;
@@ -49,23 +51,28 @@ public class HostToMHost implements Runnable{
         boolean flag=true;
         while (flag) {
         	
+            //Messages that are only to be sent
+        	Message message = Server.messageController.queueSend.pop();
+            if(message != null ){
+//            	System.out.println("QueueSend--> Sending " + message.toString());
+            	flag = sendMessage(message);
+            }	
+        	
         	//Messages that contains Text messages (received form clients) and are going to be forwarded to other hosts
-            Message message = Server.messageController.queueMHostsChat.pop();
-            if(message != null){
-            	if(Commands.messageIsOfCommand(message, Commands.forwardMessage)){
-            		flag = sendMessage(message);
-            	} else {
-            		System.out.println("@@ Why are we here???? @@ [queueMHostChat popping]");
-            	}
-            }
-            
-            
+//            message = Server.messageController.queueMHostsChat.pop();
+//            if(message != null){
+//            	if(Commands.messageIsOfCommand(message, Commands.forwardMessage)){
+//            		flag = sendMessage(message);
+//            	} else {
+//            		System.out.println("@@ Why are we here???? @@ [queueMHostChat popping]");
+//            	}
+//            }
             
             //Messages that contain info for a specific client. Are going to be sent to all clients with Multicast
-            message = Server.messageController.queueMClientCommand.pop();
-            if(message != null){
-                flag=sendMessage(message);
-            }
+//            message = Server.messageController.queueMClientCommand.pop();
+//            if(message != null){
+//                flag=sendMessage(message);
+//            }
             
             //Messages that contains commands that should be parsed and executed
             message = Server.messageController.queueMHostsCommand.pop();
@@ -75,10 +82,12 @@ public class HostToMHost implements Runnable{
                         Host suitableHost = HostsList.findSuitableHost();
                         	//TODO search again if null?
                             String command = Commands.constructCommand(Commands.hostFound, Commands.constructHostFound(suitableHost, message.getProcessID()));
-                            Message newMessage = new Message(MessageType.mClientCommand, true, Misc.processID, command);
+                            Message newMessage = new Message(MessageType.mClientCommand, true, command);
                             newMessage.setClientAsReceiver(true);//In order not to be stored by other hosts
-                            Server.messageController.queueMClientCommand.push(newMessage);
-                    }
+                            sendMessage(newMessage);
+                            System.out.println("@@ I ["+ Misc.processID+"/"+Server.port +"] am redirecting a client to host" 
+                            + suitableHost.getProcessID() + "/" +suitableHost.getPort());
+            		}
             	//If you parse a received message that requests a status update then send a status update
                 } else if(Commands.messageIsOfCommand(message, Commands.requestStatusUpdate)) { 
                 	//Create and Send a StatusUpdate message
@@ -86,31 +95,35 @@ public class HostToMHost implements Runnable{
                 	sendMessage(statusMessage);
                 //Participate in the elections if you parse a received message about elections
                 } else if(Commands.messageIsOfCommand(message, Commands.startElection)) {
+                	System.out.println("\n###-- Request for starting elections from "+message.getProcessID() + " parsed. --###");
                 	if(Server.electionState.equals(Server.ElectionStates.normal)) {
                 		Election election = new Election(Server.messageController);
                 		election.start();
                 	}
                 } else if(Commands.messageIsOfCommand(message, Commands.IAmTheMaster)) {
-                	System.out.println("@@ HTMH @@ - Setting the master ");
                 	//Elections STEP 5a
-                	HostsList.setMaster(message.getProcessID());
+                	HostsList.setMasterAndResetVotes(message.getProcessID());
                 	//Elections STEP 5b
                 	Server.electionState = Server.ElectionStates.normal;
+                	System.out.println("##-- Am I ["+Misc.processID+"/"+Server.port+"] the Master? " + Config.master);
+                } else if(Commands.messageIsOfCommand(message, Commands.vote)){
+                	sendMessage(message);
                 }
             }
             
             //Messages that contains status messages received from hosts
+            //Status updates stored in the queue (because we store them manually) should not be parsed
             message = Server.messageController.queueMHostsStatus.pop();
-            if(message != null){
-//            	System.out.println("@HostToMHost\n\tParsing status update sent from host " + message.getProcessID());
+            if(message != null && !message.getProcessID().equals(Misc.processID)){
                 Host host = Commands.getStatus(message);
                 if(!HostsList.hostExists(host)) {
                     host.setLastUpdate(new Date());
                 	HostsList.addHost(host);
+//                	System.out.println("I ["+Misc.processID+","+Server.port + "] added new Host [" 
+//                        	+ host.getProcessID() +","+ host.getPort() +"] to my Hosts list");
                 } else {
                 	HostsList.updateHost(host);
                 }
-                HostsList.printHostAddresses(Server.port);
             }
             
             //Messages that contains vote messages received from hosts
@@ -118,16 +131,14 @@ public class HostToMHost implements Runnable{
             if(message != null 
             		&& (Server.electionState.equals(Server.ElectionStates.voting) 
             				|| Server.electionState.equals(Server.ElectionStates.voted))){
-            	System.out.println("@@ Parsing vote message from host " + message.getProcessID() + "\n\t" + message.getText());
+//            	System.out.println("@@ Parsing vote message from host " + message.getProcessID() + "\n\t" + message.getText());
             	HostsList.updateHostVote(message.getProcessID());
             }	
 
             
             
-            
-            
             try {
-                Thread.sleep(500); //TODO put delay in config. Must be faster than push from ping for now
+                Thread.sleep(150); //TODO put delay in config. Must be faster than push from ping for now
             } 
             catch (InterruptedException e) { 
                 e.printStackTrace();

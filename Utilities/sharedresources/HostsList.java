@@ -15,6 +15,7 @@ public  class HostsList {
      */
 	public static void addHost(Host host){
         hosts.add(host);
+//        System.out.println("adding host: " + host.toString()+ "\n\tnew size: " + hosts.size());
     }
     
     /**
@@ -104,25 +105,35 @@ public  class HostsList {
 	public static void updateHostVote(String processID) {
 		for(Host host: hosts) {
             if(host.getProcessID().equals(processID)) {
+            	System.out.println("\t\tvote for " + processID + " counted!");
                 host.setNrOfVotes(host.getNrOfVotes()+1);
             }
         }
 		
 	}
 
-	public static void setMaster(String processID) {
+	public static void setMasterAndResetVotes(String processID) {
 		//Set yourself as a master only if the processID of the voted is yours
 		//otherwise set to false
 		Config.master = processID.equals(Misc.processID);
 		
 		//Find the voted host and set his Master variable to True, False for the others
 		for(Host host: hosts) {
+			host.setNrOfVotes(0);
             if(host.getProcessID().equals(processID)) {
                 host.setMaster(true);
+                System.out.println("##-- Master is host with processId: "+ processID +" and port: " + host.getPort() + " --##");
             } else {
             	host.setMaster(false);
             }
         }
 		
+	}
+	
+	public static void printHostsVotes(){
+		System.out.println("-- Votes --");
+		for(Host host: hosts) {
+			System.out.println("\t\tpid: " +host.getProcessID() + ", nofClients: " + host.getNrOfClients() +", Votes: " + host.getNrOfVotes());
+		}
 	}
 }

@@ -26,6 +26,11 @@ public class Host {
         this.setProcessID(Misc.processID);
         this.votes=0;
     }
+    
+    public Host(int nrOfClients, String address, int port, boolean isMaster, String processID){
+    	this(nrOfClients, address, port, isMaster);
+    	this.processID = processID;
+    }
 
     public String getProcessID() {
         return processID;
@@ -87,6 +92,7 @@ public class Host {
 	public int getNrOfVotes() {
 		return this.votes;
 	}
+
 
         
 }

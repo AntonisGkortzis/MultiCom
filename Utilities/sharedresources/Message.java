@@ -87,5 +87,12 @@ public class Message implements Serializable {
 	public boolean getClientAsReceiver(){
 		return this.clientAsReceiver;
 	}
+	
+	public String toString(){
+		String s = "";
+		s = "Type: " + messageType +", processID: " + processID +", Text: " + text;
+		
+		return s;
+	}
 
 }

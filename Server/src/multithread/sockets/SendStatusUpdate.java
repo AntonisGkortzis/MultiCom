@@ -35,11 +35,11 @@ public class SendStatusUpdate implements Runnable {
 	}
 	
 	private static String constructStatus() {
-	    return Commands.constructStatus(ConnectedClientsList.size(), Server.address, Server.port, Config.master, Misc.processID);
+	    return Commands.constructStatus(ConnectedClientsList.size(), Server.address, Server.port, Config.master);
 	}
 	
 	public static Message getStatusMessage() {
-        String command = Commands.constructCommand(Commands.requestStatusUpdate, constructStatus()); 
+        String command = Commands.constructCommand(Commands.statusUpdate, constructStatus()); 
 		return new Message(MessageType.mHostStatus,true,command);
 //	    return Commands.constructStatus(Server.clients.size(), Server.address, Server.port, Config.master, Misc.getProcessID());
 	}

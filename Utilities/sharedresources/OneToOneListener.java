@@ -50,9 +50,10 @@ public class OneToOneListener implements Runnable {
 			    message.setProcessId(Misc.processID);
 			    messageController.queueHostChat.push(message); //to send it to the clients connected on this host
 			    String command = Commands.constructCommand(Commands.forwardMessage, message.getText());
-			    Message newmessage = new Message(MessageType.mHostChat,true, message.getUsername(), command);
-			    messageController.queueMHostsChat.push(newmessage); //to send it to other Hosts
-			    System.out.println("Server received: "+message.getText());
+			    Message newMessage = new Message(MessageType.mHostChat,true, message.getUsername(), command);
+//			    messageController.queueMHostsChat.push(newmessage); //to send it to other Hosts
+			    messageController.queueSend.push(newMessage);
+//			    System.out.println("Server received: "+message.getText());
 
 				Thread.sleep(250);
 			} catch (IOException | ClassNotFoundException | InterruptedException e) {

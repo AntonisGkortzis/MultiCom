@@ -73,8 +73,8 @@ public class Commands {
 	 * Masters needs to find a suitable host for the client
 	 */
 //	public final static String findHost = "FindSuitableHost";
-	public static String constructStatus(int nrOfClients, String address, int port, boolean isMaster, String processID) {
-	    return nrOfClients + delimiter + address + delimiter + port + delimiter + isMaster + delimiter + processID + delimiter;
+	public static String constructStatus(int nrOfClients, String address, int port, boolean isMaster) {
+	    return nrOfClients + delimiter + address + delimiter + port + delimiter + isMaster + delimiter;
 	}
 	
 	/**
@@ -109,8 +109,8 @@ public class Commands {
         String address = messageParts[2];
         int port = Integer.parseInt(messageParts[3]);
         boolean isMaster = Boolean.parseBoolean(messageParts[4]);
-        String processID = messageParts[5];
+        String processID = message.getProcessID();
 
-        return new Host(nrOfClients, address, port, isMaster);
+        return new Host(nrOfClients, address, port, isMaster, processID);
     }
 }

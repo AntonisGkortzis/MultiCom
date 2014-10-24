@@ -55,10 +55,16 @@ public class Server {
         OneToManyListener oneToManyListener = new OneToManyListener(messageController, true);
         oneToManyListener.start();
         
+        //Requesting Status updates from already existing host in order to build the HostsList
+        Message statusRequest = new Message(MessageType.mHostCommand, true, Commands.requestStatusUpdate);
+        messageController.queueSend.push(statusRequest);
+        
+        //A waiting time (Thread.sleep(2000)) exists at the beginning of the elections.
+        
         // For starting Elections on host's start up
         String command = Commands.constructCommand(Commands.startElection);
 		Message electionsStart = new Message(MessageType.mHostCommand, true, command);
-		messageController.queueMHostsCommand.push(electionsStart);
+		messageController.queueSend.push(electionsStart);
     }
    
 }

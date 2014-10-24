@@ -18,7 +18,7 @@ public class MessageQueue{
 	public boolean push(Message newMessage){
 //		System.out.println("## Message pushed: " + newMessage.getText());
 		boolean flag = false;
-		int size = size();
+/*		int size = size();
 		if(!isEmpty()){
 			for(int i=0; i<size; i++){
 				if(newMessage.getTimestamp() <= queue.get(i).getTimestamp()){
@@ -27,10 +27,10 @@ public class MessageQueue{
 				}
 			}
 		}
-		if(!flag){
-			this.queue.add(newMessage);
-			flag = true;
-		}
+		if(!flag){*/
+			flag = this.queue.add(newMessage);
+//			flag = true;
+//		}
 		return flag;
 	}
 	

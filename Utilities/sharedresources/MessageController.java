@@ -16,6 +16,9 @@ public class MessageController {
 	public MessageQueue queueMClientCommand = new MessageQueue();
 	public MessageQueue queueClientChat = new MessageQueue();
 	
+	// This one is just for sending and NOT for storing received messages
+	public MessageQueue queueSend = new MessageQueue();
+	
 	
 	public MessageController(){
 //		System.out.println("Creating message controller..");

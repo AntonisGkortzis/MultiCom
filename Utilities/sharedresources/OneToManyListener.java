@@ -81,24 +81,27 @@ public class OneToManyListener implements Runnable {
 
 	}
 	
-	private void handleMessage(Message receivedMessage) {
+	private void handleMessage(Message message) {
 		//Ignore your own Messages
-		if(receivedMessage.getProcessID().equals(Misc.processID)){
+		if(message.getProcessID().equals(Misc.processID) 
+				&& !Commands.messageIsOfCommand(message, Commands.IAmTheMaster)
+				&& !Commands.messageIsOfCommand(message, Commands.startElection)
+				&& !Commands.messageIsOfCommand(message, Commands.vote)){
 			return;
 		}
-		if(receivedMessage.getMessageType().equals(Misc.MessageType.mClientCommand) 
+		if(message.getMessageType().equals(Misc.MessageType.mClientCommand) 
 				&& isHost
-				&& receivedMessage.getClientAsReceiver())
+				&& message.getClientAsReceiver())
 		{
 			return;
 		}
 		
-		if(receivedMessage.getMessageType().equals(Misc.MessageType.mHostChat)) {
-			receivedMessage.setMessageType(Misc.MessageType.hostChat);
+		if(message.getMessageType().equals(Misc.MessageType.mHostChat)) {
+			message.setMessageType(Misc.MessageType.hostChat);
 		}
 
 //		System.out.println("@OneToManyListener\n\tReceived Message [" + receivedMessage.getMessageType()+"] " + receivedMessage.getText());
-		messageController.pushMessageInCorrectQueue(receivedMessage);
+		messageController.pushMessageInCorrectQueue(message);
 		
 	}
 }
