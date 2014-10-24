@@ -34,7 +34,6 @@ public class Election implements Runnable {
     	try {
     		    		
     		Thread.sleep(2000);
-//    		HostsList.resetVotes();
     		System.out.println("##-- Host: " + Server.port + " starts participating in the Master's election [candidates: "+HostsList.size()+"] --##");
     		
     		//STEP 1a
@@ -49,38 +48,24 @@ public class Election implements Runnable {
     		messageController.queueSend.push(message);
     		
     		System.out.println("##-- Participants: " + HostsList.size() + " --##");
+    		
     		//STEP 2
     		//Sleep & Wait to receive as many status updates as possible
             Thread.sleep(2000); 
             
-            //STEP 3a
-            //get the most suitable candidate
-            Host preferredCandidate = getPreferredCandidate();
-            
-            //STEP 3b
-            //Creating adding (for sending) the voting message
-            command = Commands.constructCommand(Commands.vote, preferredCandidate.getProcessID());
-            Message vote = new Message(MessageType.mHostVote, true, command);
-            messageController.queueSend.push(vote);
-            System.out.println("##-- I ["+Misc.processID+","+Server.port + "] vote for Host [" 
-            		+ preferredCandidate.getProcessID() +","+ preferredCandidate.getPort() +"] --##");
-            
-            //STEP 3c
-            //Go into the voted state
-            Server.electionState = Server.ElectionStates.voted; 
-            //Wait to receive as many votes as possible
-            Thread.sleep(3000);
-            
-            //STEP 4
-            //Parse the Hosts list in order to find the one with the most votes.
-            Host mostVotedHost  = HostsList.getTheMostVotedHost();
-            //if YOU are the most voted [votes > 1/2list size] host then announce yourself as the Master
-            if(Misc.processID.equals(mostVotedHost.getProcessID())){
-            	command = Commands.constructCommand(Commands.IAmTheMaster);
-            	Message master = new Message(MessageType.mHostCommand, true, command);
-            	messageController.queueSend.push(master);
+            if(HostsList.size()>1) {
+	            this.voteOnPreferredHostAndSend();
+	            
+	            //Wait to receive as many votes as possible
+	            Thread.sleep(3000);
+	            
+	            this.electionResults();
+            } else { //this host is the only host so you are the master
+            	System.out.println("##-- Only one host, so I took the liberty of announcing myself Master --##");
+            	Config.master = true;
+            	HostsList.setMasterAndResetVotes(Misc.processID);
+            	Server.electionState = Server.ElectionStates.normal;
             }
-            
     		System.out.println("##-- Host: " + Server.port + " exits the election. --##");
 
                         
@@ -88,9 +73,31 @@ public class Election implements Runnable {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-    	System.out.println("--- HostLsit of host " + Misc.processID);
+    	System.out.println("--- HostList of host " + Misc.processID);
     	HostsList.printHostsVotes();
 
+    }
+    
+    
+    /**
+     * Vote on a preferred candidate and send this vote through global multicast
+     */
+    private void voteOnPreferredHostAndSend() {
+    	//STEP 3a
+        //get the most suitable candidate
+        Host preferredCandidate = getPreferredCandidate();
+        
+        //STEP 3b
+        //Creating adding (for sending) the voting message
+        String command = Commands.constructCommand(Commands.vote, preferredCandidate.getProcessID());
+        Message vote = new Message(MessageType.mHostVote, true, command);
+        messageController.queueSend.push(vote);
+        System.out.println("##-- I ["+Misc.processID+","+Server.port + "] vote for Host [" 
+        		+ preferredCandidate.getProcessID() +","+ preferredCandidate.getPort() +"] --##");
+        
+        //STEP 3c
+        //Go into the voted state
+        Server.electionState = Server.ElectionStates.voted; 
     }
     
     /**
@@ -115,6 +122,21 @@ public class Election implements Runnable {
         return preferredCandidate;
     }
     
+    /**
+     * Find the host with the most votes and announce yourself the leader if 
+     * you are chosen as the master.
+     */
+    private void electionResults() {
+    	//STEP 4
+        //Parse the Hosts list in order to find the one with the most votes.
+        Host mostVotedHost  = HostsList.getTheMostVotedHost();
+        //if YOU are the most voted [votes > 1/2list size] host then announce yourself as the Master
+        if(Misc.processID.equals(mostVotedHost.getProcessID())){
+        	String command = Commands.constructCommand(Commands.IAmTheMaster);
+        	Message master = new Message(MessageType.mHostCommand, true, command);
+        	messageController.queueSend.push(master);
+        }
+    }
     @Override
     public void run() {
         startElection();        

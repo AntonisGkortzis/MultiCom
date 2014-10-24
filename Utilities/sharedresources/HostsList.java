@@ -87,8 +87,8 @@ public  class HostsList {
         Host mostVotedHost = null;
         
         for(Host host : hosts){
-        	System.out.println("@@@@ pid: " +host.getProcessID() +", port: "+host.getPort()+ ", nofClients: " 
-					+ host.getNrOfClients() +", Votes: " + host.getNrOfVotes());
+//        	System.out.println("@@@@ pid: " +host.getProcessID() +", port: "+host.getPort()+ ", nofClients: " 
+//					+ host.getNrOfClients() +", Votes: " + host.getNrOfVotes());
             if(host.getNrOfVotes()>max) {
                 mostVotedHost = host;
                 max = host.getNrOfVotes();
@@ -133,6 +133,19 @@ public  class HostsList {
 		
 	}
 	
+	/**
+	 * Check for all hosts if one of them is a master
+	 * @return
+	 */
+	public static boolean masterAlive() {
+		for(Host host: hosts) {
+			if(host.isMaster()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public static void printHostsVotes(){
 		for(Host host: hosts) {
 			System.out.println("\tpid: " +host.getProcessID() +", port: "+host.getPort()+ ", nofClients: " 

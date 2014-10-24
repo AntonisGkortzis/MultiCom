@@ -96,10 +96,10 @@ public class HostToMHost implements Runnable{
                 //Participate in the elections if you parse a received message about elections
                 } else if(Commands.messageIsOfCommand(message, Commands.startElection)) {
                 	System.out.println("\n###-- Request for starting elections from "+message.getProcessID() + " parsed. --###");
-//                	if(Server.electionState.equals(Server.ElectionStates.normal)) {
+                	if(Server.electionState.equals(Server.ElectionStates.normal)) {
                 		Election election = new Election(Server.messageController);
                 		election.start();
-//                	}
+                	}
                 } else if(Commands.messageIsOfCommand(message, Commands.IAmTheMaster)) {
                 	//Elections STEP 5a
                 	HostsList.setMasterAndResetVotes(message.getProcessID());
@@ -123,6 +123,15 @@ public class HostToMHost implements Runnable{
 //                        	+ host.getProcessID() +","+ host.getPort() +"] to my Hosts list");
                 } else {
                 	HostsList.updateHost(host);
+                }
+                
+                //TODO does not work yet, because hosts are never removed from hostlist
+                //Check if there is a master alive, if not start the elections!
+                if(!HostsList.masterAlive()) {
+                	//OH NO, there is no master alive. Let's elect:
+                    String command = Commands.constructCommand(Commands.startElection);
+            		Message electionsStart = new Message(MessageType.mHostCommand, true, command);
+            		Server.messageController.queueSend.push(electionsStart);
                 }
             }
             
