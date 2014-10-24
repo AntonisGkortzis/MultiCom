@@ -87,6 +87,8 @@ public  class HostsList {
         Host mostVotedHost = null;
         
         for(Host host : hosts){
+        	System.out.println("@@@@ pid: " +host.getProcessID() +", port: "+host.getPort()+ ", nofClients: " 
+					+ host.getNrOfClients() +", Votes: " + host.getNrOfVotes());
             if(host.getNrOfVotes()>max) {
                 mostVotedHost = host;
             }
@@ -105,7 +107,7 @@ public  class HostsList {
 	public static void updateHostVote(String processID) {
 		for(Host host: hosts) {
             if(host.getProcessID().equals(processID)) {
-            	System.out.println("\t\tvote for " + processID + " counted!");
+//            	System.out.println("\t\tvote for " + processID + " counted. ");
                 host.setNrOfVotes(host.getNrOfVotes()+1);
             }
         }
@@ -131,9 +133,16 @@ public  class HostsList {
 	}
 	
 	public static void printHostsVotes(){
-		System.out.println("-- Votes --");
 		for(Host host: hosts) {
-			System.out.println("\t\tpid: " +host.getProcessID() + ", nofClients: " + host.getNrOfClients() +", Votes: " + host.getNrOfVotes());
+			System.out.println("\tpid: " +host.getProcessID() +", port: "+host.getPort()+ ", nofClients: " 
+					+ host.getNrOfClients() +", Votes: " + host.getNrOfVotes());
+		}
+	}
+	
+	public static void resetVotes(){
+		System.out.println("---> Resetting votes <----");
+		for(Host host: hosts) {
+			host.setNrOfVotes(0);
 		}
 	}
 }

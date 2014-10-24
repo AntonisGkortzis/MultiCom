@@ -113,4 +113,9 @@ public class Commands {
 
         return new Host(nrOfClients, address, port, isMaster, processID);
     }
+    
+    public static String getVote(Message message){
+        String[] messageParts = message.getText().split(delimiter);
+        return messageParts[1];
+    }
 }

@@ -34,6 +34,7 @@ public class Election implements Runnable {
     	try {
     		    		
     		Thread.sleep(2000);
+//    		HostsList.resetVotes();
     		System.out.println("##-- Host: " + Server.port + " starts participating in the Master's election [candidates: "+HostsList.size()+"] --##");
     		
     		//STEP 1a
@@ -73,7 +74,6 @@ public class Election implements Runnable {
             //STEP 4
             //Parse the Hosts list in order to find the one with the most votes.
             Host mostVotedHost  = HostsList.getTheMostVotedHost();
-            System.out.println("---> DEBUG: most voted host's processId=" + mostVotedHost.getProcessID());
             //if YOU are the most voted [votes > 1/2list size] host then announce yourself as the Master
             if(Misc.processID.equals(mostVotedHost.getProcessID())){
             	command = Commands.constructCommand(Commands.IAmTheMaster);
@@ -88,7 +88,7 @@ public class Election implements Runnable {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-    	System.out.println("HostLsit of host " + Misc.processID);
+    	System.out.println("--- HostLsit of host " + Misc.processID);
     	HostsList.printHostsVotes();
 
     }
@@ -111,6 +111,7 @@ public class Election implements Runnable {
         		preferredCandidate = host;
         	}
         }
+        System.out.println("--> My ["+Misc.processID+"] preferred candidate is "+preferredCandidate.getProcessID());
         return preferredCandidate;
     }
     

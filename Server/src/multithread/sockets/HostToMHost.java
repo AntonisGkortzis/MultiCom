@@ -96,10 +96,10 @@ public class HostToMHost implements Runnable{
                 //Participate in the elections if you parse a received message about elections
                 } else if(Commands.messageIsOfCommand(message, Commands.startElection)) {
                 	System.out.println("\n###-- Request for starting elections from "+message.getProcessID() + " parsed. --###");
-                	if(Server.electionState.equals(Server.ElectionStates.normal)) {
+//                	if(Server.electionState.equals(Server.ElectionStates.normal)) {
                 		Election election = new Election(Server.messageController);
                 		election.start();
-                	}
+//                	}
                 } else if(Commands.messageIsOfCommand(message, Commands.IAmTheMaster)) {
                 	//Elections STEP 5a
                 	HostsList.setMasterAndResetVotes(message.getProcessID());
@@ -130,9 +130,8 @@ public class HostToMHost implements Runnable{
             message = Server.messageController.queueMHostsVote.pop();
             if(message != null 
             		&& (Server.electionState.equals(Server.ElectionStates.voting) 
-            				|| Server.electionState.equals(Server.ElectionStates.voted))){
-//            	System.out.println("@@ Parsing vote message from host " + message.getProcessID() + "\n\t" + message.getText());
-            	HostsList.updateHostVote(message.getProcessID());
+            				|| Server.electionState.equals(Server.ElectionStates.voted))){         	
+            	HostsList.updateHostVote(Commands.getVote(message));
             }	
 
             
