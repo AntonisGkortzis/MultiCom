@@ -91,6 +91,7 @@ public  class HostsList {
 					+ host.getNrOfClients() +", Votes: " + host.getNrOfVotes());
             if(host.getNrOfVotes()>max) {
                 mostVotedHost = host;
+                max = host.getNrOfVotes();
             }
         }
         return mostVotedHost;
