@@ -1,8 +1,11 @@
 package multithread.sockets;
+import sharedresources.Commands;
+import sharedresources.Message;
 import sharedresources.MessageController;
 import sharedresources.Misc;
 import sharedresources.OneToManyListener;
 import sharedresources.OneToOneListener;
+import sharedresources.Misc.MessageType;
 
 /**
  * This class is used to start a server and initiates all the connections.
@@ -31,7 +34,7 @@ public class Server {
     
     // Listen for incoming connections and handle them
     public static void main(String[] args) {
-        System.out.println("Server Running with processID " + Misc.getProcessID() + " and port " + port + " ...");
+        System.out.println("Server Running with processID " + Misc.processID + " and port " + port + " ...");
         
         //One to one communication between host and client
         HostToClient hostToClient = new HostToClient();
@@ -51,6 +54,11 @@ public class Server {
         //Listen to global multicast
         OneToManyListener oneToManyListener = new OneToManyListener(messageController, true);
         oneToManyListener.start();
+        
+        // For starting Elections on host's start up
+        String command = Commands.constructCommand(Commands.startElection);
+		Message electionsStart = new Message(MessageType.mHostCommand, true, command);
+		messageController.queueMHostsCommand.push(electionsStart);
     }
    
 }

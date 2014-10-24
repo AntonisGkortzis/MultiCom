@@ -74,7 +74,7 @@ public class ClientToHost {
     	}
         try {
             ObjectOutputStream outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
-            Message message = new Message(MessageType.hostChat, false, Misc.getProcessID(), client.getUserName(), text);
+            Message message = new Message(MessageType.hostChat, false, client.getUserName(), text);
             outputStream.writeObject(message);
             outputStream.flush();
             System.out.println("@@ Client to Host--> send message: " + message.getText());

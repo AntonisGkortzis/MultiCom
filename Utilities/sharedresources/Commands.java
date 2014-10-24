@@ -54,6 +54,7 @@ public class Commands {
 	public final static String isAnyoneOutThere = "requestingPingResponse";
 	
 	public final static String imAlive = "respondToIsAnyoneAlive";
+
 	
 	public static String[] splitMessage(Message message) {
 	    return message.getText().split(delimiter);
@@ -66,6 +67,7 @@ public class Commands {
 	
 	public final static String vote = "voteFor";
 	
+	public final static String IAmTheMaster = "announcementOfYourselfAsTheMaster";
 	
 	/**
 	 * Masters needs to find a suitable host for the client
@@ -109,6 +111,6 @@ public class Commands {
         boolean isMaster = Boolean.parseBoolean(messageParts[4]);
         String processID = messageParts[5];
 
-        return new Host(nrOfClients, address, port, isMaster, processID);
+        return new Host(nrOfClients, address, port, isMaster);
     }
 }

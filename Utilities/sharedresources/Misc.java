@@ -3,6 +3,13 @@ package sharedresources;
 import java.lang.management.ManagementFactory;
 
 public class Misc {
+	
+	/**
+	 * The process ID will be used to identify as process in the distributed network
+	 * @return an ID of the form "12345@hostname"
+	 */
+	public static final String processID = ManagementFactory.getRuntimeMXBean().getName();
+
 	/**
 	 * Enumeration to specify to type of process that needs to receive/send
 	 * @author mark
@@ -20,13 +27,9 @@ public class Misc {
 	    hostChat //
 	}
 	
-    /**
-     * The process ID will be used to identify as process in the distributed network
-     * @return an ID of the form "12345@hostname"
-     */
-    public static String getProcessID() {
-		return ManagementFactory.getRuntimeMXBean().getName();
-	}
+//    public String getProcessID() {
+//		return processID;
+//	}
     
     @Deprecated
     public static final Object monitor = new Object();

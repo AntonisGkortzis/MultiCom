@@ -14,15 +14,17 @@ public class Host {
     private boolean isMaster;
     private int nrOfClients;
     private Date lastUpdate;
+	private int votes;
     
     public Host(){}
     
-    public Host(int nrOfClients, String address, int port, boolean isMaster, String processID){
+    public Host(int nrOfClients, String address, int port, boolean isMaster){
         this.setNrOfClients(nrOfClients);
         this.setAddress(address);
         this.setPort(port);
         this.setMaster(isMaster);
-        this.setProcessID(processID);
+        this.setProcessID(Misc.processID);
+        this.votes=0;
     }
 
     public String getProcessID() {
@@ -56,6 +58,10 @@ public class Host {
     public void setMaster(boolean isMaster) {
         this.isMaster = isMaster;
     }
+    
+    public void setNrOfVotes(int vote){
+    	this.votes = vote;
+    }
 
     public int getNrOfClients() {
         return nrOfClients;
@@ -76,6 +82,10 @@ public class Host {
 
 	public void setLastUpdate(Date lastUpdate) {
 		this.lastUpdate = lastUpdate;
+	}
+
+	public int getNrOfVotes() {
+		return this.votes;
 	}
 
         

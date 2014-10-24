@@ -25,7 +25,7 @@ public class HostToClient implements Runnable{
         System.out.println("Listening for clients on port: " + Server.port);
         
         // Add yourselves to the list of hosts
-        Host newHost = new Host(ConnectedClientsList.size(), Server.address, Server.port, Config.master, Misc.getProcessID());
+        Host newHost = new Host(ConnectedClientsList.size(), Server.address, Server.port, Config.master);
         newHost.setLastUpdate(new Date());
         HostsList.addHost(newHost);
         

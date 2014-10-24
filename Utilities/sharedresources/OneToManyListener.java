@@ -83,7 +83,7 @@ public class OneToManyListener implements Runnable {
 	
 	private void handleMessage(Message receivedMessage) {
 		//Ignore your own Messages
-		if(receivedMessage.getProcessID().equals(Misc.getProcessID())){
+		if(receivedMessage.getProcessID().equals(Misc.processID)){
 			return;
 		}
 		if(receivedMessage.getMessageType().equals(Misc.MessageType.mClientCommand) 

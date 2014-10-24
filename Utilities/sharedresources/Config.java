@@ -22,7 +22,7 @@ public final class Config {
 	 */
 	public final static int hostMultiCastGroup = 5000;
 	
-    public static boolean master = true; // TODO Must be set by election process
+    public static boolean master = false; // TODO Must be set by election process
 
 	//DELAYS
 	

@@ -23,17 +23,17 @@ public class Message implements Serializable {
 	
 	public Message(){}
 	
-	public Message(MessageType type, boolean command, String processID, String text){
+	public Message(MessageType type, boolean command, String text){
 		this.messageType = type;
 		this.command = command;
-		this.processID = processID;
+		this.processID = Misc.processID;
 		this.id++;
 		this.text = text;
 		this.clientAsReceiver = false;
 	}
 	
-	public Message(MessageType type, boolean command, String processID, String username, String text){
-		this(type, command, processID, text);
+	public Message(MessageType type, boolean command, String username, String text){
+		this(type, command, text);
 		this.username = username;
 	}
 	

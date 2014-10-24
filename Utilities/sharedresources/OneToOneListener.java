@@ -47,10 +47,10 @@ public class OneToOneListener implements Runnable {
 				
                 addNewClient(message.getProcessID(), message.getUsername());
 				
-			    message.setProcessId(Misc.getProcessID());
+			    message.setProcessId(Misc.processID);
 			    messageController.queueHostChat.push(message); //to send it to the clients connected on this host
 			    String command = Commands.constructCommand(Commands.forwardMessage, message.getText());
-			    Message newmessage = new Message(MessageType.mHostChat,true,Misc.getProcessID(),message.getUsername(), command);
+			    Message newmessage = new Message(MessageType.mHostChat,true, message.getUsername(), command);
 			    messageController.queueMHostsChat.push(newmessage); //to send it to other Hosts
 			    System.out.println("Server received: "+message.getText());
 
@@ -67,7 +67,7 @@ public class OneToOneListener implements Runnable {
     	if(!ConnectedClientsList.clientExists(processID)) {
 	    	ConnectedClient newclient = new ConnectedClient(processID, username);
 	        ConnectedClientsList.addClient(newclient); 
-	        HostsList.updateHost(Misc.getProcessID(), ConnectedClientsList.size(), Config.master);
+	        HostsList.updateHost(Misc.processID, ConnectedClientsList.size(), Config.master);
     	}
     }
 }

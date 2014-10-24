@@ -3,20 +3,21 @@ package multithread.sockets;
 import java.util.Date;
 
 import sharedresources.Commands;
+import sharedresources.Config;
 import sharedresources.Host;
 import sharedresources.HostsList;
 import sharedresources.Message;
+import sharedresources.MessageController;
 import sharedresources.Misc;
 import sharedresources.Misc.MessageType;
 
 public class Election implements Runnable {
 
-    private HostToMHost hostToMHost;
+    private MessageController messageController;
     private Date electionStart;
-    public Election(HostToMHost hostToMHost) {
-        this.hostToMHost = hostToMHost;
+    public Election(MessageController messageController) {
+        this.messageController = messageController;
         
-        Server.electionState = Server.ElectionStates.voting; // Go into the voting state
     }
     
     public void start() {
@@ -31,26 +32,51 @@ public class Election implements Runnable {
     
     public void startElection() {
     	try {
-    		String command = Commands.constructCommand(Commands.startElection);
-    		Message message = new Message(MessageType.mHostVote, true, Misc.getProcessID(), command );
-    		hostToMHost.sendMessage(message);
-    		//Wait to receive as many status updates as possible
+    		
+    		System.out.println("##-- Host: " + Server.port + " starts participating in the Master's election --##");
+    		//STEP 1a
+    		// Go into the voting state
+    		Server.electionState = Server.ElectionStates.voting;
+    		
+    		//STEP 1b
+    		// When elections are started you have to send your status update
+    		String command = Commands.constructCommand(Commands.statusUpdate);
+    		Message message = new Message(MessageType.mHostStatus, true, command);
+    		messageController.queueMHostsStatus.push(message);
+    		
+    		//STEP 2
+    		//Sleep & Wait to receive as many status updates as possible
             Thread.sleep(5000); 
             
+            //STEP 3a
             //get the most suitable candidate
             Host preferredCandidate = getPreferredCandidate();
-            //Create the voting message
+            
+            //STEP 3b
+            //Creating adding (for sending) the voting message
             command = Commands.constructCommand(Commands.vote, preferredCandidate.getProcessID());
-            Message vote = new Message(MessageType.mHostVote, true, Misc.getProcessID(),command);
-            // Go into the voted state
+            Message vote = new Message(MessageType.mHostVote, true, command);
+            messageController.queueMHostsVote.push(vote);
+            
+            //STEP 3c
+            //Go into the voted state
             Server.electionState = Server.ElectionStates.voted; 
             //Wait to receive as many votes as possible
             Thread.sleep(3000);
             
-            //TODO parse the Hosts list in order to find the one with the most vote. 
+            //STEP 4
+            //Parse the Hosts list in order to find the one with the most votes.
+            Host mostVotedHost  = HostsList.getTheMostVotedHost();
             //if YOU are the most voted [votes > 1/2list size] host then announce yourself as the Master
-            //TODO keep a vote count variable in Host and update it when vote messages arrive
+            if(Misc.processID.equals(mostVotedHost.getProcessID())){
+            	command = Commands.constructCommand(Commands.IAmTheMaster);
+            	Message master = new Message(MessageType.mHostCommand, true, command);
+            	messageController.queueMHostsCommand.push(master);
+            }
             
+    		System.out.println("##-- Host: " + Server.port + " exits the Master's election --##");
+
+                        
     	} catch (InterruptedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

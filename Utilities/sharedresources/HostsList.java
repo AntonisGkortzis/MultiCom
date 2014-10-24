@@ -81,6 +81,18 @@ public  class HostsList {
         return suitableHost;
     }
     
+    public static Host getTheMostVotedHost(){
+    	int max = -1;
+        Host mostVotedHost = null;
+        
+        for(Host host : hosts){
+            if(host.getNrOfVotes()>max) {
+                mostVotedHost = host;
+            }
+        }
+        return mostVotedHost;
+    }
+    
     public static int size() {
         return hosts.size();
     }
@@ -88,4 +100,29 @@ public  class HostsList {
     public static List<Host> getHostsList(){
     	return hosts;
     }
+
+	public static void updateHostVote(String processID) {
+		for(Host host: hosts) {
+            if(host.getProcessID().equals(processID)) {
+                host.setNrOfVotes(host.getNrOfVotes()+1);
+            }
+        }
+		
+	}
+
+	public static void setMaster(String processID) {
+		//Set yourself as a master only if the processID of the voted is yours
+		//otherwise set to false
+		Config.master = processID.equals(Misc.processID);
+		
+		//Find the voted host and set his Master variable to True, False for the others
+		for(Host host: hosts) {
+            if(host.getProcessID().equals(processID)) {
+                host.setMaster(true);
+            } else {
+            	host.setMaster(false);
+            }
+        }
+		
+	}
 }

@@ -75,7 +75,7 @@ public class HostToMHost implements Runnable{
                         Host suitableHost = HostsList.findSuitableHost();
                         	//TODO search again if null?
                             String command = Commands.constructCommand(Commands.hostFound, Commands.constructHostFound(suitableHost, message.getProcessID()));
-                            Message newMessage = new Message(MessageType.mClientCommand, true, Misc.getProcessID(), command);
+                            Message newMessage = new Message(MessageType.mClientCommand, true, Misc.processID, command);
                             newMessage.setClientAsReceiver(true);//In order not to be stored by other hosts
                             Server.messageController.queueMClientCommand.push(newMessage);
                     }
@@ -84,11 +84,18 @@ public class HostToMHost implements Runnable{
                 	//Create and Send a StatusUpdate message
                 	Message statusMessage = SendStatusUpdate.getStatusMessage();
                 	sendMessage(statusMessage);
+                //Participate in the elections if you parse a received message about elections
                 } else if(Commands.messageIsOfCommand(message, Commands.startElection)) {
                 	if(Server.electionState.equals(Server.ElectionStates.normal)) {
-                		Election election = new Election(this);
+                		Election election = new Election(Server.messageController);
                 		election.start();
                 	}
+                } else if(Commands.messageIsOfCommand(message, Commands.IAmTheMaster)) {
+                	System.out.println("@@ HTMH @@ - Setting the master ");
+                	//Elections STEP 5a
+                	HostsList.setMaster(message.getProcessID());
+                	//Elections STEP 5b
+                	Server.electionState = Server.ElectionStates.normal;
                 }
             }
             
@@ -106,6 +113,17 @@ public class HostToMHost implements Runnable{
                 HostsList.printHostAddresses(Server.port);
             }
             
+            //Messages that contains vote messages received from hosts
+            message = Server.messageController.queueMHostsVote.pop();
+            if(message != null 
+            		&& (Server.electionState.equals(Server.ElectionStates.voting) 
+            				|| Server.electionState.equals(Server.ElectionStates.voted))){
+            	System.out.println("@@ Parsing vote message from host " + message.getProcessID() + "\n\t" + message.getText());
+            	HostsList.updateHostVote(message.getProcessID());
+            }	
+
+            
+            
             
             
             try {
@@ -116,7 +134,6 @@ public class HostToMHost implements Runnable{
                 flag=false;
             }
         }
-   
         
         socket.close();    
         
