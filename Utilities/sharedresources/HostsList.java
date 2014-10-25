@@ -1,11 +1,14 @@
 package sharedresources;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 public  class HostsList {
     private static List<Host> hosts = new ArrayList<>();
+    public final static int declareDead = 10000; //MilliSeconds
     
     public HostsList(){}
     
@@ -125,7 +128,7 @@ public  class HostsList {
 			host.setNrOfVotes(0);
             if(host.getProcessID().equals(processID)) {
                 host.setMaster(true);
-                System.out.println("##-- Master is host with processId: "+ processID +" and port: " + host.getPort() + " --##");
+//                System.out.println("##-- Master is host with processId: "+ processID +" and port: " + host.getPort() + " --##");
             } else {
             	host.setMaster(false);
             }
@@ -149,7 +152,7 @@ public  class HostsList {
 	public static void printHostsVotes(){
 		for(Host host: hosts) {
 			System.out.println("\tpid: " +host.getProcessID() +", port: "+host.getPort()+ ", nofClients: " 
-					+ host.getNrOfClients() +", Votes: " + host.getNrOfVotes());
+					+ host.getNrOfClients() +", Votes: " + host.getNrOfVotes() + " isMaster: " + host.isMaster());
 		}
 	}
 	
@@ -158,5 +161,34 @@ public  class HostsList {
 		for(Host host: hosts) {
 			host.setNrOfVotes(0);
 		}
+	}
+
+	/**
+	 * Finds hosts that are not responding anymore by checking their last update time
+	 */
+	public static void findDeadHosts() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(new Date());
+		long currentTime = calendar.getTimeInMillis();
+		
+		Iterator<Host> itererator = hosts.iterator();
+		Host host = null;
+		while (itererator.hasNext()) { //Iterator used so you can remove an item during iteration
+		    host = itererator.next();
+		    
+		    //skip yourself, you don't want to remove yourself, do ya?
+		    if(host.getProcessID().equals(Misc.processID)) {
+		    	continue;
+		    }
+		    calendar.setTime(host.getLastUpdate());
+		    long lastUpdateOfHost = calendar.getTimeInMillis();
+		    if(currentTime-lastUpdateOfHost > declareDead) {
+		    	System.out.println("@@@ -- current: " + currentTime +  " lastUpdateOfHost: " + lastUpdateOfHost +  "-- @@@");
+		    	System.out.println("##-- Removing a dead host now with pid: "+ host.getProcessID() + " port: " + host.getPort() + " --##");
+		    	itererator.remove();		    	
+		    }
+		    
+		}
+		
 	}
 }

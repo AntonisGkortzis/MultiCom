@@ -55,6 +55,10 @@ public class Server {
         OneToManyListener oneToManyListener = new OneToManyListener(messageController, true);
         oneToManyListener.start();
         
+        //Keep track of the status of the hosts
+        StatusMonitor statusMonitor = new StatusMonitor();
+        statusMonitor.start();
+        
         //Requesting Status updates from already existing host in order to build the HostsList
         Message statusRequest = new Message(MessageType.mHostCommand, true, Commands.requestStatusUpdate);
         messageController.queueSend.push(statusRequest);

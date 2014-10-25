@@ -55,8 +55,8 @@ public class Election implements Runnable {
     		Message message = new Message(MessageType.mHostStatus, true, command);
     		messageController.queueSend.push(message);
     		
-    		System.out.println("##-- Participants: " + HostsList.size() + " --##");
-    		
+//    		System.out.println("##-- Participants: " + HostsList.size() + " --##");
+//    		
     		//STEP 2
     		//Sleep & Wait to receive as many status updates as possible
             Thread.sleep(2000); 
@@ -74,7 +74,7 @@ public class Election implements Runnable {
             	HostsList.setMasterAndResetVotes(Misc.processID);
             	Server.electionState = ElectionStates.normal;
             }
-    		System.out.println("##-- Host: " + Server.port + " exits the election. --##");
+//    		System.out.println("##-- Host: " + Server.port + " exits the election. --##");
 
                         
     	} catch (InterruptedException e) {

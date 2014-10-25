@@ -129,14 +129,7 @@ public class HostToMHost implements Runnable{
                 	HostsList.updateHost(host);
                 }
                 
-                //TODO does not work yet, because hosts are never removed from hostlist
-                //Check if there is a master alive, if not start the elections!
-                if(!HostsList.masterAlive()) {
-                	//OH NO, there is no master alive. Let's elect:
-                    String command = Commands.constructCommand(Commands.startElection);
-            		Message electionsStart = new Message(MessageType.mHostCommand, true, command);
-            		Server.messageController.queueSend.push(electionsStart);
-                }
+
             }
             
             //Messages that contains vote messages received from hosts
