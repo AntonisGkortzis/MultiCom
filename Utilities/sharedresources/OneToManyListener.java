@@ -89,15 +89,15 @@ public class OneToManyListener implements Runnable {
 				&& !Commands.messageIsOfCommand(message, Commands.vote)){
 			return;
 		}
-		if(message.getMessageType().equals(Misc.MessageType.mClientCommand) 
+		if(message.getMessageType().equals(Message.MessageType.mClientCommand) 
 				&& isHost
 				&& message.getClientAsReceiver())
 		{
 			return;
 		}
 		
-		if(message.getMessageType().equals(Misc.MessageType.mHostChat)) {
-			message.setMessageType(Misc.MessageType.hostChat);
+		if(message.getMessageType().equals(Message.MessageType.mHostChat)) {
+			message.setMessageType(Message.MessageType.hostChat);
 		}
 		
 		//TODO explain queues and commands in report

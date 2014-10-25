@@ -5,7 +5,6 @@ import sharedresources.MessageController;
 import sharedresources.Misc;
 import sharedresources.OneToManyListener;
 import sharedresources.OneToOneListener;
-import sharedresources.Misc.MessageType;
 
 /**
  * This class is used to start a server and initiates all the connections.
@@ -60,7 +59,7 @@ public class Server {
         statusMonitor.start();
         
         //Requesting Status updates from already existing host in order to build the HostsList
-        Message statusRequest = new Message(MessageType.mHostCommand, true, Commands.requestStatusUpdate);
+        Message statusRequest = new Message(Message.MessageType.mHostCommand, true, Commands.requestStatusUpdate);
         messageController.queueSend.push(statusRequest);
         
         //A waiting time (Thread.sleep(2000)) exists at the beginning of the elections.

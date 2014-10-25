@@ -5,7 +5,6 @@ import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import sharedresources.Misc.MessageType;
 
 /**
  * This class is used for a listener of a one to one connection.
@@ -55,7 +54,7 @@ public class OneToOneListener implements Runnable {
 			    message.setProcessId(Misc.processID);
 			    messageController.queueHostChat.push(message); //to send it to the clients connected on this host
 			    String command = Commands.constructCommand(Commands.forwardMessage, message.getText());
-			    Message newMessage = new Message(MessageType.mHostChat,true, message.getUsername(), command);
+			    Message newMessage = new Message(Message.MessageType.mHostChat,true, message.getUsername(), command);
 			    messageController.queueSend.push(newMessage); //Send to other hosts
 
 				Thread.sleep(250);

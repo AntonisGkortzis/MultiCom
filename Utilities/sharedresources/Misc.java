@@ -10,46 +10,6 @@ public class Misc {
 	 */
 	public static final String processID = ManagementFactory.getRuntimeMXBean().getName();
 
-	/**
-	 * Enumeration to specify to type of process that needs to receive/send
-	 * @author mark
-	 */
-	public static enum MessageType {
-//		hostAsReceiver, // if the message's destination is a host.
-//		hostAsSender,  // if the message's sender is a host.
-//		multipleReceivers // if the message should be delivered to a group of listeners.
-	    mHostCommand,
-	    mHostStatus,
-	    mHostChat,
-	    mHostVote,
-	    clientChat,
-	    mClientCommand,
-	    hostChat //
-	}
-	
-//    public String getProcessID() {
-//		return processID;
-//	}
-    
-    @Deprecated
-    public static final Object monitor = new Object();
-    @Deprecated
-    public static void waitForPort() {
-        while (Config.connectToPortFromHost==-1) {
-            synchronized (monitor) {
-                try {
-                	System.out.println("@Misc\n\tWaiting for Port");
-                    monitor.wait(); // wait until notified
-                } catch (Exception e) {}
-            }
-        }
-    }
-    
-    @Deprecated
-    public static void unlockWaiter() {
-        synchronized (monitor) {
-        	System.out.println("@Misc\n\tUnlocking Waiter");
-            monitor.notifyAll(); // unlock again
-        }
-    }
+
+
 }

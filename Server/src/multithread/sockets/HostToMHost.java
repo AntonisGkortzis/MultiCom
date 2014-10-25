@@ -13,7 +13,6 @@ import sharedresources.Commands;
 import sharedresources.Config;
 import sharedresources.Message;
 import sharedresources.Misc;
-import sharedresources.Misc.MessageType;
 
 /**
  * This class is used for communication between a host and multiple hosts.
@@ -63,7 +62,7 @@ public class HostToMHost implements Runnable{
                         Host suitableHost = HostsList.findSuitableHost();
                         	//TODO search again if null?
                             String command = Commands.constructCommand(Commands.hostFound, Commands.constructHostFound(suitableHost, message.getProcessID()));
-                            Message newMessage = new Message(MessageType.mClientCommand, true, command);
+                            Message newMessage = new Message(Message.MessageType.mClientCommand, true, command);
                             newMessage.setClientAsReceiver(true);//In order not to be stored by other hosts
                             sendMessage(newMessage);
                             System.out.println("@@ I ["+ Misc.processID+"/"+Server.port +"] am redirecting a client to host" 

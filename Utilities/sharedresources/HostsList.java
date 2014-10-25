@@ -118,7 +118,7 @@ public  class HostsList {
 	}
 
 	public static void setMasterAndResetVotes(String processID) {
-		//Set yourself as a master only if the processID of the voted is yours
+		//Set yourself as a master only if the processID of the chosen one is yours
 		//otherwise set to false
 		Config.master = processID.equals(Misc.processID);
 		
@@ -155,12 +155,12 @@ public  class HostsList {
 		}
 	}
 	
-	public static void resetVotes(){
-		System.out.println("---> Resetting votes <----");
-		for(Host host: hosts) {
-			host.setNrOfVotes(0);
-		}
-	}
+//	public static void resetVotes(){ // XXX implemented in resetMasterAndVotes?
+//		System.out.println("---> Resetting votes <----");
+//		for(Host host: hosts) {
+//			host.setNrOfVotes(0);
+//		}
+//	}
 
 	/**
 	 * Finds hosts that are not responding anymore by checking their last update time

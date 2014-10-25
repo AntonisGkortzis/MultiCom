@@ -1,6 +1,6 @@
 package sharedresources;
 
-import sharedresources.Misc.MessageType;
+import sharedresources.Message.MessageType;;
 
 /**
  * This class is used for creating and using one MesssageQueue() object throughout the program.

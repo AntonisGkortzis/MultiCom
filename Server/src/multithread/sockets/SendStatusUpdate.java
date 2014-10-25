@@ -4,7 +4,6 @@ import sharedresources.Commands;
 import sharedresources.Config;
 import sharedresources.ConnectedClientsList;
 import sharedresources.Message;
-import sharedresources.Misc.MessageType;
 
 public class SendStatusUpdate implements Runnable {
 	public SendStatusUpdate() {
@@ -21,7 +20,7 @@ public class SendStatusUpdate implements Runnable {
 	    while(true) {
             String command = Commands.constructCommand(Commands.requestStatusUpdate, constructStatus());
 
-          	Message message = new Message(MessageType.mHostStatus,true, command); 
+          	Message message = new Message(Message.MessageType.mHostStatus,true, command); 
           	Server.messageController.queueSend.push(message);
             try {
 //                Thread.sleep(Config.DELAY);
@@ -39,6 +38,6 @@ public class SendStatusUpdate implements Runnable {
 	
 	public static Message createStatusMessage() {
         String command = Commands.constructCommand(Commands.statusUpdate, constructStatus()); 
-		return new Message(MessageType.mHostStatus,true,command);
+		return new Message(Message.MessageType.mHostStatus,true,command);
 	}
 }

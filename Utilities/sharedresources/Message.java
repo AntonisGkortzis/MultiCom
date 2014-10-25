@@ -3,15 +3,27 @@ package sharedresources;
 
 import java.io.Serializable;
 
-import sharedresources.Misc.MessageType;
-
 /**
  * This class is used for storing message information
  *
  */
 public class Message implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    /**
+     * Enumeration to specify to type of process that needs to receive/send
+     * @author mark
+     */
+    public static enum MessageType { //TODO explain in report
+        mHostCommand,
+        mHostStatus,
+        mHostChat,
+        mHostVote,
+        clientChat,
+        mClientCommand,
+        hostChat
+    }
+    
+    private static final long serialVersionUID = 1L;
 	private MessageType messageType;			// Different kinds of messages
 	private boolean command;			//TRUE if the message contains a command. FALSE if the message is ..just a message!
 	private String text;				//The text of the message
