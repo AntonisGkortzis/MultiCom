@@ -29,6 +29,7 @@ import sharedresources.Misc.MessageType;
 public class HostToMHost implements Runnable{
 
     private DatagramSocket socket;
+    private Election election;
 
 	public HostToMHost() {	    
         try {
@@ -96,10 +97,13 @@ public class HostToMHost implements Runnable{
                 //Participate in the elections if you parse a received message about elections
                 } else if(Commands.messageIsOfCommand(message, Commands.startElection)) {
                 	System.out.println("\n###-- Request for starting elections from "+message.getProcessID() + " parsed. --###");
-                	if(Server.electionState.equals(Server.ElectionStates.normal)) {
-                		Election election = new Election(Server.messageController);
-                		election.start();
+                	// In case that the receiver is already in an elections then reset the elections and re-initialize them 
+                	if(!Server.electionState.equals(Server.ElectionStates.normal) 
+                			&& election != null){ 
+                			election.stop();             		
                 	}
+                	election = new Election(Server.messageController);
+                	election.start();
                 } else if(Commands.messageIsOfCommand(message, Commands.IAmTheMaster)) {
                 	//Elections STEP 5a
                 	HostsList.setMasterAndResetVotes(message.getProcessID());

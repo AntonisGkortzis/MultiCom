@@ -2,6 +2,7 @@ package multithread.sockets;
 
 import java.util.Date;
 
+import multithread.sockets.Server.ElectionStates;
 import sharedresources.Commands;
 import sharedresources.Config;
 import sharedresources.ConnectedClientsList;
@@ -29,8 +30,15 @@ public class Election implements Runnable {
         t.start();
     }
     
+    public void stop(){
+    	Server.electionState = ElectionStates.normal; 
+    	t.interrupt();
+//    	t.stop();
+    }
+    
     
     public void startElection() {
+    	
     	try {
     		    		
     		Thread.sleep(2000);
@@ -38,7 +46,7 @@ public class Election implements Runnable {
     		
     		//STEP 1a
     		// Go into the voting state
-    		Server.electionState = Server.ElectionStates.voting;
+    		Server.electionState = ElectionStates.voting;
     		
     		//STEP 1b
     		// When elections are started you have to send your status update
@@ -64,14 +72,17 @@ public class Election implements Runnable {
             	System.out.println("##-- Only one host, so I took the liberty of announcing myself Master --##");
             	Config.master = true;
             	HostsList.setMasterAndResetVotes(Misc.processID);
-            	Server.electionState = Server.ElectionStates.normal;
+            	Server.electionState = ElectionStates.normal;
             }
     		System.out.println("##-- Host: " + Server.port + " exits the election. --##");
 
                         
     	} catch (InterruptedException e) {
             // TODO Auto-generated catch block
+    		
             e.printStackTrace();
+            Server.electionState = ElectionStates.normal;
+            return;
         }
     	System.out.println("--- HostList of host " + Misc.processID);
     	HostsList.printHostsVotes();
