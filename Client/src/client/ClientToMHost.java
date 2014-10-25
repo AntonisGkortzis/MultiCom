@@ -34,11 +34,9 @@ public class ClientToMHost {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
-        this.sendConnectRequest();
-	}
+   	}
 
-	private void sendConnectRequest(){
+	public void sendConnectRequest(){
 		InetAddress group;
 		try {
 			group = InetAddress.getByName(Config.multiCastAddress);

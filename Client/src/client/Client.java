@@ -8,6 +8,7 @@ package client;
 import java.awt.Color;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Date;
 
 import sharedresources.Commands;
 import sharedresources.Config;
@@ -163,10 +164,21 @@ public class Client extends javax.swing.JFrame {
     	oneToManyListener.start();
     	
     	//Multicast to join network
-    	new ClientToMHost(this);
+    	ClientToMHost clientToMHost = new ClientToMHost(this);
+    	//Send connect request through global multicast
+    	clientToMHost.sendConnectRequest();
     	
     	boolean flag = true;
+    	long startWaitingForConnection = new Date().getTime();
+    	long waitBeforeResendConnectRequest = 5000; //wait this long for resending connection request
+    	
     	while(flag) {
+    	    long currentTime = new Date().getTime();
+    	    //Send a new connection request after some time
+    	    if(currentTime-startWaitingForConnection>waitBeforeResendConnectRequest) {
+    	        clientToMHost.sendConnectRequest();
+    	        startWaitingForConnection = new Date().getTime(); //reset the time of the start
+    	    }
     		try {
     			/*
     			 * It doesn't receive/pop a connection response without this Thread.sleep
