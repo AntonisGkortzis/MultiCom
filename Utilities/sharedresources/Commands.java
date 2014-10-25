@@ -1,7 +1,5 @@
 package sharedresources;
 
-import java.util.Date;
-
 /**
  * This class is used to store the commands send through the network
  * This class is grouped by the type of command
@@ -19,6 +17,7 @@ public class Commands {
 	public final static String initConnection = "AskingPermissionToJoinNetwork";
 	
 	/****ClientToHost*******/
+	public final static String initOneToOneWithHost = "IAmNowConnectedToYou";
 	public final static String chatMessage = "SendChatMessage";
 	public final static String ackForReceive = "SendAckForReceiveMessage";
 	
@@ -56,9 +55,10 @@ public class Commands {
 	/**
 	 * Hosts sending ping request on their connection to the cluster
 	 */
-	public final static String isAnyoneOutThere = "requestingPingResponse";
+	//TODO uncomment, but needed?
+//	public final static String isAnyoneOutThere = "requestingPingResponse"; //TODO this is probably requestStatusUpdate
 	
-	public final static String imAlive = "respondToIsAnyoneAlive";
+//	public final static String imAlive = "respondToIsAnyoneAlive"; //TODO this is probably StatusUpdate
 
 	
 	public static String[] splitMessage(Message message) {

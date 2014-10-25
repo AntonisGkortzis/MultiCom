@@ -2,7 +2,6 @@ package multithread.sockets;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.util.Date;
 import sharedresources.*;
 
 /**
@@ -26,7 +25,7 @@ public class HostToClient implements Runnable{
         
         // Add yourselves to the list of hosts
         Host newHost = new Host(ConnectedClientsList.size(), Server.address, Server.port, Config.master);
-        newHost.setLastUpdate(new Date());
+//        newHost.setLastUpdate(new Date()); done in addhost
         HostsList.addHost(newHost);
         
     }

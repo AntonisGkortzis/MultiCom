@@ -4,7 +4,6 @@ import sharedresources.Commands;
 import sharedresources.Config;
 import sharedresources.ConnectedClientsList;
 import sharedresources.Message;
-import sharedresources.Misc;
 import sharedresources.Misc.MessageType;
 
 public class SendStatusUpdate implements Runnable {
@@ -38,9 +37,8 @@ public class SendStatusUpdate implements Runnable {
 	    return Commands.constructStatus(ConnectedClientsList.size(), Server.address, Server.port, Config.master);
 	}
 	
-	public static Message getStatusMessage() {
+	public static Message createStatusMessage() {
         String command = Commands.constructCommand(Commands.statusUpdate, constructStatus()); 
 		return new Message(MessageType.mHostStatus,true,command);
-//	    return Commands.constructStatus(Server.clients.size(), Server.address, Server.port, Config.master, Misc.getProcessID());
 	}
 }

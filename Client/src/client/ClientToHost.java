@@ -6,7 +6,6 @@ import java.net.Socket;
 
 import sharedresources.Config;
 import sharedresources.Message;
-import sharedresources.Misc;
 import sharedresources.Misc.MessageType;
 
 /**

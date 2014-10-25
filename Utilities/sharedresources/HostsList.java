@@ -1,7 +1,6 @@
 package sharedresources;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -17,8 +16,8 @@ public  class HostsList {
      * @param host
      */
 	public static void addHost(Host host){
+	    host.setLastUpdate(new Date());
         hosts.add(host);
-//        System.out.println("adding host: " + host.toString()+ "\n\tnew size: " + hosts.size());
     }
     
     /**

@@ -1,9 +1,6 @@
 package multithread.sockets;
 
-import sharedresources.Commands;
 import sharedresources.HostsList;
-import sharedresources.Message;
-import sharedresources.Misc.MessageType;
 
 public class StatusMonitor implements Runnable {
 

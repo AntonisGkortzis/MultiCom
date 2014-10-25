@@ -10,7 +10,6 @@ import java.net.SocketException;
 
 import sharedresources.Config;
 import sharedresources.Message;
-import sharedresources.Misc;
 
 /**
  * This class is used for communication with a host and multiple clients.

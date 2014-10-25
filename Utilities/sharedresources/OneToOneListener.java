@@ -45,15 +45,18 @@ public class OneToOneListener implements Runnable {
 				inStream = new ObjectInputStream(socket.getInputStream());
 				message = (Message)inStream.readObject();
 				
-                addNewClient(message.getProcessID(), message.getUsername());
+				if(Commands.messageIsOfCommand(message, Commands.initOneToOneWithHost)) {
+				    addNewClient(message.getProcessID(), message.getUsername());
+				    //Not further action is needed as this is only a 
+				    //message to let the host know that there is a new client.
+				    continue;
+				}
 				
 			    message.setProcessId(Misc.processID);
 			    messageController.queueHostChat.push(message); //to send it to the clients connected on this host
 			    String command = Commands.constructCommand(Commands.forwardMessage, message.getText());
 			    Message newMessage = new Message(MessageType.mHostChat,true, message.getUsername(), command);
-//			    messageController.queueMHostsChat.push(newmessage); //to send it to other Hosts
-			    messageController.queueSend.push(newMessage);
-//			    System.out.println("Server received: "+message.getText());
+			    messageController.queueSend.push(newMessage); //Send to other hosts
 
 				Thread.sleep(250);
 			} catch (IOException | ClassNotFoundException | InterruptedException e) {

@@ -7,10 +7,6 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
-import java.util.Date;
-
-import javax.swing.text.MaskFormatter;
-
 import sharedresources.Host;
 import sharedresources.HostsList;
 import sharedresources.Commands;
@@ -59,22 +55,6 @@ public class HostToMHost implements Runnable{
             	flag = sendMessage(message);
             }	
         	
-        	//Messages that contains Text messages (received form clients) and are going to be forwarded to other hosts
-//            message = Server.messageController.queueMHostsChat.pop();
-//            if(message != null){
-//            	if(Commands.messageIsOfCommand(message, Commands.forwardMessage)){
-//            		flag = sendMessage(message);
-//            	} else {
-//            		System.out.println("@@ Why are we here???? @@ [queueMHostChat popping]");
-//            	}
-//            }
-            
-            //Messages that contain info for a specific client. Are going to be sent to all clients with Multicast
-//            message = Server.messageController.queueMClientCommand.pop();
-//            if(message != null){
-//                flag=sendMessage(message);
-//            }
-            
             //Messages that contains commands that should be parsed and executed
             message = Server.messageController.queueMHostsCommand.pop();
             if(message != null) {
@@ -92,7 +72,7 @@ public class HostToMHost implements Runnable{
             	//If you parse a received message that requests a status update then send a status update
                 } else if(Commands.messageIsOfCommand(message, Commands.requestStatusUpdate)) { 
                 	//Create and Send a StatusUpdate message
-                	Message statusMessage = SendStatusUpdate.getStatusMessage();
+                	Message statusMessage = SendStatusUpdate.createStatusMessage();
                 	sendMessage(statusMessage);
                 //Participate in the elections if you parse a received message about elections
                 } else if(Commands.messageIsOfCommand(message, Commands.startElection)) {
@@ -126,14 +106,13 @@ public class HostToMHost implements Runnable{
             if(message != null && !message.getProcessID().equals(Misc.processID)){
                 Host host = Commands.getStatus(message);
                 if(!HostsList.hostExists(host)) {
-                    host.setLastUpdate(new Date());
+//                    host.setLastUpdate(new Date()); done in host
                 	HostsList.addHost(host);
 //                	System.out.println("I ["+Misc.processID+","+Server.port + "] added new Host [" 
 //                        	+ host.getProcessID() +","+ host.getPort() +"] to my Hosts list");
                 } else {
                 	HostsList.updateHost(host);
                 }
-                
 
             }
             
