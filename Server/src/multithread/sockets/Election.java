@@ -132,6 +132,7 @@ public class Election implements Runnable {
         	}
         	if(host.getNrOfClients() < leastClients || (host.getNrOfClients() == leastClients 
         			&& host.getPort() < preferredCandidate.getPort())) {
+        	    leastClients = host.getNrOfClients();
         		preferredCandidate = host;
         	}
         }
