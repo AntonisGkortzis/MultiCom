@@ -190,4 +190,21 @@ public  class HostsList {
 		}
 		
 	}
+
+	/**
+	 * Counts the number of participants in this election by looking at the hosts' last update time
+	 * @param electionStart The time when the election started
+	 * @return the number of participants in this election
+	 */
+    public static int nrOfElectionParticipants(Date electionStart) {
+        int nrOfParticipants = 0;
+        for(Host host: hosts) {
+            if(host.getProcessID().equals(Misc.processID)) { // because we do not update own host's time
+                nrOfParticipants++;
+            } else if(!host.getLastUpdate().before(electionStart)) {
+                nrOfParticipants++;
+            }
+        }
+        return nrOfParticipants;
+    }
 }

@@ -99,8 +99,8 @@ public class OneToManyListener implements Runnable {
 		if(message.getMessageType().equals(Misc.MessageType.mHostChat)) {
 			message.setMessageType(Misc.MessageType.hostChat);
 		}
-
-//		System.out.println("@OneToManyListener\n\tReceived Message [" + receivedMessage.getMessageType()+"] " + receivedMessage.getText());
+		
+		//TODO explain queues and commands in report
 		messageController.pushMessageInCorrectQueue(message);
 		
 	}

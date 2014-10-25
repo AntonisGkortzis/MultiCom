@@ -13,7 +13,7 @@ public class Host {
     private String processID;
     private boolean isMaster;
     private int nrOfClients;
-    private Date lastUpdate;
+    private Date lastUpdate; //TODO explain in Report that this time is only relevant to current host
 	private int votes;
     
     public Host(){}

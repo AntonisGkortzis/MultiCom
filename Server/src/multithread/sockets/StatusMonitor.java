@@ -5,7 +5,7 @@ import sharedresources.HostsList;
 public class StatusMonitor implements Runnable {
 
 	Thread t;
-	
+	//TODO in REPORT
 	public StatusMonitor() {
 		
 	}

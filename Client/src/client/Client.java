@@ -174,7 +174,7 @@ public class Client extends javax.swing.JFrame {
     	
     	while(flag) {
     	    long currentTime = new Date().getTime();
-    	    //Send a new connection request after some time
+    	    //Send a new connection request after some time TODO in report
     	    if(currentTime-startWaitingForConnection>waitBeforeResendConnectRequest) {
     	        clientToMHost.sendConnectRequest();
     	        startWaitingForConnection = new Date().getTime(); //reset the time of the start

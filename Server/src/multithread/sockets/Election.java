@@ -19,6 +19,8 @@ public class Election implements Runnable {
     private Date electionStart; //To prevent votes from hosts participating too late. Their latest status update is too old
     Thread t;
     
+    //TODO in report explain ignoring of old elections. Especially that we are
+    //sending the time of the starter, but not for comparison with own clock!!
     private String starterProcessID; //PID of the host starting the election
     private long starterElectionTime; //Time of the host starting the election at start of election
     
@@ -150,9 +152,19 @@ public class Election implements Runnable {
         Host mostVotedHost  = HostsList.getTheMostVotedHost();
         //if YOU are the most voted [votes > 1/2list size] host then announce yourself as the Master
         if(Misc.processID.equals(mostVotedHost.getProcessID())){
-        	String command = Commands.constructElectionMessage(Commands.IAmTheMaster, this.starterProcessID, this.starterElectionTime);
-        	Message master = new Message(MessageType.mHostCommand, true, command);
-        	messageController.queueSend.push(master);
+            int nrOfParticipants = HostsList.nrOfElectionParticipants(this.electionStart);
+            System.out.println("##-- In this election. #participants: " + nrOfParticipants + " #MaxVotes: " + mostVotedHost.getNrOfVotes() + " --##");
+            if(mostVotedHost.getNrOfVotes() >  nrOfParticipants/2) { // majority
+            	String command = Commands.constructElectionMessage(Commands.IAmTheMaster, this.starterProcessID, this.starterElectionTime);
+            	Message master = new Message(MessageType.mHostCommand, true, command);
+            	messageController.queueSend.push(master);
+            } else { //host does not have a majority, restart elections
+                System.out.println("##--## The election was not successfull. #Participants: " + 
+                        nrOfParticipants + " #MostVotes: " + mostVotedHost.getNrOfVotes() +" ##--##");
+                Election.initElection(); //restart election
+                //TODO explain restart in report
+                
+            }
         }
     }
     @Override
@@ -167,6 +179,15 @@ public class Election implements Runnable {
 		
 	}
 
+	/** TODO in report
+	 * Checks if the election message belongs to the current election.
+	 * 
+	 * This means that the processID and time of the latest starter
+	 * will be compared with the processID and time of the starter
+	 * of this message.
+	 * @param message
+	 * @return
+	 */
 	public boolean isMessageForCurrentElection(Message message) {
     	String starterProcessID = Commands.getStarterProcessID(message);
     	long starterTime = Commands.getStarterTime(message);
