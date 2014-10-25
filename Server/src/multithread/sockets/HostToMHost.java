@@ -96,23 +96,28 @@ public class HostToMHost implements Runnable{
                 	sendMessage(statusMessage);
                 //Participate in the elections if you parse a received message about elections
                 } else if(Commands.messageIsOfCommand(message, Commands.startElection)) {
+//                	Election.starterProcessID = Commands.getStarterProcessID(message);
+//                	Election.starterElectionTime = Commands.getStarterTime(message);
                 	System.out.println("\n###-- Request for starting elections from "+message.getProcessID() + " parsed. --###");
                 	// In case that the receiver is already in an elections then reset the elections and re-initialize them 
                 	if(!Server.electionState.equals(Server.ElectionStates.normal) 
                 			&& election != null){ 
-                			election.stop();             		
+                			election.stop();
+                			Server.electionState = Server.ElectionStates.normal;
                 	}
-                	election = new Election(Server.messageController);
+                	election = new Election(Server.messageController, Commands.getStarterProcessID(message), Commands.getStarterTime(message));
                 	election.start();
                 } else if(Commands.messageIsOfCommand(message, Commands.IAmTheMaster)) {
-                	//Elections STEP 5a
-                	HostsList.setMasterAndResetVotes(message.getProcessID());
-                	//Elections STEP 5b
-                	Server.electionState = Server.ElectionStates.normal;
-                	System.out.println("##-- Am I ["+Misc.processID+"/"+Server.port+"] the Master? " + Config.master);
-                } else if(Commands.messageIsOfCommand(message, Commands.vote)){
+                	if(this.election.isMessageForCurrentElection(message)) {
+	                	//Elections STEP 5a
+	                	HostsList.setMasterAndResetVotes(message.getProcessID());
+	                	//Elections STEP 5b
+	                	Server.electionState = Server.ElectionStates.normal;
+	                	System.out.println("##-- Am I ["+Misc.processID+"/"+Server.port+"] the Master? " + Config.master);
+                	}
+                } /*else if(Commands.messageIsOfCommand(message, Commands.vote)){
                 	sendMessage(message);
-                }
+                }*/
             }
             
             //Messages that contains status messages received from hosts
@@ -136,8 +141,14 @@ public class HostToMHost implements Runnable{
             message = Server.messageController.queueMHostsVote.pop();
             if(message != null 
             		&& (Server.electionState.equals(Server.ElectionStates.voting) 
-            				|| Server.electionState.equals(Server.ElectionStates.voted))){         	
-            	HostsList.updateHostVote(Commands.getVote(message));
+            				|| Server.electionState.equals(Server.ElectionStates.voted))){
+
+            	//Only update if this message was part of the last election
+//            	System.out.println("@@@@--" + message.getText() + "   " + this.election.getStarterProcessID() + " " + this.election.getStarterElectionTime() +  " " +  "-- @@@@");
+            	if(this.election.isMessageForCurrentElection(message)) {
+//            		System.out.println("@@@@-- accept vote --@@@@");
+            		HostsList.updateHostVote(Commands.getVote(message));
+            	}
             }	
 
             

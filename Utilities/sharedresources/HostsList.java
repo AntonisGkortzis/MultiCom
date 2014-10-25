@@ -167,9 +167,9 @@ public  class HostsList {
 	 * Finds hosts that are not responding anymore by checking their last update time
 	 */
 	public static void findDeadHosts() {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(new Date());
-		long currentTime = calendar.getTimeInMillis();
+//		Calendar calendar = Calendar.getInstance();
+//		calendar.setTime(new Date());
+		long currentTime = new Date().getTime();//calendar.getTimeInMillis();
 		
 		Iterator<Host> itererator = hosts.iterator();
 		Host host = null;
@@ -180,8 +180,8 @@ public  class HostsList {
 		    if(host.getProcessID().equals(Misc.processID)) {
 		    	continue;
 		    }
-		    calendar.setTime(host.getLastUpdate());
-		    long lastUpdateOfHost = calendar.getTimeInMillis();
+//		    calendar.setTime(host.getLastUpdate());
+		    long lastUpdateOfHost = new Date().getTime();//calendar.getTimeInMillis();
 		    if(currentTime-lastUpdateOfHost > declareDead) {
 		    	System.out.println("@@@ -- current: " + currentTime +  " lastUpdateOfHost: " + lastUpdateOfHost +  "-- @@@");
 		    	System.out.println("##-- Removing a dead host now with pid: "+ host.getProcessID() + " port: " + host.getPort() + " --##");

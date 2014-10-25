@@ -1,5 +1,7 @@
 package sharedresources;
 
+import java.util.Date;
+
 /**
  * This class is used to store the commands send through the network
  * This class is grouped by the type of command
@@ -44,6 +46,9 @@ public class Commands {
 	
 	public final static String statusUpdate = "HereIsMyStatusUpdate";
 	
+//	/**
+//	 * Masters needs to find a suitable host for the client
+//	 */
 	public final static String hostFound = "HostIsFoundForClient";
 	
 	public final static String forwardMessage = "forwardedMessageReceivedFromClient";
@@ -69,10 +74,6 @@ public class Commands {
 	
 	public final static String IAmTheMaster = "announcementOfYourselfAsTheMaster";
 	
-	/**
-	 * Masters needs to find a suitable host for the client
-	 */
-//	public final static String findHost = "FindSuitableHost";
 	public static String constructStatus(int nrOfClients, String address, int port, boolean isMaster) {
 	    return nrOfClients + delimiter + address + delimiter + port + delimiter + isMaster + delimiter;
 	}
@@ -87,6 +88,16 @@ public class Commands {
 	    return processID + delimiter + host.getAddress() + delimiter + host.getPort();
 	}
 	
+	
+	/**
+	 * Save the PID and start time of the starter who starts the election
+	 * for every election message (first set when constructing startElection)
+	 * @param host
+	 * @return
+	 */
+	public static String constructElectionMessage(String command, String processID, long time) {
+		return command + delimiter + processID + delimiter + time;
+	}
 	/**
 	 * Constructs commands from keywords
 	 * @param command keyword
@@ -97,6 +108,11 @@ public class Commands {
 	}
 	public static String constructCommand(String command) {
 	    return command + delimiter;
+	}
+	
+	public static String constructVoteCommand(String command,
+			String starterProcessID, Long time, String vote) {
+		return command + delimiter + starterProcessID + delimiter + time + delimiter + vote;
 	}
 	
 	public static boolean messageIsOfCommand(Message message, String command) {
@@ -116,6 +132,16 @@ public class Commands {
     
     public static String getVote(Message message){
         String[] messageParts = message.getText().split(delimiter);
-        return messageParts[1];
+        return messageParts[3];
     }
+
+	public static String getStarterProcessID(Message message) {
+		String[] messageParts = message.getText().split(delimiter);
+		return messageParts[1];
+	}
+
+	public static long getStarterTime(Message message) {
+		String[] messageParts = message.getText().split(delimiter);
+		return Long.parseLong(messageParts[2]);
+	}
 }

@@ -66,9 +66,7 @@ public class Server {
         //A waiting time (Thread.sleep(2000)) exists at the beginning of the elections.
         
         // For starting Elections on host's start up
-        String command = Commands.constructCommand(Commands.startElection);
-		Message electionsStart = new Message(MessageType.mHostCommand, true, command);
-		messageController.queueSend.push(electionsStart);
+        Election.initElection();
     }
    
 }
