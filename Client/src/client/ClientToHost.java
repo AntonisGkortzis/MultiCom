@@ -17,22 +17,23 @@ import sharedresources.Message;
 
 public class ClientToHost {
 	
-	private Socket clientSocket;
-	private Client client;
+	private static Socket clientSocket;
+	private static Client client;
+	private static ObjectOutputStream outputStream;
 	
 	public ClientToHost(Client client) {
 		try {
 			this.client = client;
 			this.clientSocket = new Socket(Config.hostName, Config.connectToPortFromHost);
             this.client.setServerStatus("Connection Established on port: " + Config.connectToPortFromHost,true); 
-
+            this.outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
 		} catch (IOException e) {
 			client.showErrorMessage("Failed to make a connection to '"+Config.hostName+"' on port "+Config.connectToPortFromHost);
 		}
 		
 	}
 	public Socket getSocket(){
-		return this.clientSocket;
+		return ClientToHost.clientSocket;
 	}
 
 //	public void start() {
@@ -66,21 +67,28 @@ public class ClientToHost {
 //        }
 //	}
 	public void sendMessage(String text) {
+//            ObjectOutputStream outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
+            Message message = new Message(Message.MessageType.hostChat, false, client.getUserName(), text, Client.getNextMessageId());
+            sendMessage(message);
+            
+            //after sending the message we should store it at the SentMessages queue and wait for its acknowledgment
+            Client.messageController.queueSentMessages.push(message);
+	}
+	
+	public static void sendMessage(Message message){
 		if (clientSocket == null) {
-            client.showErrorMessage("You are not connected.");
-            return;
-    	}
-        try {
-            ObjectOutputStream outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
-            Message message = new Message(Message.MessageType.hostChat, false, client.getUserName(), text);
-            outputStream.writeObject(message);
-            outputStream.flush();
-            System.out.println("@@ Client to Host--> send message: " + message.getText());
-        } catch(IOException ex) {
-            client.showErrorMessage("Connection closed, is the server running?\n"+ex.getMessage());
-            client.closeSocket();
+			client.showErrorMessage("You are not connected.");
+			return;
+		}
+		try {
+			outputStream.writeObject(message);
+			outputStream.flush();
+			System.out.println("@@ Client to Host--> send message: " + message.getText());
+		} catch(IOException ex) {
+			client.showErrorMessage("Connection closed, is the server running?\n"+ex.getMessage());
+			client.closeSocket();
 //            ex.printStackTrace();
-        }
+		}
 		
 	}
 

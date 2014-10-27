@@ -47,7 +47,7 @@ public class MessageQueue{
 	/*
 	 * Removes and returns an object of a given index from the queue .
 	 */
-	public void remove(String user, int id){
+	public void remove(String user, long id){
 		if(!isEmpty()){
 			for(int i=0; i<size(); i++){
 				if(this.queue.get(i).getUsername().equals(user) 
@@ -64,6 +64,10 @@ public class MessageQueue{
 	
 	public boolean isEmpty(){
 		return this.queue.isEmpty();
+	}
+
+	public Message get(int i) {
+		return this.queue.get(i);
 	}
 
 }

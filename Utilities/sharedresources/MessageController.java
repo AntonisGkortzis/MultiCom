@@ -19,6 +19,10 @@ public class MessageController {
 	// This one is just for sending and NOT for storing received messages
 	public MessageQueue queueSend = new MessageQueue();
 	
+	//Stores the created (ready to be sent) acknowledgments 
+	public MessageQueue queueAcknowledgements = new MessageQueue();
+	//Stores the sent messages. These messages will be removed after receiving their acknowledgment.
+	public MessageQueue queueSentMessages = new MessageQueue();
 	
 	public MessageController(){
 //		System.out.println("Creating message controller..");

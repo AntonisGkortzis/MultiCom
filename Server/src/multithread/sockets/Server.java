@@ -19,6 +19,7 @@ public class Server {
     public static int port; //port for one to one connections with clients
     public static int mPort; // port for multicast message to clients
     public static String address;
+    public static long messageId;
     
     public static MessageController messageController = new MessageController();
    

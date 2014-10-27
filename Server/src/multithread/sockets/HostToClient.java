@@ -2,6 +2,7 @@ package multithread.sockets;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+
 import sharedresources.*;
 
 /**
@@ -42,8 +43,32 @@ public class HostToClient implements Runnable{
 
     @Override
     public void run() {
-//        listen(listener);
+    	//sending acknowledgement for parsed messages.
+    	boolean flag=true;
+        while (flag) {
+        	
+            //Messages that are only to be sent
+        	Message message = Server.messageController.queueAcknowledgements.pop();
+            if(message != null ){
+            	System.out.println("Sending acknowledgment " + message.toString());
+            	flag = HostToMHost.sendMessage(message);
+            }	
+    	
+            try {
+                Thread.sleep(150); //TODO put delay in config. Must be faster than push from ping for now
+            } 
+            catch (InterruptedException e) { 
+                e.printStackTrace();
+                flag=false;
+            }
+        }
         
+        try {
+			socket.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
     }
 
 }

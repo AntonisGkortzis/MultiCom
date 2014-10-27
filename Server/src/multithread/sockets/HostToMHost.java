@@ -23,7 +23,7 @@ import sharedresources.Misc;
  */
 public class HostToMHost implements Runnable{
 
-    private DatagramSocket socket;
+    private static DatagramSocket socket;
     private Election election;
 
 	public HostToMHost() {	    
@@ -144,7 +144,7 @@ public class HostToMHost implements Runnable{
         
     }
         
-    public boolean sendMessage(Message message) {
+    public static boolean sendMessage(Message message) { //
         InetAddress group;
         try {
             group = InetAddress.getByName(Config.multiCastAddress);

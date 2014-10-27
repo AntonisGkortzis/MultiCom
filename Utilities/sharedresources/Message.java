@@ -3,6 +3,8 @@ package sharedresources;
 
 import java.io.Serializable;
 
+import com.sun.security.ntlm.Client;
+
 /**
  * This class is used for storing message information
  *
@@ -20,7 +22,8 @@ public class Message implements Serializable {
         mHostVote,
         clientChat,
         mClientCommand,
-        hostChat
+        hostChat,
+        acknowledgement
     }
     
     private static final long serialVersionUID = 1L;
@@ -30,7 +33,7 @@ public class Message implements Serializable {
 	private long timestamp;				//The time that the message was sent
 	private String username;				//The name of the user sending the message.
 	private String processID;            //The id of the process sending the message.
-	private int id=0;					//An incrementing number as an id //TODO used for what?
+	private long id=0;					//An incrementing number as an id //TODO used for what?
 	private boolean clientAsReceiver;
 	
 	public Message(){}
@@ -39,14 +42,15 @@ public class Message implements Serializable {
 		this.messageType = type;
 		this.command = command;
 		this.processID = Misc.processID;
-		this.id++;
+//		this.id++;
 		this.text = text;
 		this.clientAsReceiver = false;
 	}
 	
-	public Message(MessageType type, boolean command, String username, String text){
+	public Message(MessageType type, boolean command, String username, String text, long id){
 		this(type, command, text);
 		this.username = username;
+		this.id = id;
 	}
 	
 	public MessageType getMessageType() {
@@ -69,7 +73,7 @@ public class Message implements Serializable {
 		return this.text;
 	}
 	
-	public int getId(){
+	public long getId(){
 		return this.id;
 	}
 	
@@ -102,7 +106,7 @@ public class Message implements Serializable {
 	
 	public String toString(){
 		String s = "";
-		s = "Type: " + messageType +", processID: " + processID +", Text: " + text;
+		s = "Id: " + id+ ", Type: " + messageType +", processID: " + processID +", Text: " + text;
 		
 		return s;
 	}

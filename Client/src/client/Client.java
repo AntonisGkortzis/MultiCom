@@ -30,6 +30,12 @@ public class Client extends javax.swing.JFrame {
     private Socket socketClient;
     private ClientToHost clientToHost;
     public static MessageController messageController = new MessageController();
+    
+    /**
+     * A unique number that will is used as a messages' identifier. 
+     */
+    private static long messageId;
+    
     /**
      * Creates new form ChatClient
      */
@@ -210,6 +216,9 @@ public class Client extends javax.swing.JFrame {
     	clientToHost = new ClientToHost(this);
     	socketClient = clientToHost.getSocket();
     	
+    	ReceivedAcknowledgmentsMonitor ackMonitor = new ReceivedAcknowledgmentsMonitor();
+    	ackMonitor.start();
+    	
     	sendFirstConnectMessageToHost();
         
     }//GEN-LAST:event_ConnectToServerButtonActionPerformed
@@ -285,6 +294,10 @@ public class Client extends javax.swing.JFrame {
     }
     public String getUserName(){
         return this.UsernameTextField.getText();
+    }
+    
+    public static long getNextMessageId(){
+    	return ++messageId;
     }
     
 //    /**

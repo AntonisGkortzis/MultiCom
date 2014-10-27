@@ -61,6 +61,8 @@ public class Commands {
 //	public final static String imAlive = "respondToIsAnyoneAlive"; //TODO this is probably StatusUpdate
 
 	
+	public final static String acknowledgement = "containerOfAMessageAcknowledgement";
+	
 	public static String[] splitMessage(Message message) {
 	    return message.getText().split(delimiter);
 	}
@@ -143,5 +145,9 @@ public class Commands {
 	public static long getStarterTime(Message message) {
 		String[] messageParts = message.getText().split(delimiter);
 		return Long.parseLong(messageParts[2]);
+	}
+	
+	public static long getOriginalId(Message message){
+		return Long.parseLong(message.getText());
 	}
 }
