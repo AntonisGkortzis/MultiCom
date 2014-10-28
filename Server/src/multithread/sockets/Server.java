@@ -40,8 +40,8 @@ public class Server {
         HostToClient hostToClient = new HostToClient();
         hostToClient.start();       
         
-        OneToOneListener oneToOneListener = new OneToOneListener(hostToClient.getSocket(), Server.messageController);
-        oneToOneListener.start();
+//        OneToOneListener oneToOneListener = new OneToOneListener(hostToClient.getSocket(), Server.messageController);
+//        oneToOneListener.start();
         
         //One to many communication between host and its clients
         HostToMClient hostToMClient = new HostToMClient();

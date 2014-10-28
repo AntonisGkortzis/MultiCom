@@ -17,23 +17,23 @@ import sharedresources.Message;
 
 public class ClientToHost {
 	
-	private static Socket clientSocket;
-	private static Client client;
-	private static ObjectOutputStream outputStream;
+	private Socket clientSocket;
+	private Client client;
+	private ObjectOutputStream outputStream;
 	
 	public ClientToHost(Client client) {
 		try {
 			this.client = client;
 			this.clientSocket = new Socket(Config.hostName, Config.connectToPortFromHost);
             this.client.setServerStatus("Connection Established on port: " + Config.connectToPortFromHost,true); 
-            this.outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
+//            this.outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
 		} catch (IOException e) {
 			client.showErrorMessage("Failed to make a connection to '"+Config.hostName+"' on port "+Config.connectToPortFromHost);
 		}
 		
 	}
 	public Socket getSocket(){
-		return ClientToHost.clientSocket;
+		return this.clientSocket;
 	}
 
 //	public void start() {
@@ -66,8 +66,9 @@ public class ClientToHost {
 //            client.setServerStatus("Connection failed..", false);
 //        }
 //	}
+	
+	//TODO ack for initConnection ?? if so do nothing else have check here
 	public void sendMessage(String text) {
-//            ObjectOutputStream outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
             Message message = new Message(Message.MessageType.hostChat, false, client.getUserName(), text, Client.getNextMessageId());
             sendMessage(message);
             
@@ -75,12 +76,13 @@ public class ClientToHost {
             Client.messageController.queueSentMessages.push(message);
 	}
 	
-	public static void sendMessage(Message message){
+	public void sendMessage(Message message){
 		if (clientSocket == null) {
 			client.showErrorMessage("You are not connected.");
 			return;
 		}
 		try {
+			ObjectOutputStream outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
 			outputStream.writeObject(message);
 			outputStream.flush();
 			System.out.println("@@ Client to Host--> send message: " + message.getText());

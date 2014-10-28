@@ -216,8 +216,8 @@ public class Client extends javax.swing.JFrame {
     	clientToHost = new ClientToHost(this);
     	socketClient = clientToHost.getSocket();
     	
-    	ReceivedAcknowledgmentsMonitor ackMonitor = new ReceivedAcknowledgmentsMonitor();
-    	ackMonitor.start();
+//    	ReceivedAcknowledgmentsMonitor ackMonitor = new ReceivedAcknowledgmentsMonitor(clientToHost);
+//    	ackMonitor.start();
     	
     	sendFirstConnectMessageToHost();
         

@@ -5,6 +5,11 @@ import sharedresources.Message;
 
 public class ReceivedAcknowledgmentsMonitor implements Runnable {
 	
+	private ClientToHost clientToHost;
+
+	public ReceivedAcknowledgmentsMonitor(ClientToHost clientToHost) {
+		this.clientToHost = clientToHost;
+	}
 	public void start() {
 		Thread t = new Thread(this);
 		t.start();
@@ -19,7 +24,7 @@ public class ReceivedAcknowledgmentsMonitor implements Runnable {
 			//check if there are any unverified messages in the SentMessages queue
 			for(int i=0; i<Client.messageController.queueSentMessages.size(); i++) {
 				Message message = Client.messageController.queueSentMessages.get(i);
-				ClientToHost.sendMessage(message);
+				clientToHost.sendMessage(message);
 			}
           	
             try {

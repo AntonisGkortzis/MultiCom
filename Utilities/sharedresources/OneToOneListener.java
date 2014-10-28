@@ -14,12 +14,11 @@ public class OneToOneListener implements Runnable {
     private Socket socket;
     private MessageController messageController;
     private Thread t;
-	private ServerSocket serverSocket;
 	
 	public static long messageId = 0;
     
-    public OneToOneListener(ServerSocket serverSocket, MessageController messageController) {
-    	this.serverSocket = serverSocket;
+    public OneToOneListener(Socket socket, MessageController messageController) {
+    	this.socket = socket;
         this.messageController = messageController;
     }
 
@@ -33,27 +32,18 @@ public class OneToOneListener implements Runnable {
     	Message message;
     	boolean flag = true;
 		
-    	//Accepts a connection. This blocks until a connection is accepted
-    	try {
-			this.socket = this.serverSocket.accept();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	
     	while(flag) {
 	    	try {
 				inStream = new ObjectInputStream(socket.getInputStream());
 				message = (Message)inStream.readObject();
-				System.out.println(message.toString());
+				System.out.println("@ OneToOneListener" + message.toString());
 				if(Commands.messageIsOfCommand(message, Commands.initOneToOneWithHost)) {
-				    addNewClient(message.getProcessID(), message.getUsername());
 				    //Not further action is needed as this is only a 
 				    //message to let the host know that there is a new client.
-				    //continue;
+					addNewClient(message.getProcessID(), message.getUsername());
 				}
 				//if the message is a chat message (sent from client to host)
-				else if(Commands.messageIsOfCommand(message, Commands.chatMessage)){
+				else if(message.getMessageType().equals(Message.MessageType.hostChat)){
 				    message.setProcessId(Misc.processID);
 				    messageController.queueHostChat.push(message); //to send it to the clients connected on this host
 				    String command = Commands.constructCommand(Commands.forwardMessage, message.getText());

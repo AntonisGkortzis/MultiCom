@@ -3,8 +3,6 @@ package sharedresources;
 
 import java.io.Serializable;
 
-import com.sun.security.ntlm.Client;
-
 /**
  * This class is used for storing message information
  *
