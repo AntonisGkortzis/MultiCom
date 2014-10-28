@@ -7,6 +7,7 @@ import java.net.Socket;
 import sharedresources.Commands;
 import sharedresources.Config;
 import sharedresources.Message;
+import sharedresources.Misc;
 
 /**
  * Used for sending one to one information to one specific host.
@@ -68,12 +69,12 @@ public class ClientToHost {
 	
 	//TODO ack for initConnection ?? if so do nothing else have check here
 	public void sendMessage(String text) {
-            Message message = new Message(Message.MessageType.hostChat, false, client.getUserName(), text, Client.getNextMessageId());
+            Message message = new Message(Message.MessageType.hostChat, false, client.getUserName(), text, Misc.getNextMessageId());
             sendMessage(message);
             
             //after sending the message we should store it at the SentMessages queue and wait for its acknowledgment
             if(!Commands.messageIsOfCommand(message, Commands.initOneToOneWithHost))
-            	Client.messageController.queueSentMessages.push(message);
+            	Client.messageController.queueSentMessagesByClient.push(message);
 	}
 	
 	public void sendMessage(Message message){

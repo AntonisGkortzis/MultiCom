@@ -4,7 +4,6 @@ import sharedresources.Message;
 import sharedresources.MessageController;
 import sharedresources.Misc;
 import sharedresources.OneToManyListener;
-import sharedresources.OneToOneListener;
 
 /**
  * This class is used to start a server and initiates all the connections.
@@ -19,7 +18,6 @@ public class Server {
     public static int port; //port for one to one connections with clients
     public static int mPort; // port for multicast message to clients
     public static String address;
-    public static long messageId;
     
     public static MessageController messageController = new MessageController();
    

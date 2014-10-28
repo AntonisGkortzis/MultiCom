@@ -18,15 +18,15 @@ public class ReceivedAcknowledgmentsMonitor implements Runnable {
 	@Override
 	public void run() {
 		while(true) {
-			if(Client.messageController.queueSentMessages.size() <= 0 )
+			if(Client.messageController.queueSentMessagesByClient.size() <= 0 )
 				continue;
 			
 			//check if there are any unverified messages in the SentMessages queue
-			for(int i=0; i<Client.messageController.queueSentMessages.size(); i++) {
-				Message message = Client.messageController.queueSentMessages.get(i);
+			for(int i=0; i<Client.messageController.queueSentMessagesByClient.size(); i++) {
+				Message message = Client.messageController.queueSentMessagesByClient.get(i);
 				//Remove the message if it has been re-sent more than 2 times
 				if(message.getTimesSent() > 2){
-					Client.messageController.queueSentMessages.remove(message.getUsername(), message.getId());
+					Client.messageController.queueSentMessagesByClient.remove(message.getUsername(), message.getId());
 				} else {
 					clientToHost.sendMessage(message);
 				}

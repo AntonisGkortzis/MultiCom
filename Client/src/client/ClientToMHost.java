@@ -11,6 +11,7 @@ import java.net.SocketException;
 import sharedresources.Commands;
 import sharedresources.Config;
 import sharedresources.Message;
+import sharedresources.Misc;
 
 /**
  * This class is used when starting a client which wants to connect to a host.
@@ -41,7 +42,7 @@ public class ClientToMHost {
 			group = InetAddress.getByName(Config.multiCastAddress);
 			
 			String command = Commands.constructCommand(Commands.connectRequest);
-	        Message message = new Message(Message.MessageType.mHostCommand, true, client.getUserName(), command, Client.getNextMessageId());
+	        Message message = new Message(Message.MessageType.mHostCommand, true, client.getUserName(), command, Misc.getNextMessageId());
 	    	System.out.println("Message " + message.getText());
 	    	
 	        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

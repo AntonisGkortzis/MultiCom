@@ -1,9 +1,13 @@
 package sharedresources;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import sharedresources.Message.MessageType;;
 
 /**
- * This class is used for creating and using one MesssageQueue() object throughout the program.
+ * This class is used for creating and using MesssageQueue() objects throughout the program.
+ * Messages will be placed in the correct queue by pushMessageInCorrectQueue
  * 
  */
 public class MessageController {
@@ -21,13 +25,11 @@ public class MessageController {
 	
 	//Stores the created (ready to be sent) acknowledgments 
 	public MessageQueue queueAcknowledgements = new MessageQueue();
-	//Stores the sent messages. These messages will be removed after receiving their acknowledgment.
-	public MessageQueue queueSentMessages = new MessageQueue();
+	//Stores the sent messages by clients. These messages will be removed after receiving their acknowledgment. Otherwise sent again
+	public MessageQueue queueSentMessagesByClient = new MessageQueue();
+	//Stores the sent messages by hosts to its clients.
+	public List<ForwardMessage> queueSentMessagesByHostToClient = new ArrayList<ForwardMessage>();
 	
-	public MessageController(){
-//		System.out.println("Creating message controller..");
-	}
-
 
 	public void pushMessageInCorrectQueue(Message receivedMessage) {
     	if(receivedMessage.getMessageType().equals(MessageType.mHostCommand)) {
@@ -45,15 +47,4 @@ public class MessageController {
 		
 	}
 	
-//	public MessageQueue getQueue(){
-//		return queue;
-//	}
-//	
-//	public void push(Message message){
-//		queue.push(message);
-//	}
-//	
-//	public Message pop(){
-//		return queue.pop();
-//	}
 }

@@ -19,7 +19,6 @@ public class OneToOneListener implements Runnable {
 	public static long messageId = 0;
     
     public OneToOneListener(Socket socket, MessageController messageController, boolean isHost) {
-    	System.out.println("OnweToOneListener initialised");
     	this.socket = socket;
         this.messageController = messageController;
         this.isHost = isHost;
@@ -64,7 +63,7 @@ public class OneToOneListener implements Runnable {
 				else if(message.getMessageType().equals(Message.MessageType.acknowledgement) && !this.isHost){
 					System.out.println("Ack received for message: " +message.toString());
 					//remove the original message form the SentMessages queue
-					messageController.queueSentMessages.remove(message.getUsername(), Commands.getOriginalId(message));
+					messageController.queueSentMessagesByClient.remove(message.getUsername(), Commands.getOriginalId(message));
 				}
 				
 				Thread.sleep(250);

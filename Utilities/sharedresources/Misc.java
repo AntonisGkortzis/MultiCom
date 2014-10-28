@@ -10,6 +10,15 @@ public class Misc {
 	 */
 	public static final String processID = ManagementFactory.getRuntimeMXBean().getName();
 
+    
+    /**
+     * A unique number that is used as a message's identifier. 
+     */
+    public static long messageId=0;
+    
 
+    public static long getNextMessageId(){
+        return ++messageId;
+    }
 
 }

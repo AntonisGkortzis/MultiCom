@@ -7,6 +7,8 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 
+import com.sun.corba.se.spi.activation.Server;
+
 /**
  * This class is used to listen for messages send with Multicast to multiple hosts
  * Messages are of type:
@@ -82,13 +84,14 @@ public class OneToManyListener implements Runnable {
 	}
 	
 	private void handleMessage(Message message) {
-		//Ignore your own Messages
+		//Ignore your own Messages except for election messages
 		if(message.getProcessID().equals(Misc.processID) 
 				&& !Commands.messageIsOfCommand(message, Commands.IAmTheMaster)
 				&& !Commands.messageIsOfCommand(message, Commands.startElection)
 				&& !Commands.messageIsOfCommand(message, Commands.vote)){
 			return;
 		}
+		//Messages destined for clients only
 		if(message.getMessageType().equals(Message.MessageType.mClientCommand) 
 				&& isHost
 				&& message.getClientAsReceiver())
@@ -96,12 +99,28 @@ public class OneToManyListener implements Runnable {
 			return;
 		}
 		
+		//For forwarding messages to clients
 		if(message.getMessageType().equals(Message.MessageType.mHostChat)) {
-			message.setMessageType(Message.MessageType.hostChat);
+			message.setMessageType(Message.MessageType.hostChat); //TODO This message is not pushed in here but in oneToOneListener :s
+			
+			//Put the message in a queue for possible resending
+			addToRetryQueue(message);
+			
 		}
 		
 		//TODO explain queues and commands in report
 		messageController.pushMessageInCorrectQueue(message);
 		
 	}
+
+
+    private void addToRetryQueue(Message message) {
+        ForwardMessage forwardMessage = new ForwardMessage(message, Misc.getNextMessageId());
+        for(ConnectedClient client: ConnectedClientsList.clients) {
+            forwardMessage.addClient(client);
+        }
+        
+        messageController.queueSentMessagesByHostToClient.add(forwardMessage);
+        
+    }
 }

@@ -8,7 +8,7 @@ import java.util.List;
  * The purpose of this class is to know to which clients acknowledgments have to be send
  */
 public class ConnectedClientsList {
-	private static List<ConnectedClient> clients = new ArrayList<>();
+	public static List<ConnectedClient> clients = new ArrayList<>();
 	
 	public ConnectedClientsList(){}
 	

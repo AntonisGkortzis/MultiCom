@@ -31,11 +31,7 @@ public class Client extends javax.swing.JFrame {
     private Socket socketClient;
     private ClientToHost clientToHost;
     public static MessageController messageController = new MessageController();
-    
-    /**
-     * A unique number that will is used as a messages' identifier. 
-     */
-    private static long messageId;
+
     
     /**
      * Creates new form ChatClient
@@ -202,7 +198,7 @@ public class Client extends javax.swing.JFrame {
 			}
         	Message message = messageController.queueMClientCommand.pop();
         	if(message!=null && Commands.messageIsOfCommand(message, Commands.hostFound)) {
-        		messageController.queueSentMessages.clear();
+        		messageController.queueSentMessagesByClient.clear();
         		
                 String[] messageParts = Commands.splitMessage(message);
                 if(Misc.processID.equals(messageParts[1])) { //This client requested a connection
@@ -308,9 +304,6 @@ public class Client extends javax.swing.JFrame {
         return this.UsernameTextField.getText();
     }
     
-    public static long getNextMessageId(){
-    	return ++messageId;
-    }
     
 //    /**
 //     * @Deprecated
