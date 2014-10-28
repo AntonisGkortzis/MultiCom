@@ -166,8 +166,10 @@ public class Client extends javax.swing.JFrame {
     	OneToManyListener oneToManyListener = new OneToManyListener(messageController, false);
     	oneToManyListener.start();
     	
+    	
     	//Multicast to join network
     	ClientToMHost clientToMHost = new ClientToMHost(this);
+    	
     	//Send connect request through global multicast
     	clientToMHost.sendConnectRequest();
     	
@@ -221,6 +223,9 @@ public class Client extends javax.swing.JFrame {
     	clientToHost = new ClientToHost(this);
     	socketClient = clientToHost.getSocket();
     	
+    	ClientToHostAckSender clientToHostAckSender = new ClientToHostAckSender(clientToHost);
+    	clientToHostAckSender.start();
+
     	OneToOneListener oneToOneListener = new OneToOneListener(socketClient, messageController, false);
     	oneToOneListener.start();
     	

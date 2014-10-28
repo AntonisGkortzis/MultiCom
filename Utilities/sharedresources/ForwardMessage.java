@@ -6,13 +6,13 @@ import java.util.Iterator;
 
 public class ForwardMessage {
 
-    public Message message;
-    public long messageId;
-    public ArrayList<ClientAmountSendPair> clients;
+    private Message message;
+    private long id;
+    private ArrayList<ClientAmountSendPair> clients;
     
     public ForwardMessage(Message message, long messageId) {
         this.message = message;
-        this.messageId = messageId;
+        this.id = messageId;
         clients = new ArrayList<ClientAmountSendPair>();
     }
     
@@ -65,12 +65,12 @@ public class ForwardMessage {
         this.message = message;
     }
 
-    public long getMessageId() {
-        return messageId;
+    public long getId() {
+        return id;
     }
 
-    public void setMessageId(long messageId) {
-        this.messageId = messageId;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public ArrayList<ClientAmountSendPair> getClients() {

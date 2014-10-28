@@ -67,12 +67,12 @@ public class ClientToHost {
 //        }
 //	}
 	
-	//TODO ack for initConnection ?? if so do nothing else have check here
 	public void sendMessage(String text) {
             Message message = new Message(Message.MessageType.hostChat, false, client.getUserName(), text, Misc.getNextMessageId());
             sendMessage(message);
             
             //after sending the message we should store it at the SentMessages queue and wait for its acknowledgment
+            //initialize command is not acknowledged
             if(!Commands.messageIsOfCommand(message, Commands.initOneToOneWithHost))
             	Client.messageController.queueSentMessagesByClient.push(message);
 	}

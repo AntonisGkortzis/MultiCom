@@ -116,11 +116,6 @@ public class Commands {
 			String starterProcessID, Long time, String vote) {
 		return command + delimiter + starterProcessID + delimiter + time + delimiter + vote;
 	}
-	
-	public static boolean messageIsOfCommand(Message message, String command) {
-		String[] messageParts = message.getText().split(delimiter);
-		return messageParts[0].equals(command);
-	}
     public static Host getStatus(Message message) {
         String[] messageParts = message.getText().split(delimiter);
         int nrOfClients = Integer.parseInt(messageParts[1]);
@@ -132,23 +127,40 @@ public class Commands {
         return new Host(nrOfClients, address, port, isMaster, processID);
     }
     
+    public static boolean messageIsOfCommand(Message message, String command) {
+//        String[] messageParts = message.getText().split(delimiter);
+//        return messageParts[0].equals(command);
+        return getMessagePart(message, 0).equals(command);
+    }
+    
     public static String getVote(Message message){
-        String[] messageParts = message.getText().split(delimiter);
-        return messageParts[3];
+//        String[] messageParts = message.getText().split(delimiter);
+//        return messageParts[3];
+        return getMessagePart(message, 3);
     }
 
 	public static String getStarterProcessID(Message message) {
-		String[] messageParts = message.getText().split(delimiter);
-		return messageParts[1];
+//		String[] messageParts = message.getText().split(delimiter);
+//		return messageParts[1];
+	    return getMessagePart(message, 1);
+
 	}
 
 	public static long getStarterTime(Message message) {
-		String[] messageParts = message.getText().split(delimiter);
-		return Long.parseLong(messageParts[2]);
+//		String[] messageParts = message.getText().split(delimiter);
+//		return Long.parseLong(messageParts[2]);
+	    return Long.parseLong(getMessagePart(message, 2));
+
 	}
 	
 	public static long getOriginalId(Message message){
-		String[] messageParts = message.getText().split(delimiter);
-		return Long.parseLong(messageParts[1]);
+//		String[] messageParts = message.getText().split(delimiter);
+//		return Long.parseLong(messageParts[1]);
+	    return Long.parseLong(getMessagePart(message, 1));
+	}
+	
+	private static String getMessagePart(Message message, int i) {
+	    String[] messageParts = message.getText().split(delimiter);
+        return messageParts[i];
 	}
 }

@@ -42,8 +42,10 @@ public class MessageController {
     		this.queueMHostsVote.push(receivedMessage);
     	} else if(receivedMessage.getMessageType().equals(MessageType.mClientCommand)) {
     		this.queueMClientCommand.push(receivedMessage);
-    	} 
-
+    	}/* else if(receivedMessage.getMessageType().equals(MessageType.hostChat)) {
+    	    this.queueHostChat.push(receivedMessage);
+    	}
+*/
 		
 	}
 	

@@ -60,10 +60,17 @@ public class OneToOneListener implements Runnable {
 				    messageController.queueAcknowledgements.push(ack);
 				}
 				//if the message is an acknowledgment sent by a Host to a Client
-				else if(message.getMessageType().equals(Message.MessageType.acknowledgement) && !this.isHost){
-					System.out.println("Ack received for message: " +message.toString());
-					//remove the original message form the SentMessages queue
-					messageController.queueSentMessagesByClient.remove(message.getUsername(), Commands.getOriginalId(message));
+				else if(message.getMessageType().equals(Message.MessageType.acknowledgement)){
+				    if(!this.isHost) {
+				        System.out.println("Ack received for message by client: " +message.toString());
+				        //remove the original message form the SentMessages queue
+				        messageController.queueSentMessagesByClient.remove(message.getUsername(), Commands.getOriginalId(message));
+				    } else { //a host can receive an ack from a client
+				        removeResendMessageToClient(message);
+				        
+                        System.out.println("Ack received for message by host: " +message.toString());				        
+				        
+				    }
 				}
 				
 				Thread.sleep(250);
@@ -75,6 +82,20 @@ public class OneToOneListener implements Runnable {
     	}
     }
     
+    /**
+     * Remove the client for a message as the client has sent an acknowledgement.
+     * @param message
+     */
+    private void removeResendMessageToClient(Message message) {
+        for(ForwardMessage forwardMessage: messageController.queueSentMessagesByHostToClient) {
+            System.out.println("Never here???? " + forwardMessage.getId());
+            if(forwardMessage.getId() == Commands.getOriginalId(message)) { //correct message
+                System.out.println("@@ OneToOneListener (host): Removing client as I received an ack.");
+                forwardMessage.removeClient(message.getProcessID());
+                break;
+            }
+        }
+    }
     private void addNewClient(String processID, String username) {
     	if(!ConnectedClientsList.clientExists(processID)) {
 	    	ConnectedClient newclient = new ConnectedClient(processID, username);

@@ -7,6 +7,7 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 
+import sharedresources.Commands;
 import sharedresources.Config;
 import sharedresources.Message;
 
@@ -49,9 +50,14 @@ public class MClientListener implements Runnable {
                 ByteArrayInputStream in = new ByteArrayInputStream(data);
                 ObjectInputStream is = new ObjectInputStream(in);
                 try{
-                	Message received = (Message)is.readObject();  
-                	System.out.println("Client received: " + received.getText());
-                	client.AddTextToMainPanel(received.getTimestamp() + "| " + received.getUsername() + ": " + received.getText());
+                	Message message = (Message)is.readObject();  
+                	System.out.println("Client received: " + message.getText() + " id: " + message.getId());
+                	client.AddTextToMainPanel(message.getTimestamp() + "| " + message.getUsername() + ": " + message.getText());
+                	
+                	//create the acknowledgement and store it in the queueAcknowledgments
+                    String command = Commands.constructCommand(Commands.acknowledgement, Long.toString(message.getId()));
+                    Message ack = new Message(Message.MessageType.acknowledgement, true, command);
+                    Client.messageController.queueAcknowledgements.push(ack);
                 } catch(ClassNotFoundException ex) {
                 	ex.printStackTrace();
                 }
