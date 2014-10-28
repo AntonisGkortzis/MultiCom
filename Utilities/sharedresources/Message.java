@@ -2,6 +2,7 @@ package sharedresources;
 
 
 import java.io.Serializable;
+import java.net.Socket;
 
 /**
  * This class is used for storing message information
@@ -33,6 +34,7 @@ public class Message implements Serializable {
 	private String processID;            //The id of the process sending the message.
 	private long id=0;					//An incrementing number as an id //TODO used for what?
 	private boolean clientAsReceiver;
+	private Socket socket;
 	
 	public Message(){}
 	
@@ -49,6 +51,14 @@ public class Message implements Serializable {
 		this(type, command, text);
 		this.username = username;
 		this.id = id;
+	}
+	
+	public void setSocket(Socket socket){
+		this.socket = socket;
+	}
+	
+	public Socket getSocket(){
+		return socket;
 	}
 	
 	public MessageType getMessageType() {

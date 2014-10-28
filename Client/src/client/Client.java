@@ -16,6 +16,7 @@ import sharedresources.Message;
 import sharedresources.MessageController;
 import sharedresources.Misc;
 import sharedresources.OneToManyListener;
+import sharedresources.OneToOneListener;
 /**
  * This class is used to create the Gui of the client and to start communication with the hosts. 
  * The connections started are:
@@ -216,8 +217,11 @@ public class Client extends javax.swing.JFrame {
     	clientToHost = new ClientToHost(this);
     	socketClient = clientToHost.getSocket();
     	
-//    	ReceivedAcknowledgmentsMonitor ackMonitor = new ReceivedAcknowledgmentsMonitor(clientToHost);
-//    	ackMonitor.start();
+    	OneToOneListener oneToOneListener = new OneToOneListener(socketClient, messageController, false);
+    	oneToOneListener.start();
+    	
+    	ReceivedAcknowledgmentsMonitor ackMonitor = new ReceivedAcknowledgmentsMonitor(clientToHost);
+    	ackMonitor.start();
     	
     	sendFirstConnectMessageToHost();
         

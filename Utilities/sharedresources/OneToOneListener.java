@@ -14,12 +14,15 @@ public class OneToOneListener implements Runnable {
     private Socket socket;
     private MessageController messageController;
     private Thread t;
+    private boolean isHost;
 	
 	public static long messageId = 0;
     
-    public OneToOneListener(Socket socket, MessageController messageController) {
+    public OneToOneListener(Socket socket, MessageController messageController, boolean isHost) {
+    	System.out.println("OnweToOneListener initialised");
     	this.socket = socket;
         this.messageController = messageController;
+        this.isHost = isHost;
     }
 
     public void start() {
@@ -43,7 +46,7 @@ public class OneToOneListener implements Runnable {
 					addNewClient(message.getProcessID(), message.getUsername());
 				}
 				//if the message is a chat message (sent from client to host)
-				else if(message.getMessageType().equals(Message.MessageType.hostChat)){
+				else if(message.getMessageType().equals(Message.MessageType.hostChat) && this.isHost){
 				    message.setProcessId(Misc.processID);
 				    messageController.queueHostChat.push(message); //to send it to the clients connected on this host
 				    String command = Commands.constructCommand(Commands.forwardMessage, message.getText());
@@ -53,10 +56,12 @@ public class OneToOneListener implements Runnable {
 				    //create the acknowledgement and store it in the queueAcknowledgments
 				    command = Commands.constructCommand(Commands.acknowledgement, Long.toString(message.getId()));
 				    Message ack = new Message(Message.MessageType.acknowledgement, true, command);
+				    ack.setSocket(socket);
+				    System.out.println("Pushing ack " + ack.toString());
 				    messageController.queueAcknowledgements.push(ack);
 				}
 				//if the message is an acknowledgment sent by a Host to a Client
-				else if(Commands.messageIsOfCommand(message, Commands.acknowledgement)){
+				else if(message.getMessageType().equals(Message.MessageType.acknowledgement) && !this.isHost){
 					System.out.println("Ack received for message: " +message.toString());
 					//remove the original message form the SentMessages queue
 					messageController.queueSentMessages.remove(message.getUsername(), Commands.getOriginalId(message));

@@ -56,23 +56,9 @@ public class HostToClient implements Runnable{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-    		OneToOneListener oneToOneListener = new OneToOneListener(socket, Server.messageController);
+    		OneToOneListener oneToOneListener = new OneToOneListener(socket, Server.messageController, true);
     		oneToOneListener.start();
             	
-//            //Messages that are only to be sent
-//        	Message message = Server.messageController.queueAcknowledgements.pop();
-//            if(message != null ){
-//            	System.out.println("Sending acknowledgment " + message.toString());
-//            	flag = this.sendMessage(socket, message);
-//            }	
-//    	
-//            try {
-//                Thread.sleep(150); //TODO put delay in config. Must be faster than push from ping for now
-//            } 
-//            catch (InterruptedException e) { 
-//                e.printStackTrace();
-//                flag=false;
-//            }
         }
         
         try {
@@ -81,23 +67,5 @@ public class HostToClient implements Runnable{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
-    }
-
-    private boolean sendMessage(Socket socket, Message message) {
-    	if (socket == null) {
-			System.out.println("@HostToClient Not connected to client");
-			return false;
-		}
-    	try {
-    		ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
-    		outputStream.writeObject(message);
-    		outputStream.flush();
-    		System.out.println("@@ HostToClient--> send message: " + message.getText());
-    	} catch(IOException ex) {
-            ex.printStackTrace();
-            return false;
-    	}
-    	
-    	return true;
     }
 }
