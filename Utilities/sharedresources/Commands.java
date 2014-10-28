@@ -148,6 +148,7 @@ public class Commands {
 	}
 	
 	public static long getOriginalId(Message message){
-		return Long.parseLong(message.getText());
+		String[] messageParts = message.getText().split(delimiter);
+		return Long.parseLong(messageParts[1]);
 	}
 }

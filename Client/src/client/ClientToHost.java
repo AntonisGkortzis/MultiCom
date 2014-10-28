@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import sharedresources.Commands;
 import sharedresources.Config;
 import sharedresources.Message;
 
@@ -73,7 +74,8 @@ public class ClientToHost {
             sendMessage(message);
             
             //after sending the message we should store it at the SentMessages queue and wait for its acknowledgment
-            Client.messageController.queueSentMessages.push(message);
+            if(!Commands.messageIsOfCommand(message, Commands.initOneToOneWithHost))
+            	Client.messageController.queueSentMessages.push(message);
 	}
 	
 	public void sendMessage(Message message){
