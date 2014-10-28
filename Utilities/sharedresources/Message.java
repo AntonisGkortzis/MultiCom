@@ -87,6 +87,10 @@ public class Message implements Serializable {
 		return this.id;
 	}
 	
+	public void setId(long id) {
+	    this.id = id;
+	}
+	
 	public long getTimestamp(){
 		return this.timestamp;
 	}

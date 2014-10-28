@@ -101,9 +101,11 @@ public class OneToManyListener implements Runnable {
 		
 		//For forwarding messages to clients
 		if(message.getMessageType().equals(Message.MessageType.mHostChat)) {
-			message.setMessageType(Message.MessageType.hostChat); //TODO This message is not pushed in here but in oneToOneListener :s
+			message.setMessageType(Message.MessageType.hostChat); //TODO This message is not pushed in here but in oneToOneListener, or not?? :s
+			long messageId = Misc.getNextMessageId();
+			message.setId(messageId); //This message must have a new unique id 
 			
-			//Put the message in a queue for possible resending
+			//Put the message in a queue for possible re-sending
 			addToRetryQueue(message);
 			
 		}
@@ -115,7 +117,7 @@ public class OneToManyListener implements Runnable {
 
 
     private void addToRetryQueue(Message message) {
-        ForwardMessage forwardMessage = new ForwardMessage(message, Misc.getNextMessageId());
+        ForwardMessage forwardMessage = new ForwardMessage(message, message.getId());
         for(ConnectedClient client: ConnectedClientsList.clients) {
             forwardMessage.addClient(client);
         }
