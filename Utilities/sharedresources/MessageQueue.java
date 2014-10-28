@@ -70,4 +70,9 @@ public class MessageQueue{
 		return this.queue.get(i);
 	}
 
+	public void clear() {
+		this.queue.clear();
+		
+	}
+
 }

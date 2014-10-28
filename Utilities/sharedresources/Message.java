@@ -35,6 +35,7 @@ public class Message implements Serializable {
 	private long id=0;					//An incrementing number as an id //TODO used for what?
 	private boolean clientAsReceiver;
 	private Socket socket;
+	private int timesSent;
 	
 	public Message(){}
 	
@@ -45,6 +46,7 @@ public class Message implements Serializable {
 //		this.id++;
 		this.text = text;
 		this.clientAsReceiver = false;
+		this.incTimesSent(0);
 	}
 	
 	public Message(MessageType type, boolean command, String username, String text, long id){
@@ -117,6 +119,14 @@ public class Message implements Serializable {
 		s = "Id: " + id+ ", Type: " + messageType +", processID: " + processID +", Text: " + text;
 		
 		return s;
+	}
+
+	public int getTimesSent() {
+		return timesSent;
+	}
+
+	public void incTimesSent(int timesSent) {
+		this.timesSent++;
 	}
 
 }

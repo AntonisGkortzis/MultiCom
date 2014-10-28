@@ -20,14 +20,12 @@ public class ClientToHost {
 	
 	private Socket clientSocket;
 	private Client client;
-	private ObjectOutputStream outputStream;
 	
 	public ClientToHost(Client client) {
 		try {
 			this.client = client;
 			this.clientSocket = new Socket(Config.hostName, Config.connectToPortFromHost);
             this.client.setServerStatus("Connection Established on port: " + Config.connectToPortFromHost,true); 
-//            this.outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
 		} catch (IOException e) {
 			client.showErrorMessage("Failed to make a connection to '"+Config.hostName+"' on port "+Config.connectToPortFromHost);
 		}
@@ -91,6 +89,7 @@ public class ClientToHost {
 		} catch(IOException ex) {
 			client.showErrorMessage("Connection closed, is the server running?\n"+ex.getMessage());
 			client.closeSocket();
+			client.setSocket(null);
 //            ex.printStackTrace();
 		}
 		

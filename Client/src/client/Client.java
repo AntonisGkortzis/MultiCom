@@ -178,12 +178,16 @@ public class Client extends javax.swing.JFrame {
     	boolean flag = true;
     	long startWaitingForConnection = new Date().getTime();
     	long waitBeforeResendConnectRequest = 5000; //wait this long for resending connection request
-    	
+    	int connectTries = 0;
     	while(flag) {
     	    long currentTime = new Date().getTime();
     	    //Send a new connection request after some time TODO in report
     	    if(currentTime-startWaitingForConnection>waitBeforeResendConnectRequest) {
     	        clientToMHost.sendConnectRequest();
+    	        if(connectTries>2){
+    	        	showErrorMessage("No available hosts. Try again later.");
+    	        	return;
+    	        }
     	        startWaitingForConnection = new Date().getTime(); //reset the time of the start
     	    }
     		try {
@@ -198,6 +202,8 @@ public class Client extends javax.swing.JFrame {
 			}
         	Message message = messageController.queueMClientCommand.pop();
         	if(message!=null && Commands.messageIsOfCommand(message, Commands.hostFound)) {
+        		messageController.queueSentMessages.clear();
+        		
                 String[] messageParts = Commands.splitMessage(message);
                 if(Misc.processID.equals(messageParts[1])) { //This client requested a connection
                     Config.connectToPortFromHost = Integer.parseInt(messageParts[3]);
@@ -206,6 +212,8 @@ public class Client extends javax.swing.JFrame {
 //                    oneToManyListener.stop();
                     break;
                 }
+        	} else {
+        		connectTries++;        		
         	}
         }
     	
@@ -348,4 +356,9 @@ public class Client extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     // End of variables declaration//GEN-END:variables
+
+	public void setSocket(Socket socket) {
+		this.socketClient = socket;
+		
+	}
 }
