@@ -26,7 +26,7 @@ public class MClientListener implements Runnable {
     public MClientListener(Client client) {
         this.client = client;
         try {
-            socket = new MulticastSocket(5555);
+            socket = new MulticastSocket(Config.connectToPortFromHost + 1);
             group = InetAddress.getByName(Config.multiCastAddress);
             socket.joinGroup(group);
         } catch (IOException e) {

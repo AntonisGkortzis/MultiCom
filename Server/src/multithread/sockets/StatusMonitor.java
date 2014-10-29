@@ -22,11 +22,10 @@ public class StatusMonitor implements Runnable {
 			try {
 				//Must be put at the start of the algorithm
 				Thread.sleep(HostsList.declareDead); //Make it milliseconds
-//				System.out.println("@@-- Monitor status --@@");
 				//Remove hosts that are found out to be dead
 				HostsList.findDeadHosts();
 				
-//				HostsList.printHostsVotes();
+//				HostsList.printHostsVotes(); //DEBUG
                 //Check if there is a master alive, if not start the elections!
                 if(!HostsList.masterAlive()) {
                 	System.out.println("##-- No master alive, I will start elections --#");
@@ -34,7 +33,6 @@ public class StatusMonitor implements Runnable {
                 	Election.initElection();
                 }
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				flag = false;
 			}

@@ -9,7 +9,7 @@ import sharedresources.Message;
 public class HostToClientAckSender implements Runnable {
 	
 	public HostToClientAckSender() {
-		System.out.println("HostToClientAckSender initialised");
+//		System.out.println("HostToClientAckSender initialised");
 		// TODO Auto-generated constructor stub
 	}
 	
@@ -19,7 +19,7 @@ public class HostToClientAckSender implements Runnable {
 		while(flag){
 			Message message = Server.messageController.queueAcknowledgements.pop();
 			if(message != null ){
-				System.out.println("Sending acknowledgment " + message.toString());
+//				System.out.println("Sending acknowledgment " + message.toString());
 				Socket socket = message.getSocket();
 				message.setSocket(null);
 				flag = sendMessage(socket, message);
@@ -51,7 +51,7 @@ public class HostToClientAckSender implements Runnable {
     		ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
     		outputStream.writeObject(message);
     		outputStream.flush();
-    		System.out.println("@@ AckSender--> send message: " + message.getText());
+//    		System.out.println("@@ AckSender--> send message: " + message.getText());
     	} catch(IOException ex) {
             ex.printStackTrace();
             return false;

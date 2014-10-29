@@ -47,13 +47,12 @@ public class MessageController {
     	} else if(receivedMessage.getMessageType().equals(MessageType.mClientCommand)) {
 //    		System.out.print(" mClientCommand [message: "+receivedMessage.toString()+"]\n");
     		this.queueMClientCommand.push(receivedMessage);
-    	} /*else if(receivedMessage.getMessageType().equals(MessageType.hostChat)) {
+    	} else if(receivedMessage.getMessageType().equals(MessageType.hostChat)) {
     	    this.queueHostChat.push(receivedMessage);
-    	}*/
+    	}
     	else 
     	{
-    		System.out.print("--> Message " + receivedMessage.getMessageType());
-    		System.out.print(" is not pushed!!\n");
+    		System.err.println("$$ Message " + receivedMessage.getMessageType() + " is not pushed $$");
     	}
     
 

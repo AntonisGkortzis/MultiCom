@@ -78,6 +78,7 @@ public  class HostsList {
         for(Host host : hosts){
             if(host.getNrOfClients()<minimumClients) {
                 suitableHost = host;
+                minimumClients = host.getNrOfClients();
             }
         }
         

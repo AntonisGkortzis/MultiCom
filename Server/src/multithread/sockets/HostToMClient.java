@@ -8,6 +8,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 
+import sharedresources.Commands;
 import sharedresources.Config;
 import sharedresources.Message;
 
@@ -58,7 +59,11 @@ public class HostToMClient implements Runnable {
     
     private boolean sendMessage(Message message) {
         if(message != null){     
-        	System.out.println("@QueueHost message: " + message.toString());
+        	if(Commands.messageIsOfCommand(message, Commands.forwardMessage)){
+        		message.setText(Commands.getParseMessageText(message));
+        		System.out.println("@@ Formatted (forwarded) message " + message.toString());
+        	}
+        	
             try {
                 InetAddress group = InetAddress.getByName(Config.multiCastAddress);
 //                System.out.println("@HostToMultipleClients\n\tSending message: " + message.getText());
@@ -66,7 +71,7 @@ public class HostToMClient implements Runnable {
                 ObjectOutputStream os = new ObjectOutputStream(outputStream);
                 os.writeObject(message);
                 byte[] data = outputStream.toByteArray();
-                DatagramPacket packet = new DatagramPacket(data, data.length, group, 5555);
+                DatagramPacket packet = new DatagramPacket(data, data.length, group, Server.port + 1); //TODO fix this hard coded port
                 socket.send(packet);
             } catch (IOException e) {
                 e.printStackTrace();

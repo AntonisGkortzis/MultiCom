@@ -38,7 +38,7 @@ public class OneToOneListener implements Runnable {
 	    	try {
 				inStream = new ObjectInputStream(socket.getInputStream());
 				message = (Message)inStream.readObject();
-				System.out.println("@ OneToOneListener received " + message.toString());
+//				System.out.println("@ OneToOneListener received " + message.toString());
 				if(Commands.messageIsOfCommand(message, Commands.initOneToOneWithHost)) {
 				    //Not further action is needed as this is only a 
 				    //message to let the host know that there is a new client.
@@ -58,19 +58,19 @@ public class OneToOneListener implements Runnable {
 				    command = Commands.constructCommand(Commands.acknowledgement, Long.toString(message.getId()));
 				    Message ack = new Message(Message.MessageType.acknowledgement, true, command);
 				    ack.setSocket(socket);
-				    System.out.println("Pushing ack " + ack.toString());
+//				    System.out.println("Pushing ack " + ack.toString());
 				    messageController.queueAcknowledgements.push(ack);
 				}
 				//if the message is an acknowledgment sent by a Host to a Client
 				else if(message.getMessageType().equals(Message.MessageType.acknowledgement)){
 				    if(!this.isHost) {
-				        System.out.println("Ack received for message by client: " +message.toString());
+//				        System.out.println("Ack received for message by client: " +message.toString());
 				        //remove the original message form the SentMessages queue
 				        messageController.queueSentMessagesByClient.remove(message.getUsername(), Commands.getOriginalId(message));
 				    } else { //a host can receive an ack from a client
 				        removeResendMessageToClient(message);
 				        
-                        System.out.println("Ack received for message by host: " +message.toString());				        
+//                        System.out.println("Ack received for message by host: " +message.toString());				        
 				        
 				    }
 				}

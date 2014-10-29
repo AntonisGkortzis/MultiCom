@@ -163,4 +163,8 @@ public class Commands {
 	    String[] messageParts = message.getText().split(delimiter);
         return messageParts[i];
 	}
+
+	public static String getParseMessageText(Message message) {
+		return getMessagePart(message, 1);
+	}
 }
