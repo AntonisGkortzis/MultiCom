@@ -1,20 +1,15 @@
 package multithread.sockets;
 
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
+import java.util.Iterator;
 
 import sharedresources.ClientAmountSendPair;
 import sharedresources.Commands;
-import sharedresources.ConnectedClient;
 import sharedresources.ForwardMessage;
 import sharedresources.Message;
 
 public class ReceivedAcknowledgmentsByHostMonitor implements Runnable {
 	
-	public ReceivedAcknowledgmentsByHostMonitor(){
-		System.out.println("ReceivedAcknowledgmentsByHostMonitor initialized");
-	}
+	public ReceivedAcknowledgmentsByHostMonitor(){}
 	
 	public void start() {
 		Thread t = new Thread(this);
@@ -23,7 +18,6 @@ public class ReceivedAcknowledgmentsByHostMonitor implements Runnable {
 	
 	@Override
 	public void run() {
-		System.out.println("ReceivedAcknowledgmentsByHostMonitor run method started");
 		boolean flag = true;
 		while(flag) {
 			try {
@@ -37,39 +31,62 @@ public class ReceivedAcknowledgmentsByHostMonitor implements Runnable {
 			if(Server.messageController.queueSentMessagesByHostToClient.size() <= 0 )
 				continue;
 			
+			System.out.println("@@ ReceivedAcksByHostsMonitor sentMessagesSize: " + Server.messageController.queueSentMessagesByHostToClient.size());
+			
 			//check if there are any unverified messages in the SentMessages queue
-			for(int i=0; i<Server.messageController.queueSentMessagesByHostToClient.size(); i++) {
-				ForwardMessage forwardMessage = Server.messageController.queueSentMessagesByHostToClient.get(i);
-				for(ClientAmountSendPair clientPair : forwardMessage.getClients()){
-//					flag = sendMessage(clientPair.getClient().getSocket(), forwardMessage.getMessage());
-					Message message = forwardMessage.getMessage();
-					String command = Commands.constructCommand(Commands.targetedResentMessage, clientPair.getClient().getProcessID(), message.getText());
-					message.setCommand(true);
-					message.setText(command);
-					Server.messageController.queueHostChat.push(message);
-					System.out.println("@ReceivedAcksByHostsMonitor = Message sent " + forwardMessage.getMessage().getMessageType());
-				}
+			Iterator<ForwardMessage> iteratorMsg = Server.messageController.queueSentMessagesByHostToClient.iterator();
+			while(iteratorMsg.hasNext()) {
+			    ForwardMessage forwardMessage = iteratorMsg.next();
+			    Iterator<ClientAmountSendPair> iteratorPair = forwardMessage.getClients().iterator();
+			    while(iteratorPair.hasNext()) {
+			        ClientAmountSendPair clientPair = iteratorPair.next();
+			        if(clientPair.getNrOfRetries()>2) { //remove client after some retries (not responding/sending acks)
+                        iteratorPair.remove();
+                        System.out.println("Too much retries, so remove client");
+                        if(forwardMessage.getClients().size()<=0) { //no clients anymore so this message is done
+                            iteratorMsg.remove();
+                            System.out.println("No clients anymore, so remove ForwardMsg");
+                            continue;
+                        }
+                        continue;
+                    }
+                    
+                    Message message = forwardMessage.getMessage();
+                    
+                    //Set the message text as the first time it is a raw message, but the second time a command
+                    String messageText = message.getText();
+                    if(Commands.messageIsOfCommand(message, Commands.targetedResentMessage)) {
+                        messageText = Commands.getTextParseTargetedMessageText(message);
+                    }
+                    String command = Commands.constructCommand(Commands.targetedResentMessage, clientPair.getClient().getProcessID(), messageText);
+                    message.setCommand(true);
+                    message.setText(command);
+                    Server.messageController.queueHostChat.push(message);
+                    clientPair.incNrOfRetries();
+
+                    System.out.println("@ReceivedAcksByHostsMonitor = Message sent " + forwardMessage.getMessage().getMessageType());
+			    }
 			}
 
 		}
 	}
-
-	private boolean sendMessage(Socket socket, Message message) {
-    	if (socket == null) {
-			System.out.println("@ReceivedAcksByHostsMonitor Not connected to client");
-			return false;
-		}
-    	try {
-    		ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
-    		outputStream.writeObject(message);
-    		outputStream.flush();
-    	} catch(IOException ex) {
-            ex.printStackTrace();
-            return false;
-    	}
-    	
-    	return true;
-    }
+//
+//	private boolean sendMessage(Socket socket, Message message) {
+//    	if (socket == null) {
+//			System.out.println("@ReceivedAcksByHostsMonitor Not connected to client");
+//			return false;
+//		}
+//    	try {
+//    		ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
+//    		outputStream.writeObject(message);
+//    		outputStream.flush();
+//    	} catch(IOException ex) {
+//            ex.printStackTrace();
+//            return false;
+//    	}
+//    	
+//    	return true;
+//    }
 		
 }
 

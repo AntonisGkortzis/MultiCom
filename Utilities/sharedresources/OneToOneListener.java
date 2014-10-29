@@ -47,12 +47,20 @@ public class OneToOneListener implements Runnable {
 				}
 				//if the message is a chat message (sent from client to host)
 				else if(message.getMessageType().equals(Message.MessageType.hostChat)){
+				    //create the acknowledgement and store it in the queueAcknowledgments
+				    //Must BE placed before IF, because PID of sender is needed (pid is changed below)
+				    String command = Commands.constructCommand(Commands.acknowledgement, message.getProcessID(), Long.toString(message.getId()));
+				    Message ack = new Message(Message.MessageType.acknowledgement, true, command);
+				    ack.setSocket(socket);
+				    messageController.queueAcknowledgements.push(ack);
+				    
+				    //Must be after ack
 					if(!Commands.messageIsOfCommand(message, Commands.targetedResentMessage)){
 						if(this.isHost ){
 						    message.setProcessId(Misc.processID);
 		//				    System.out.println("OneToOneListener received a host chat message " + message.toString());
 						    messageController.queueHostChat.push(message); //to send it to the clients connected on this host
-						    String command = Commands.constructCommand(Commands.forwardMessage, message.getText());
+						    command = Commands.constructCommand(Commands.forwardMessage, message.getText());
 						    Message newMessage = new Message(Message.MessageType.mHostChat,true, message.getUsername(), command, Misc.getNextMessageId());
 						    
 						    messageController.queueSend.push(newMessage); //Send to other hosts    
@@ -60,19 +68,15 @@ public class OneToOneListener implements Runnable {
 							System.out.println("@@@ OneToOneListener pushing to ClientReceivedMessages queue: "+ message.toString());
 							messageController.queueClientReceivedMessages.push(message);
 						}*/
-						//create the acknowledgement and store it in the queueAcknowledgments
-						String command = Commands.constructCommand(Commands.acknowledgement, Long.toString(message.getId()));
-						Message ack = new Message(Message.MessageType.acknowledgement, true, command);
-						ack.setSocket(socket);
-						messageController.queueAcknowledgements.push(ack);
 					}
 				}
 				//if the message is an acknowledgment sent by a Host to a Client
 				else if(message.getMessageType().equals(Message.MessageType.acknowledgement)){
 				    if(!this.isHost) {
-//				        System.out.println("Ack received for message by client: " +message.toString());
+				        System.out.println("Ack received for message by client: " +message);
 				        //remove the original message form the SentMessages queue
-				        messageController.queueSentMessagesByClient.remove(message.getUsername(), Commands.getOriginalId(message));
+				        String processIdOfOriginalSender = Commands.getPidParseTargetedMessageText(message);
+				        messageController.queueSentMessagesByClient.remove(processIdOfOriginalSender, Commands.getMessageIdTargetedMessageText(message));
 				    } else { //a host can receive an ack from a client
 				        removeResendMessageToClient(message);
 

@@ -72,10 +72,11 @@ public class HostToMClient implements Runnable {
                 ObjectOutputStream os = new ObjectOutputStream(outputStream);
                 os.writeObject(message);
                 byte[] data = outputStream.toByteArray();
-                DatagramPacket packet = new DatagramPacket(data, data.length, group, Server.port + 1); //TODO fix this hard coded port
+                DatagramPacket packet = new DatagramPacket(data, data.length, group, Server.port + 1); //TODO fix this "hard coded" port
                 socket.send(packet);
-    			//Put the message in a queue for possible re-sending
-    			addToRetryQueue(message);
+                
+    			//Put the chat message in a queue for possible re-sending
+    			if(!message.isCommand()) addToRetryQueue(message);
     			
             } catch (IOException e) {
                 e.printStackTrace();

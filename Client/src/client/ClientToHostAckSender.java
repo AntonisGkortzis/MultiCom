@@ -1,7 +1,5 @@
 package client;
 
-import java.net.Socket;
-
 import sharedresources.Message;
 
 public class ClientToHostAckSender implements Runnable {

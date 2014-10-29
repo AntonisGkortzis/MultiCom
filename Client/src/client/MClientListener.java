@@ -23,9 +23,8 @@ public class MClientListener implements Runnable {
     
     private InetAddress group;
     private MulticastSocket socket;
-    private Client client;
-    public MClientListener(Client client) {
-        this.client = client;
+    
+    public MClientListener() {
         try {
             socket = new MulticastSocket(Config.connectToPortFromHost + 1);
             group = InetAddress.getByName(Config.multiCastAddress);
@@ -56,17 +55,16 @@ public class MClientListener implements Runnable {
                 		if(!Commands.getStarterProcessID(message).equals(Misc.processID)){
                 			continue;
                 		} else {
-                			message.setText(Commands.getParseTargetedMessageText(message));
+                			message.setText(Commands.getTextParseTargetedMessageText(message));
                 		}
                 	}
                 	System.out.println("Client received: " + message.getText() + " id: " + message.getId());
-//                	client.AddTextToMainPanel(message.getTimestamp() + "| " + message.getUsername() + ": " + message.getText());
                 	Client.messageController.queueClientReceivedMessages.push(message);
                 	
                 	//create the acknowledgement and store it in the queueAcknowledgments
                     String command = Commands.constructCommand(Commands.acknowledgement, Long.toString(message.getId()));
                     Message ack = new Message(Message.MessageType.acknowledgement, true, command);
-//                    Client.messageController.queueAcknowledgements.push(ack);
+                    Client.messageController.queueAcknowledgements.push(ack); //Comment this if you want to test the host retries
                 	
                 } catch(ClassNotFoundException ex) {
                 	ex.printStackTrace();

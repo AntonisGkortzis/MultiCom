@@ -108,7 +108,7 @@ public class OneToManyListener implements Runnable {
 		if(message.getMessageType().equals(Message.MessageType.mHostChat) 
 				&& isHost 
 				&& Commands.messageIsOfCommand(message, Commands.forwardMessage)) {
-			message.setMessageType(Message.MessageType.hostChat); //TODO This message is not pushed in here but in oneToOneListener, or not?? :s
+			message.setMessageType(Message.MessageType.hostChat);
 			long messageId = Misc.getNextMessageId();
 			message.setId(messageId); //This message must have a new unique id 
 			System.out.println("Host with pid " + Misc.processID + "received message form host with id " + message.getProcessID());

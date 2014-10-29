@@ -49,7 +49,7 @@ public class HostToClientAckSender implements Runnable {
     		ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
     		outputStream.writeObject(message);
     		outputStream.flush();
-//    		System.out.println("@@ AckSender--> send message: " + message.getText());
+    		System.out.println("@@ AckSender--> send message: " + message.getText());
     	} catch(IOException ex) {
             ex.printStackTrace();
             return false;

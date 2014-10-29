@@ -1,6 +1,7 @@
 package sharedresources;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -47,15 +48,24 @@ public class MessageQueue{
 	/*
 	 * Removes and returns an object of a given index from the queue .
 	 */
-	public void remove(String user, long id){
-		if(!isEmpty()){
-			for(int i=0; i<size(); i++){
-				if(this.queue.get(i).getUsername().equals(user) 
-						&& this.queue.get(i).getId() == id){
-					this.queue.remove(i);
-				}
-			}
-		}
+	public void remove(String processId, long id){
+//		if(!isEmpty()){
+	    Iterator<Message> iterator = this.queue.iterator();
+	    while(iterator.hasNext()) {
+	        Message message = iterator.next();
+	        System.out.println("processid " + processId + " id " + id + " messagePId " + message.getProcessID() + " messageID " + message.getId());
+	        if(message.getProcessID().equals(processId) && message.getId()==id) {
+	            System.out.println("@ MessageQueue, remove a message");
+	            iterator.remove();
+	        }
+	    }
+//			for(int i=0; i<size(); i++){
+//				if(this.queue.get(i).getUsername().equals(user) 
+//						&& this.queue.get(i).getId() == id){
+//					this.queue.remove(i);
+//				}
+//			}
+//		}
 	}
 	
 	public int size(){

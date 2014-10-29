@@ -46,21 +46,22 @@ public class ForwardMessage {
      * If the number of times send exceeds 2 then the client is removed from the list.
      * @param processID
      */
-    public void incAmountSend(String processID) {
-        Iterator<ClientAmountSendPair> iterator = clients.iterator();
-        ClientAmountSendPair pair = null;
-        while(iterator.hasNext()) {
-            pair = iterator.next();
-            if(pair.isClient(processID)) {
-                if(pair.getNrOfRetries()>2) {
-                    iterator.remove();
-                } else {
-                    pair.incNrOfRetries();
-                }
-                break;
-            }
-        }
-    }
+//    public void incAmountSend(String processID) {
+//        Iterator<ClientAmountSendPair> iterator = clients.iterator();
+//        ClientAmountSendPair pair = null;
+//        while(iterator.hasNext()) {
+//            pair = iterator.next();
+//            if(pair.isClient(processID)) {
+//                System.out.println("@@ IncAmountSend nrOfTimes: " + pair.getNrOfRetries());
+//                if(pair.getNrOfRetries()>2) {
+//                    iterator.remove();
+//                } else {
+//                    pair.incNrOfRetries();
+//                }
+//                break;
+//            }
+//        }
+//    }
     public Message getMessage() {
         return message;
     }

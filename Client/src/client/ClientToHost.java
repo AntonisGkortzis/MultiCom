@@ -30,42 +30,11 @@ public class ClientToHost {
 		} catch (IOException e) {
 			client.showErrorMessage("Failed to make a connection to '"+Config.hostName+"' on port "+Config.connectToPortFromHost);
 		}
-		
 	}
+	
 	public Socket getSocket(){
 		return this.clientSocket;
 	}
-
-//	public void start() {
-//        if(clientSocket != null) {
-//            Thread t = new Thread(this);
-//            t.start();
-//        }
-//    }
-
-//	@Override
-//	public void run() { //TODO Test if this is used? If not put code from Client.java SendMessageButtonActionPerformed in here
-//		// TODO Auto-generated method stub
-//		try {
-//		    BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-//		    //BufferedWriter writer= new BufferedWriter(new OutputStreamWriter(socketClient.getOutputStream()));
-//		    ObjectOutputStream objectWriter = new ObjectOutputStream(clientSocket.getOutputStream());
-//		    String serverMsg;
-//		    Message message = new Message(MessageType.hostChat, false,Misc.getProcessID(), client.getUserName(), client.getTextFromMainPanel());
-//		    objectWriter.writeObject(message);
-//		    		    
-//		 	System.out.println("hostname: " + InetAddress.getLocalHost().getHostName()); //DEBUG
-//		    
-//            while ((serverMsg = reader.readLine()) != null) {
-//            	client.AddTextToMainPanel(serverMsg);
-//            }
-//            
-//        } catch(Exception e) {
-//            e.printStackTrace();
-//            System.out.println("Client: "+"Connection failed..");
-//            client.setServerStatus("Connection failed..", false);
-//        }
-//	}
 	
 	public void sendMessage(String text) {
             Message message = new Message(Message.MessageType.hostChat, false, client.getUserName(), text, Misc.getNextMessageId());
@@ -86,7 +55,7 @@ public class ClientToHost {
 			ObjectOutputStream outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
 			outputStream.writeObject(message);
 			outputStream.flush();
-			System.out.println("@@ Client to Host--> send message: " + message.getText());
+			System.out.println("@@ Client to Host--> send message: " + message.getText() + " id: " + message.getId());
 		} catch(IOException ex) {
 			client.showErrorMessage("Connection closed, is the server running?\n"+ex.getMessage());
 			client.closeSocket();

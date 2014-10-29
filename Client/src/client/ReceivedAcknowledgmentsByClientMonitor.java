@@ -1,6 +1,7 @@
 package client;
 
 import sharedresources.Message;
+import sharedresources.Misc;
 
 
 public class ReceivedAcknowledgmentsByClientMonitor implements Runnable {
@@ -36,8 +37,8 @@ public class ReceivedAcknowledgmentsByClientMonitor implements Runnable {
 			for(int i=0; i<Client.messageController.queueSentMessagesByClient.size(); i++) {
 				Message message = Client.messageController.queueSentMessagesByClient.get(i);
 				//Remove the message if it has been re-sent more than 2 times
-				if(message.getTimesSent() > 2){
-					Client.messageController.queueSentMessagesByClient.remove(message.getUsername(), message.getId());
+				if(message.getTimesSent() > 2){ //TODO check if working
+					Client.messageController.queueSentMessagesByClient.remove(Misc.processID, message.getId());
 				} else {
 					flag = clientToHost.sendMessage(message);
 				}

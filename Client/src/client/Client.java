@@ -218,7 +218,7 @@ public class Client extends javax.swing.JFrame {
         	}
         }
     	
-    	MClientListener mClientListener = new MClientListener(this);
+    	MClientListener mClientListener = new MClientListener();
     	mClientListener.start();
     	
     	

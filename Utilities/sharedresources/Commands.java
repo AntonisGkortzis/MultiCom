@@ -28,40 +28,21 @@ public class Commands {
 
 	/******HostToMHost ********/
 	/**
-	 * Master needs to ping other hosts to see if they are still alive
-	 * TODO just to be sure I made two pings, but maybe one is enough so we can remove one in the future
-	 */
-//	public static String masterPing = "master-ping";
-	
-	/**
-	 * Host needs to ping other hosts to see if master is alive
-	 */
-//	public static String hostPing = "host-ping";
-	
-	/**
 	 * Hosts send status updates to other hosts
 	 */
 	public final static String requestStatusUpdate = "RequestStatusUpdate";
 	
 	public final static String statusUpdate = "HereIsMyStatusUpdate";
 	
-//	/**
-//	 * Masters needs to find a suitable host for the client
-//	 */
+	/**
+	 * Masters needs to find a suitable host for the client
+	 */
 	public final static String hostFound = "HostIsFoundForClient";
 	
 	public final static String forwardMessage = "forwardedMessageReceivedFromClient";
 	
 	public final static String targetedResentMessage = "messageThatShouldBeParsedOnlyByTheUserThatHasTheSameProcessIdAsTheMessages";
 	
-	/**
-	 * Hosts sending ping request on their connection to the cluster
-	 */
-	//TODO uncomment, but needed?
-//	public final static String isAnyoneOutThere = "requestingPingResponse"; //TODO this is probably requestStatusUpdate
-	
-//	public final static String imAlive = "respondToIsAnyoneAlive"; //TODO this is probably StatusUpdate
-
 	
 	public final static String acknowledgement = "containerOfAMessageAcknowledgement";
 	
@@ -91,7 +72,6 @@ public class Commands {
 	public static String constructHostFound(Host host, String processID ) {
 	    return processID + delimiter + host.getAddress() + delimiter + host.getPort();
 	}
-	
 	
 	/**
 	 * Save the PID and start time of the starter who starts the election
@@ -135,34 +115,22 @@ public class Commands {
     }
     
     public static boolean messageIsOfCommand(Message message, String command) {
-//        String[] messageParts = message.getText().split(delimiter);
-//        return messageParts[0].equals(command);
         return getMessagePart(message, 0).equals(command);
     }
     
     public static String getVote(Message message){
-//        String[] messageParts = message.getText().split(delimiter);
-//        return messageParts[3];
         return getMessagePart(message, 3);
     }
 
 	public static String getStarterProcessID(Message message) {
-//		String[] messageParts = message.getText().split(delimiter);
-//		return messageParts[1];
 	    return getMessagePart(message, 1);
-
 	}
 
 	public static long getStarterTime(Message message) {
-//		String[] messageParts = message.getText().split(delimiter);
-//		return Long.parseLong(messageParts[2]);
 	    return Long.parseLong(getMessagePart(message, 2));
-
 	}
 	
 	public static long getOriginalId(Message message){
-//		String[] messageParts = message.getText().split(delimiter);
-//		return Long.parseLong(messageParts[1]);
 	    return Long.parseLong(getMessagePart(message, 1));
 	}
 	
@@ -175,7 +143,15 @@ public class Commands {
 		return getMessagePart(message, 1);
 	}
 	
-	public static String getParseTargetedMessageText(Message message) {
+	public static String getPidParseTargetedMessageText(Message message) {
+	    return getMessagePart(message, 1);
+	}
+	
+	public static long getMessageIdTargetedMessageText(Message message) {
+	    return Long.parseLong(getMessagePart(message, 2));
+	}
+	
+	public static String getTextParseTargetedMessageText(Message message) {
 		return getMessagePart(message, 2);
 	}
 }

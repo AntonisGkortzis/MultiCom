@@ -118,9 +118,10 @@ public class Message implements Serializable {
 		return this.clientAsReceiver;
 	}
 	
+	@Override
 	public String toString(){
 		String s = "";
-		s = "Id: " + id+ ", Type: " + messageType +", processID: " + processID +", Text: " + text;
+		s = "Id: " + id+ ", Type: " + messageType + ", username: " + username +", processID: " + processID +", Text: " + text;
 		
 		return s;
 	}
