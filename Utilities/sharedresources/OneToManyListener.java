@@ -84,6 +84,11 @@ public class OneToManyListener implements Runnable {
 	}
 	
 	private void handleMessage(Message message) {
+		//If you are a client then ignore all messages except form the HostIsFound
+		if(!Commands.messageIsOfCommand(message, Commands.hostFound) && !isHost){
+			return;
+		}
+		
 		//Ignore your own Messages except for election messages
 		if(message.getProcessID().equals(Misc.processID) 
 				&& !Commands.messageIsOfCommand(message, Commands.IAmTheMaster)
@@ -100,10 +105,12 @@ public class OneToManyListener implements Runnable {
 		}
 		
 		//For forwarding messages to clients
-		if(message.getMessageType().equals(Message.MessageType.mHostChat)) {
+		if(message.getMessageType().equals(Message.MessageType.mHostChat) && isHost) {
 			message.setMessageType(Message.MessageType.hostChat); //TODO This message is not pushed in here but in oneToOneListener, or not?? :s
 			long messageId = Misc.getNextMessageId();
 			message.setId(messageId); //This message must have a new unique id 
+			
+			messageController.queueHostChat.push(message);
 			
 			//Put the message in a queue for possible re-sending
 			addToRetryQueue(message);

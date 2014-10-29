@@ -42,6 +42,7 @@ public class HostToMClient implements Runnable {
         while (flag) {                
             Message message = Server.messageController.queueHostChat.pop();
             
+            
             flag = sendMessage(message);
             try {
                 Thread.sleep(DELAY);
@@ -56,7 +57,8 @@ public class HostToMClient implements Runnable {
     }
     
     private boolean sendMessage(Message message) {
-        if(message != null){             
+        if(message != null){     
+        	System.out.println("@QueueHost message: " + message.toString());
             try {
                 InetAddress group = InetAddress.getByName(Config.multiCastAddress);
 //                System.out.println("@HostToMultipleClients\n\tSending message: " + message.getText());

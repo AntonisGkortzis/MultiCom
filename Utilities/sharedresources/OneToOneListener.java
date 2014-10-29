@@ -38,7 +38,7 @@ public class OneToOneListener implements Runnable {
 	    	try {
 				inStream = new ObjectInputStream(socket.getInputStream());
 				message = (Message)inStream.readObject();
-				System.out.println("@ OneToOneListener" + message.toString());
+				System.out.println("@ OneToOneListener received " + message.toString());
 				if(Commands.messageIsOfCommand(message, Commands.initOneToOneWithHost)) {
 				    //Not further action is needed as this is only a 
 				    //message to let the host know that there is a new client.
@@ -47,9 +47,11 @@ public class OneToOneListener implements Runnable {
 				//if the message is a chat message (sent from client to host)
 				else if(message.getMessageType().equals(Message.MessageType.hostChat) && this.isHost){
 				    message.setProcessId(Misc.processID);
+//				    System.out.println("OneToOneListener received a host chat message " + message.toString());
 				    messageController.queueHostChat.push(message); //to send it to the clients connected on this host
 				    String command = Commands.constructCommand(Commands.forwardMessage, message.getText());
-				    Message newMessage = new Message(Message.MessageType.mHostChat,true, message.getUsername(), command, messageId);
+				    Message newMessage = new Message(Message.MessageType.mHostChat,true, message.getUsername(), command, Misc.getNextMessageId());
+				    
 				    messageController.queueSend.push(newMessage); //Send to other hosts
 				    
 				    //create the acknowledgement and store it in the queueAcknowledgments
@@ -88,7 +90,7 @@ public class OneToOneListener implements Runnable {
      */
     private void removeResendMessageToClient(Message message) {
         for(ForwardMessage forwardMessage: messageController.queueSentMessagesByHostToClient) {
-            System.out.println("Never here???? " + forwardMessage.getId());
+//            System.out.println("Never here???? " + forwardMessage.getId());
             if(forwardMessage.getId() == Commands.getOriginalId(message)) { //correct message
                 System.out.println("@@ OneToOneListener (host): Removing client as I received an ack.");
                 forwardMessage.removeClient(message.getProcessID());

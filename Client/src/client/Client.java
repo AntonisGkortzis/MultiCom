@@ -207,7 +207,7 @@ public class Client extends javax.swing.JFrame {
                     Config.connectToPortFromHost = Integer.parseInt(messageParts[3]);
                     System.out.println("HOST IS FOUND Connect to port: " + Config.connectToPortFromHost);
                     flag=false;
-//                    oneToManyListener.stop();
+                    oneToManyListener.stop();
                     break;
                 }
         	} else {
