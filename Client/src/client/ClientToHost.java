@@ -77,10 +77,10 @@ public class ClientToHost {
             	Client.messageController.queueSentMessagesByClient.push(message);
 	}
 	
-	public void sendMessage(Message message){
+	public boolean sendMessage(Message message){
 		if (clientSocket == null) {
 			client.showErrorMessage("You are not connected.");
-			return;
+			return false;
 		}
 		try {
 			ObjectOutputStream outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
@@ -92,8 +92,9 @@ public class ClientToHost {
 			client.closeSocket();
 			client.setSocket(null);
 //            ex.printStackTrace();
+			return false;
 		}
-		
+		return true;
 	}
 
 }

@@ -133,4 +133,9 @@ public class Message implements Serializable {
 		this.timesSent++;
 	}
 
+	public void setCommand(boolean b) {
+		this.command = b;
+		
+	}
+
 }

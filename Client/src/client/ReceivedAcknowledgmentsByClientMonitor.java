@@ -3,11 +3,11 @@ package client;
 import sharedresources.Message;
 
 
-public class ReceivedAcknowledgmentsMonitor implements Runnable {
+public class ReceivedAcknowledgmentsByClientMonitor implements Runnable {
 	
 	private ClientToHost clientToHost;
 
-	public ReceivedAcknowledgmentsMonitor(ClientToHost clientToHost) {
+	public ReceivedAcknowledgmentsByClientMonitor(ClientToHost clientToHost) {
 		this.clientToHost = clientToHost;
 	}
 	public void start() {
@@ -17,9 +17,20 @@ public class ReceivedAcknowledgmentsMonitor implements Runnable {
 	
 	@Override
 	public void run() {
-		while(true) {
-			if(Client.messageController.queueSentMessagesByClient.size() <= 0 )
+		boolean flag = true;
+		while(flag) {
+			try {
+				Thread.sleep(2000);//TODO set a fixed delay in Config
+			} 
+			catch (InterruptedException e) { 
+				e.printStackTrace();
+				flag = false;
+			}
+
+			if(Client.messageController.queueSentMessagesByClient.size() <= 0 ){
+				flag = false;
 				continue;
+			}
 			
 			//check if there are any unverified messages in the SentMessages queue
 			for(int i=0; i<Client.messageController.queueSentMessagesByClient.size(); i++) {
@@ -28,16 +39,10 @@ public class ReceivedAcknowledgmentsMonitor implements Runnable {
 				if(message.getTimesSent() > 2){
 					Client.messageController.queueSentMessagesByClient.remove(message.getUsername(), message.getId());
 				} else {
-					clientToHost.sendMessage(message);
+					flag = clientToHost.sendMessage(message);
 				}
 			}
           	
-            try {
-                Thread.sleep(2000);//TODO set a fixed delay in Config
-            } 
-            catch (InterruptedException e) { 
-                e.printStackTrace();
-            }
 		}
 	}
 

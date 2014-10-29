@@ -14,6 +14,9 @@ public class ForwardMessage {
         this.message = message;
         this.id = messageId;
         clients = new ArrayList<ClientAmountSendPair>();
+        for(ConnectedClient client: ConnectedClientsList.clients) {
+            this.addClient(client);
+        }
     }
     
     public void addClient(ConnectedClient client) {
@@ -25,16 +28,17 @@ public class ForwardMessage {
      * A client should be removed once an ack is received belonging to this message
      * @param processID
      */
-    public void removeClient(String processID) {
+    public boolean removeClient(String processID) {
         Iterator<ClientAmountSendPair> iterator = clients.iterator();
         ClientAmountSendPair pair = null;
         while(iterator.hasNext()) {
             pair = iterator.next();
             if(pair.isClient(processID)) {
                 iterator.remove();
-                break;
+                return clients.size() == 0;
             }
         }
+        return false;
     }
     
     /**

@@ -10,6 +10,7 @@ import java.net.MulticastSocket;
 import sharedresources.Commands;
 import sharedresources.Config;
 import sharedresources.Message;
+import sharedresources.Misc;
 
 /**
  * This class is used for listening to messages send by MultiCast from a host.
@@ -51,13 +52,22 @@ public class MClientListener implements Runnable {
                 ObjectInputStream is = new ObjectInputStream(in);
                 try{
                 	Message message = (Message)is.readObject();  
+                	if(Commands.messageIsOfCommand(message, Commands.targetedResentMessage)) {
+                		if(!Commands.getStarterProcessID(message).equals(Misc.processID)){
+                			continue;
+                		} else {
+                			message.setText(Commands.getParseTargetedMessageText(message));
+                		}
+                	}
                 	System.out.println("Client received: " + message.getText() + " id: " + message.getId());
-                	client.AddTextToMainPanel(message.getTimestamp() + "| " + message.getUsername() + ": " + message.getText());
+//                	client.AddTextToMainPanel(message.getTimestamp() + "| " + message.getUsername() + ": " + message.getText());
+                	Client.messageController.queueClientReceivedMessages.push(message);
                 	
                 	//create the acknowledgement and store it in the queueAcknowledgments
                     String command = Commands.constructCommand(Commands.acknowledgement, Long.toString(message.getId()));
                     Message ack = new Message(Message.MessageType.acknowledgement, true, command);
-                    Client.messageController.queueAcknowledgements.push(ack);
+//                    Client.messageController.queueAcknowledgements.push(ack);
+                	
                 } catch(ClassNotFoundException ex) {
                 	ex.printStackTrace();
                 }

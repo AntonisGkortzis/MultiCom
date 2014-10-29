@@ -52,6 +52,8 @@ public class Commands {
 	
 	public final static String forwardMessage = "forwardedMessageReceivedFromClient";
 	
+	public final static String targetedResentMessage = "messageThatShouldBeParsedOnlyByTheUserThatHasTheSameProcessIdAsTheMessages";
+	
 	/**
 	 * Hosts sending ping request on their connection to the cluster
 	 */
@@ -105,9 +107,14 @@ public class Commands {
 	 * @param command keyword
 	 * @return command
 	 */
+	public static String constructCommand(String command, String processID, String information) {
+		return command + delimiter + processID + delimiter + information + delimiter;
+	}
+	
 	public static String constructCommand(String command, String information) {
 		return command + delimiter + information + delimiter;
 	}
+	
 	public static String constructCommand(String command) {
 	    return command + delimiter;
 	}
@@ -166,5 +173,9 @@ public class Commands {
 
 	public static String getParseMessageText(Message message) {
 		return getMessagePart(message, 1);
+	}
+	
+	public static String getParseTargetedMessageText(Message message) {
+		return getMessagePart(message, 2);
 	}
 }

@@ -115,8 +115,7 @@ public class OneToManyListener implements Runnable {
 
 //			messageController.queueHostChat.push(message);
 			
-			//Put the message in a queue for possible re-sending
-			addToRetryQueue(message);
+
 			
 		}
 		
@@ -126,13 +125,5 @@ public class OneToManyListener implements Runnable {
 	}
 
 
-    private void addToRetryQueue(Message message) {
-        ForwardMessage forwardMessage = new ForwardMessage(message, message.getId());
-        for(ConnectedClient client: ConnectedClientsList.clients) {
-            forwardMessage.addClient(client);
-        }
-        
-        messageController.queueSentMessagesByHostToClient.add(forwardMessage);
-        
-    }
+
 }

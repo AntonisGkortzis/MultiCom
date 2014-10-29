@@ -10,6 +10,9 @@ import java.net.SocketException;
 
 import sharedresources.Commands;
 import sharedresources.Config;
+import sharedresources.ConnectedClient;
+import sharedresources.ConnectedClientsList;
+import sharedresources.ForwardMessage;
 import sharedresources.Message;
 
 /**
@@ -43,7 +46,6 @@ public class HostToMClient implements Runnable {
         while (flag) {                
             Message message = Server.messageController.queueHostChat.pop();
             
-            
             flag = sendMessage(message);
             try {
                 Thread.sleep(DELAY);
@@ -66,13 +68,15 @@ public class HostToMClient implements Runnable {
         	
             try {
                 InetAddress group = InetAddress.getByName(Config.multiCastAddress);
-//                System.out.println("@HostToMultipleClients\n\tSending message: " + message.getText());
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                 ObjectOutputStream os = new ObjectOutputStream(outputStream);
                 os.writeObject(message);
                 byte[] data = outputStream.toByteArray();
                 DatagramPacket packet = new DatagramPacket(data, data.length, group, Server.port + 1); //TODO fix this hard coded port
                 socket.send(packet);
+    			//Put the message in a queue for possible re-sending
+    			addToRetryQueue(message);
+    			
             } catch (IOException e) {
                 e.printStackTrace();
                 return false;
@@ -80,5 +84,11 @@ public class HostToMClient implements Runnable {
         }
         return true;
     }
-
+    
+    private void addToRetryQueue(Message message) {
+        ForwardMessage forwardMessage = new ForwardMessage(message, message.getId());
+        System.out.println("@@ HostToMClient adding forwarded message " + forwardMessage.getMessage().toString());
+        Server.messageController.queueSentMessagesByHostToClient.add(forwardMessage);
+        
+    }
 }

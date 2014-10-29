@@ -162,6 +162,9 @@ public class Client extends javax.swing.JFrame {
     		return;
     	}
     	
+    	MessagePresenter messagePresenter = new MessagePresenter(this);
+    	messagePresenter.start();
+    	
     	//Listen for response of previous request (or should this be placed before clientomhost?
     	OneToManyListener oneToManyListener = new OneToManyListener(messageController, false);
     	oneToManyListener.start();
@@ -217,7 +220,8 @@ public class Client extends javax.swing.JFrame {
     	
     	MClientListener mClientListener = new MClientListener(this);
     	mClientListener.start();
-
+    	
+    	
     	
 //    	TODO Use info obtained from clientToMHost/oneToManyListener
     	clientToHost = new ClientToHost(this);
@@ -229,7 +233,7 @@ public class Client extends javax.swing.JFrame {
     	OneToOneListener oneToOneListener = new OneToOneListener(socketClient, messageController, false);
     	oneToOneListener.start();
     	
-    	ReceivedAcknowledgmentsMonitor ackMonitor = new ReceivedAcknowledgmentsMonitor(clientToHost);
+    	ReceivedAcknowledgmentsByClientMonitor ackMonitor = new ReceivedAcknowledgmentsByClientMonitor(clientToHost);
     	ackMonitor.start();
     	
     	sendFirstConnectMessageToHost();

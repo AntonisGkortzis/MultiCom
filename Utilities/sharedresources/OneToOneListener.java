@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Iterator;
 
 
 /**
@@ -45,21 +46,26 @@ public class OneToOneListener implements Runnable {
 					addNewClient(message.getProcessID(), message.getUsername());
 				}
 				//if the message is a chat message (sent from client to host)
-				else if(message.getMessageType().equals(Message.MessageType.hostChat) && this.isHost){
-				    message.setProcessId(Misc.processID);
-//				    System.out.println("OneToOneListener received a host chat message " + message.toString());
-				    messageController.queueHostChat.push(message); //to send it to the clients connected on this host
-				    String command = Commands.constructCommand(Commands.forwardMessage, message.getText());
-				    Message newMessage = new Message(Message.MessageType.mHostChat,true, message.getUsername(), command, Misc.getNextMessageId());
-				    
-				    messageController.queueSend.push(newMessage); //Send to other hosts
-				    
-				    //create the acknowledgement and store it in the queueAcknowledgments
-				    command = Commands.constructCommand(Commands.acknowledgement, Long.toString(message.getId()));
-				    Message ack = new Message(Message.MessageType.acknowledgement, true, command);
-				    ack.setSocket(socket);
-//				    System.out.println("Pushing ack " + ack.toString());
-				    messageController.queueAcknowledgements.push(ack);
+				else if(message.getMessageType().equals(Message.MessageType.hostChat)){
+					if(!Commands.messageIsOfCommand(message, Commands.targetedResentMessage)){
+						if(this.isHost ){
+						    message.setProcessId(Misc.processID);
+		//				    System.out.println("OneToOneListener received a host chat message " + message.toString());
+						    messageController.queueHostChat.push(message); //to send it to the clients connected on this host
+						    String command = Commands.constructCommand(Commands.forwardMessage, message.getText());
+						    Message newMessage = new Message(Message.MessageType.mHostChat,true, message.getUsername(), command, Misc.getNextMessageId());
+						    
+						    messageController.queueSend.push(newMessage); //Send to other hosts    
+						} /*else {//[if isClient] Receive resent hostChat messages and store them to the queue
+							System.out.println("@@@ OneToOneListener pushing to ClientReceivedMessages queue: "+ message.toString());
+							messageController.queueClientReceivedMessages.push(message);
+						}*/
+						//create the acknowledgement and store it in the queueAcknowledgments
+						String command = Commands.constructCommand(Commands.acknowledgement, Long.toString(message.getId()));
+						Message ack = new Message(Message.MessageType.acknowledgement, true, command);
+						ack.setSocket(socket);
+						messageController.queueAcknowledgements.push(ack);
+					}
 				}
 				//if the message is an acknowledgment sent by a Host to a Client
 				else if(message.getMessageType().equals(Message.MessageType.acknowledgement)){
@@ -69,7 +75,7 @@ public class OneToOneListener implements Runnable {
 				        messageController.queueSentMessagesByClient.remove(message.getUsername(), Commands.getOriginalId(message));
 				    } else { //a host can receive an ack from a client
 				        removeResendMessageToClient(message);
-				        
+
 //                        System.out.println("Ack received for message by host: " +message.toString());				        
 				        
 				    }
@@ -89,18 +95,24 @@ public class OneToOneListener implements Runnable {
      * @param message
      */
     private void removeResendMessageToClient(Message message) {
-        for(ForwardMessage forwardMessage: messageController.queueSentMessagesByHostToClient) {
+    	Iterator<ForwardMessage> iterator = messageController.queueSentMessagesByHostToClient.iterator();
+        while(iterator.hasNext()) {
+        	ForwardMessage forwardMessage = iterator.next();
 //            System.out.println("Never here???? " + forwardMessage.getId());
             if(forwardMessage.getId() == Commands.getOriginalId(message)) { //correct message
+            	System.out.println("@@ OneToOneListener clients: " + forwardMessage.getClients().size() + " ack size: " + messageController.queueSentMessagesByHostToClient.size());
                 System.out.println("@@ OneToOneListener (host): Removing client as I received an ack.");
-                forwardMessage.removeClient(message.getProcessID());
+                if(forwardMessage.removeClient(message.getProcessID())) {
+                	iterator.remove();
+                }
                 break;
             }
         }
     }
+    
     private void addNewClient(String processID, String username) {
     	if(!ConnectedClientsList.clientExists(processID)) {
-	    	ConnectedClient newclient = new ConnectedClient(processID, username);
+	    	ConnectedClient newclient = new ConnectedClient(processID, username, this.socket);
 	        ConnectedClientsList.addClient(newclient); 
 	        HostsList.updateHost(Misc.processID, ConnectedClientsList.size(), Config.master);
     	}

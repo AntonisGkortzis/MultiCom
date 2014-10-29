@@ -41,6 +41,9 @@ public class Server {
 //        OneToOneListener oneToOneListener = new OneToOneListener(hostToClient.getSocket(), Server.messageController);
 //        oneToOneListener.start();
         
+        ReceivedAcknowledgmentsByHostMonitor receivedAcknowledgmentsByHostMonitor = new ReceivedAcknowledgmentsByHostMonitor();
+        receivedAcknowledgmentsByHostMonitor.start();
+        
         HostToClientAckSender hostToClientAckSender = new HostToClientAckSender();
         hostToClientAckSender.start();
         

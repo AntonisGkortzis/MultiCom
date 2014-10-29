@@ -9,8 +9,6 @@ import sharedresources.Message;
 public class HostToClientAckSender implements Runnable {
 	
 	public HostToClientAckSender() {
-//		System.out.println("HostToClientAckSender initialised");
-		// TODO Auto-generated constructor stub
 	}
 	
 	@Override
