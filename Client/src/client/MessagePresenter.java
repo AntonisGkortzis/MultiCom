@@ -4,6 +4,7 @@ import sharedresources.Message;
 
 public class MessagePresenter implements Runnable {
 	private Client client;
+	private boolean flag = true;
 	
 	public MessagePresenter(Client client){
 		this.client = client;
@@ -14,11 +15,13 @@ public class MessagePresenter implements Runnable {
 		t.start();
 	}
 	
+	public void stop() {
+	    this.flag = false;
+	}
 	@Override
 	public void run() {
-		boolean flag = true;
 		while(flag){
-			Message message = Client.messageController.queueClientReceivedMessages.pop();
+			Message message = client.messageController.queueClientReceivedMessages.pop();
 			
 			if(message != null){
 				client.AddTextToMainPanel(/*message.getTimestamp() + "|" +*/ message.getUsername() + ": " + message.getText());

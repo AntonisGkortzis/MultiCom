@@ -1,5 +1,6 @@
 package multithread.sockets;
 import monitor.ClientMonitor;
+import monitor.LoadBalancer;
 import monitor.ReceivedAcknowledgmentsByHostMonitor;
 import monitor.StatusMonitor;
 import sender.HostToClientAckSender;
@@ -78,6 +79,9 @@ public class Server {
         
         // For starting Elections on host's start up
         Election.initElection();
+        
+        LoadBalancer loadBalancer = new LoadBalancer();
+        loadBalancer.start();
     }
    
 }

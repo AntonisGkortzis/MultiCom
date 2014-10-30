@@ -5,10 +5,11 @@ import sharedresources.Message;
 public class ClientToHostAckSender implements Runnable {
 
     
-    private ClientToHost clientToHost;
+    private Client client;
+    private boolean flag;
 
-    public ClientToHostAckSender(ClientToHost clientToHost) {
-       this.clientToHost = clientToHost;
+    public ClientToHostAckSender(Client client) {
+       this.client = client;
     }
 
     public void start() {
@@ -16,14 +17,18 @@ public class ClientToHostAckSender implements Runnable {
         t.start();
     }
     
+    public void stop() {
+        this.flag = false;
+    }
+    
     @Override
     public void run() {
-        boolean flag = true;
+        this.flag = true;
         while(flag){
-            Message message = Client.messageController.queueAcknowledgements.pop();
+            Message message = client.messageController.queueAcknowledgements.pop();
             if(message != null ){
                 System.out.println("@ Client to HostACK Sending acknowledgment " + message.toString());
-                clientToHost.sendMessage(message);
+                client.clientToHost.sendMessage(message);
             }   
             
             try {

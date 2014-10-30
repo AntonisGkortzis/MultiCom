@@ -6,21 +6,25 @@ import sharedresources.Misc;
 
 public class ReceivedAcknowledgmentsByClientMonitor implements Runnable {
 	
-	private ClientToHost clientToHost;
+	private Client client;
+    private boolean flag;
 
-	public ReceivedAcknowledgmentsByClientMonitor(ClientToHost clientToHost) {
-		this.clientToHost = clientToHost;
+	public ReceivedAcknowledgmentsByClientMonitor(Client client) {
+		this.client = client;
 	}
 	public void start() {
 		Thread t = new Thread(this);
 		t.start();
 	}
-	
+
+	public void stop() {
+	    this.flag = false;
+	}
 	@Override
 	public void run() {
-		boolean flag = true;
+		flag = true;
 		while(flag) {
-			if(Client.messageController.queueSentMessagesByClient.size() <= 0 ){
+			if(client.messageController.queueSentMessagesByClient.size() <= 0 ){
 			    try { //To stop the message from being directly resent
 			        Thread.sleep(2000);
 			    } catch (InterruptedException e) {
@@ -38,14 +42,14 @@ public class ReceivedAcknowledgmentsByClientMonitor implements Runnable {
 			}
 			
 			//check if there are any unverified messages in the SentMessages queue
-			for(int i=0; i<Client.messageController.queueSentMessagesByClient.size(); i++) {
-				Message message = Client.messageController.queueSentMessagesByClient.get(i);
+			for(int i=0; i<client.messageController.queueSentMessagesByClient.size(); i++) {
+				Message message = client.messageController.queueSentMessagesByClient.get(i);
 				//Remove the message if it has been re-sent more than 2 times
 				if(message.getTimesSent() > 2){
-					Client.messageController.queueSentMessagesByClient.remove(Misc.processID, message.getId());
+					client.messageController.queueSentMessagesByClient.remove(Misc.processID, message.getId());
 				} else {
 //				    System.out.println("@@ RecAckMonitorClient: resending msg, nrOfTimes: " + message.getTimesSent());
-				    flag = clientToHost.sendMessage(message);
+				    flag = client.clientToHost.sendMessage(message);
 					
 				}
 			}

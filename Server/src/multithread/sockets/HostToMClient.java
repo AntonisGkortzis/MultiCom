@@ -66,7 +66,6 @@ public class HostToMClient implements Runnable {
         		System.out.println("@@ Formatted (forwarded) message " + message.toString());
         	}
         	
-        	System.out.println("Sending L:  " + message);
             try {
                 InetAddress group = InetAddress.getByName(Config.multiCastAddress);
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

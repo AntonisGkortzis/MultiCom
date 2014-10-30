@@ -30,17 +30,22 @@ public class OneToOneListener implements Runnable {
 		t = new Thread(this);
 		t.start();
     }
-    
+//    
+//    public void stop() {
+//        try {
+//            this.socket.close();
+//            this.flag = false;
+//        } catch (IOException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
+//        
+//    }
+
     public void stop() {
-        try {
-            this.socket.close();
-            this.flag = false;
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        
+        this.flag = false;
     }
+    
     public void run () {
     	ObjectInputStream inStream;
     	Message message;
@@ -124,7 +129,7 @@ public class OneToOneListener implements Runnable {
         while(iterator.hasNext()) {
         	ForwardMessage forwardMessage = iterator.next();
             if(forwardMessage.getId() == Commands.getOriginalId(message)) { //correct message
-            	System.out.println("@@ OneToOneListener clients: " + forwardMessage.getClients().size() + " ack size: " + messageController.queueSentMessagesByHostToClient.size());
+//            	System.out.println("@@ OneToOneListener clients: " + forwardMessage.getClients().size() + " ack size: " + messageController.queueSentMessagesByHostToClient.size());
                 if(forwardMessage.removeClient(message.getProcessID())) {
                     System.out.println("@@ OneToOneListener (host): Removing client as I received an ack.");
                 	iterator.remove();

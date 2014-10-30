@@ -30,10 +30,10 @@ public class Client extends javax.swing.JFrame {
      */
     private static final long serialVersionUID = 5095009435533641880L;
     private Socket socketClient;
-    private ClientToHost clientToHost;
-    public static MessageController messageController = new MessageController();
-    public static boolean isConnected = false;
-    
+    public ClientToHost clientToHost;
+    public MessageController messageController = new MessageController();
+    public boolean isConnected = false;
+    public boolean rerouteAttempt = false;
     /**
      * Creates new form ChatClient
      */
@@ -81,8 +81,6 @@ public class Client extends javax.swing.JFrame {
         });
 
         UsernameTextField.setText("username");
-
-//        PortTextField.setText("4444");
 
         MainPanelTextArea.setColumns(20);
         MainPanelTextArea.setRows(5);
@@ -163,43 +161,61 @@ public class Client extends javax.swing.JFrame {
     		return;
     	}
     	
-    	MessagePresenter messagePresenter = new MessagePresenter(this);
-    	messagePresenter.start();
-    	
-    	//Listen for response of previous request (or should this be placed before clientomhost?
-    	OneToManyListener oneToManyListener = new OneToManyListener(messageController, false);
-    	oneToManyListener.start();
-    	
-    	//Multicast to join network TODO in report
-    	ClientToMHost clientToMHost = new ClientToMHost(this);
-    	
-    	if(!this.attemptConnection(clientToMHost, oneToManyListener)) {
-    	    return;
-    	}
-    	
-    	MClientListener mClientListener = new MClientListener();
-    	mClientListener.start();
-    	
-    	clientToHost = new ClientToHost(this);
-    	socketClient = clientToHost.getSocket();
-    	isConnected = true;
-    	
-    	ClientHeartBeatToHost clientHeartBeatToHost = new ClientHeartBeatToHost(clientToHost);
-    	clientHeartBeatToHost.start();
-    	
-    	ClientToHostAckSender clientToHostAckSender = new ClientToHostAckSender(clientToHost);
-    	clientToHostAckSender.start();
-
-    	OneToOneListener oneToOneListener = new OneToOneListener(socketClient, messageController, false);
-    	oneToOneListener.start();
-    	
-    	ReceivedAcknowledgmentsByClientMonitor ackMonitor = new ReceivedAcknowledgmentsByClientMonitor(clientToHost);
-    	ackMonitor.start();
-    	
-    	sendFirstConnectMessageToHost();
+    	startConnection();
         
     }//GEN-LAST:event_ConnectToServerButtonActionPerformed
  
+    MessagePresenter messagePresenter = null;
+    MClientListener mClientListener = null;
+    ClientHeartBeatToHost clientHeartBeatToHost = null;
+    ClientToHostAckSender clientToHostAckSender  = null;
+    OneToOneListener oneToOneListener = null;
+    ReceivedAcknowledgmentsByClientMonitor ackMonitor = null;
+    public void startConnection() {
+        if(messagePresenter!=null) messagePresenter.stop();
+        messagePresenter = new MessagePresenter(this);
+        messagePresenter.start();
+        
+        //Listen for response of previous request (or should this be placed before clientomhost?
+        OneToManyListener oneToManyListener = new OneToManyListener(messageController, false);
+        oneToManyListener.start();
+        
+        //Multicast to join network TODO in report
+        ClientToMHost clientToMHost = new ClientToMHost(this);
+        
+        //RerouteAttempt is true when a client changes hosts
+        if(!this.rerouteAttempt && !this.attemptConnection(clientToMHost, oneToManyListener)) {
+            return;
+        }
+
+        this.rerouteAttempt = false;
+        
+        clientToHost = new ClientToHost(this);
+        socketClient = clientToHost.getSocket();
+        isConnected = true;
+
+        if(mClientListener!=null) mClientListener.stop();
+        mClientListener = new MClientListener(this);
+        mClientListener.start();
+        
+        if(clientHeartBeatToHost!=null) clientHeartBeatToHost.stop();
+        clientHeartBeatToHost = new ClientHeartBeatToHost(this);
+        clientHeartBeatToHost.start();
+        
+        if(clientToHostAckSender!=null) clientToHostAckSender.stop();
+        clientToHostAckSender = new ClientToHostAckSender(this);
+        clientToHostAckSender.start();
+
+        if(oneToOneListener!=null) oneToOneListener.stop();
+        oneToOneListener = new OneToOneListener(socketClient, messageController, false);
+        oneToOneListener.start();
+        
+        if(ackMonitor!=null) ackMonitor.stop();
+        ackMonitor = new ReceivedAcknowledgmentsByClientMonitor(this);
+        ackMonitor.start();
+        
+        sendFirstConnectMessageToHost();
+    }
     /**
      * Try to establish a connection. Retry if there is no response
      * @param clientToMHost
@@ -275,7 +291,7 @@ public class Client extends javax.swing.JFrame {
     	this.EnterTextArea.setText("");
 
     }//GEN-LAST:event_SendMessageButtonActionPerformed
-
+    
 	private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
 	    
         try {

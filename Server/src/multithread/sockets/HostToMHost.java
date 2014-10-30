@@ -9,6 +9,8 @@ import java.net.InetAddress;
 import java.net.SocketException;
 
 import sender.SendStatusUpdate;
+import sharedresources.ConnectedClient;
+import sharedresources.ConnectedClientsList;
 import sharedresources.Host;
 import sharedresources.HostsList;
 import sharedresources.Commands;
@@ -62,13 +64,12 @@ public class HostToMHost implements Runnable{
             	if(Commands.messageIsOfCommand(message, Commands.connectRequest)) {
             		if(Config.master) {
                         Host suitableHost = HostsList.findSuitableHost();
-                        	//TODO search again if null?
-                            String command = Commands.constructCommand(Commands.hostFound, Commands.constructHostFound(suitableHost, message.getProcessID()));
-                            Message newMessage = new Message(Message.MessageType.mClientCommand, true, command);
-                            newMessage.setClientAsReceiver(true);//In order not to be stored by other hosts
-                            sendMessage(newMessage);
-                            System.out.println("@@ I ["+ Misc.processID+"/"+Server.port +"] am redirecting a client to host" 
-                            + suitableHost.getProcessID() + "/" +suitableHost.getPort());
+                        String command = Commands.constructHostFound(suitableHost, message.getProcessID());
+                        Message newMessage = new Message(Message.MessageType.mClientCommand, true, command);
+                        newMessage.setClientAsReceiver(true);//In order not to be stored by other hosts
+                        sendMessage(newMessage);
+                        System.out.println("@@ I ["+ Misc.processID+"/"+Server.port +"] am redirecting a client to host" 
+                        + suitableHost.getProcessID() + "/" +suitableHost.getPort());
             		}
             	//If you parse a received message that requests a status update then send a status update
                 } else if(Commands.messageIsOfCommand(message, Commands.requestStatusUpdate)) { 
@@ -96,9 +97,27 @@ public class HostToMHost implements Runnable{
 	                	Server.electionState = Server.ElectionStates.normal;
 	                	System.out.println("##-- Am I ["+Misc.processID+"/"+Server.port+"] the Master? " + Config.master);
                 	}
-                } /*else if(Commands.messageIsOfCommand(message, Commands.vote)){
-                	sendMessage(message);
-                }*/
+                } else if(Commands.messageIsOfCommand(message, Commands.loadBalance)){
+                	String[] messageParts = Commands.splitMessage(message);
+                	String fromHostPid = messageParts[1];
+                	if(fromHostPid.equals(Misc.processID)) {
+                	    String toHostPid = messageParts[2];
+                	    System.out.println("I received a load balance message. Route clients to " + toHostPid);
+                	    Host toHost = HostsList.getHost(toHostPid);
+                	    if(toHost!=null) {
+                	        int nrOfClients = Integer.parseInt(messageParts[3]);
+                	        for(int i=0; i<nrOfClients; i++) {
+                	            if(i<ConnectedClientsList.size()) {
+                	                ConnectedClient client = ConnectedClientsList.clients.get(i);
+                	                String command = Commands.constructConnectToNewHost(toHost, client.getProcessID());
+                	                message = new Message(Message.MessageType.hostChat,true,command);
+                	                Server.messageController.queueHostChat.push(message);
+                	                System.out.println("@@HostToMHost, send reconnect message to client: " + message);
+                	            }
+                	        }
+                	    }
+                	}
+                }
             }
             
             //Messages that contains status messages received from hosts

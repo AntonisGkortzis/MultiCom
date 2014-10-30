@@ -208,4 +208,13 @@ public  class HostsList {
         }
         return nrOfParticipants;
     }
+
+    public static Host getHost(String processId) {
+        for(Host host: hosts) {
+            if(host.getProcessID().equals(processId)) {
+                return host;
+            }
+        }
+        return null;
+    }
 }

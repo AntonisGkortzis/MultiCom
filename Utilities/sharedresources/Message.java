@@ -14,7 +14,7 @@ public class Message implements Serializable {
      * Enumeration to specify to type of process that needs to receive/send
      * @author mark
      */
-    public static enum MessageType { //TODO explain in report
+    public static enum MessageType { //TODO explain in report (globally no details)
         mHostCommand,
         mHostStatus,
         mHostChat,

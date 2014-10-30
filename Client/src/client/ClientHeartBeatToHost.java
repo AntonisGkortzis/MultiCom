@@ -7,10 +7,11 @@ import sharedresources.Message;
 public class ClientHeartBeatToHost implements Runnable {
 
     
-    private ClientToHost clientToHost;
+    private Client client;
+    private boolean flag;
     
-    public ClientHeartBeatToHost(ClientToHost clientToHost) {
-        this.clientToHost = clientToHost;
+    public ClientHeartBeatToHost(Client client) {
+        this.client = client;
     }
     
     public void start() {
@@ -18,13 +19,17 @@ public class ClientHeartBeatToHost implements Runnable {
         t.start();
     }
     
+    public void stop() {
+        this.flag = false;
+    }
+    
     @Override
     public void run() {
-        boolean flag = true;
+        this.flag = true;
         String command = Commands.constructCommand(Commands.clientHeartBeat);
         Message message = new Message(Message.MessageType.clientCommand, true, command);
         while(flag) {
-            if(!Client.isConnected) return;
+            if(!client.isConnected) return;
             try {
                 Thread.sleep(Config.clientHeartbeatDelay); //Must be lower than the declareDead in ClientMonitor of server
             } catch (InterruptedException e) {
@@ -32,7 +37,7 @@ public class ClientHeartBeatToHost implements Runnable {
                 e.printStackTrace();
             }
             
-            clientToHost.sendMessage(message);
+            client.clientToHost.sendMessage(message);
             
         }
         

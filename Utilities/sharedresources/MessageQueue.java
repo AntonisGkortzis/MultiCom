@@ -16,7 +16,7 @@ public class MessageQueue{
 	/*
 	 * Adds a new message in the queue sorted by its timestamp.
 	 */
-	public boolean push(Message newMessage){
+	public boolean push(Message message){
 //		System.out.println("## Message pushed: " + newMessage.getText());
 		boolean flag = false;
 /*		int size = size();
@@ -29,7 +29,7 @@ public class MessageQueue{
 			}
 		}
 		if(!flag){*/
-			flag = this.queue.add(newMessage);
+			flag = this.queue.add(message);
 //			flag = true;
 //		}
 		return flag;

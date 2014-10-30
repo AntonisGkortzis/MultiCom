@@ -43,13 +43,13 @@ public class ClientToHost {
             //after sending the message we should store it at the SentMessages queue and wait for its acknowledgment
             //initialize command is not acknowledged
             if(!Commands.messageIsOfCommand(message, Commands.initOneToOneWithHost))
-            	Client.messageController.queueSentMessagesByClient.push(message);
+            	client.messageController.queueSentMessagesByClient.push(message);
 	}
 	
 	public boolean sendMessage(Message message){
 		if (clientSocket == null) {
 			client.showErrorMessage("You are not connected.");
-			Client.isConnected = false;
+			client.isConnected = false;
 			return false;
 		}
 		//Increment the number of times this message has been sent
@@ -59,11 +59,11 @@ public class ClientToHost {
 			ObjectOutputStream outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
 			outputStream.writeObject(message);
 			outputStream.flush();
-			System.out.println("@@ Client to Host--> send message: " + message.getText() + " id: " + message.getId() +  " times sent: " + message.getTimesSent());
+//			System.out.println("@@ Client to Host--> send message: " + message.getText() + " id: " + message.getId() +  " times sent: " + message.getTimesSent());
 		} catch(IOException ex) {
 			client.showErrorMessage("Connection closed, is the server running?\n"+ex.getMessage());
 			client.closeSocket();
-			Client.isConnected = false;
+			client.isConnected = false;
 			client.setSocket(null);
 //            ex.printStackTrace();
 			return false;

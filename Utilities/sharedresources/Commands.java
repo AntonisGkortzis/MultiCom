@@ -43,6 +43,7 @@ public class Commands {
 	
 	public final static String targetedResentMessage = "messageThatShouldBeParsedOnlyByTheUserThatHasTheSameProcessIdAsTheMessages";
 	
+	public final static String loadBalance = "MasterHasALoadBalanceJobForYou";
 	
 	public final static String acknowledgement = "containerOfAMessageAcknowledgement";
 	
@@ -59,6 +60,23 @@ public class Commands {
 	
 	public final static String IAmTheMaster = "announcementOfYourselfAsTheMaster";
 	
+	
+	/**
+	 * Host to Multiple clients (local multicast)
+	 */
+	public final static String connectToNewHost = "AsAHosIAmOrderingYouToConnectToThisHost";
+	
+	
+	/***** HELPER FUNCTIONS ******/
+	
+	/**
+	 * Construct a status of a host
+	 * @param nrOfClients
+	 * @param address
+	 * @param port
+	 * @param isMaster
+	 * @return
+	 */
 	public static String constructStatus(int nrOfClients, String address, int port, boolean isMaster) {
 	    return nrOfClients + delimiter + address + delimiter + port + delimiter + isMaster + delimiter;
 	}
@@ -70,7 +88,17 @@ public class Commands {
 	 * @return
 	 */
 	public static String constructHostFound(Host host, String processID ) {
-	    return processID + delimiter + host.getAddress() + delimiter + host.getPort();
+	    return Commands.hostFound + delimiter + processID + delimiter + host.getAddress() + delimiter + host.getPort();
+	}
+	
+	/**
+	 * A client with pid processID must connect to new Host host.
+	 * @param host Host to connect to 
+	 * @param processID Process ID of client
+	 * @return
+	 */
+	public static String constructConnectToNewHost(Host host, String processID) {
+	    return Commands.connectToNewHost + delimiter + processID + delimiter + host.getAddress() + delimiter + host.getPort();
 	}
 	
 	/**
@@ -82,6 +110,19 @@ public class Commands {
 	public static String constructElectionMessage(String command, String processID, long time) {
 		return command + delimiter + processID + delimiter + time;
 	}
+	
+	/**
+	 * Message to instruct host "from" that he needs to lose "nr" of clients to host "to"
+	 * Message of the form: "command ; from.PID ; to:PID ; nr"
+	 * @param from Host which has to loose clients
+	 * @param to Host which gains clients
+	 * @param nr Number of clients to be moved
+	 * @return
+	 */
+	public static String constructCommandLoadBalance(Host from, Host to, int nr) {
+	    return Commands.loadBalance + delimiter + from.getProcessID() + delimiter + to.getProcessID() + delimiter + nr + delimiter;
+	}
+	
 	/**
 	 * Constructs commands from keywords
 	 * @param command keyword
