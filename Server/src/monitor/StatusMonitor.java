@@ -1,5 +1,6 @@
-package multithread.sockets;
+package monitor;
 
+import multithread.sockets.Election;
 import sharedresources.HostsList;
 
 public class StatusMonitor implements Runnable {

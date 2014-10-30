@@ -183,6 +183,9 @@ public class Client extends javax.swing.JFrame {
     	clientToHost = new ClientToHost(this);
     	socketClient = clientToHost.getSocket();
     	
+    	ClientHeartBeatToHost clientHeartBeatToHost = new ClientHeartBeatToHost(clientToHost);
+    	clientHeartBeatToHost.start();
+    	
     	ClientToHostAckSender clientToHostAckSender = new ClientToHostAckSender(clientToHost);
     	clientToHostAckSender.start();
 
@@ -262,7 +265,8 @@ public class Client extends javax.swing.JFrame {
      */
     private void sendFirstConnectMessageToHost() {
         String command = Commands.constructCommand(Commands.initOneToOneWithHost);
-        clientToHost.sendMessage(command);
+        Message initMessage = new Message(MessageType.clientCommand, true, command);
+        clientToHost.sendMessage(initMessage);
     }
     
     private void SendMessageButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SendMessageButtonActionPerformed
@@ -277,7 +281,7 @@ public class Client extends javax.swing.JFrame {
         	if(socketClient != null) {
         	    //Send a shutdown message
         	    String command = Commands.constructCommand(Commands.clientShutdown);
-        	    Message shutdownMsg = new Message(MessageType.clientChat, true, command);
+        	    Message shutdownMsg = new Message(MessageType.clientCommand, true, command);
         	    clientToHost.sendMessage(shutdownMsg);
         		
         		socketClient.close();

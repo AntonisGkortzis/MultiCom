@@ -1,9 +1,12 @@
-package multithread.sockets;
+package sender;
 
+import multithread.sockets.Server;
 import sharedresources.Commands;
 import sharedresources.Config;
 import sharedresources.ConnectedClientsList;
+import sharedresources.HostsList;
 import sharedresources.Message;
+import sharedresources.Misc;
 
 public class SendStatusUpdate implements Runnable {
 	public SendStatusUpdate() {
@@ -18,12 +21,14 @@ public class SendStatusUpdate implements Runnable {
 	@Override
 	public void run() {
 	    while(true) {
+	        //update yourself before sending status update
+	        HostsList.updateHost(Misc.processID, ConnectedClientsList.size(), Config.master);
+
             String command = Commands.constructCommand(Commands.requestStatusUpdate, constructStatus());
 
           	Message message = new Message(Message.MessageType.mHostStatus,true, command); 
           	Server.messageController.queueSend.push(message);
             try {
-//                Thread.sleep(Config.DELAY);
                 Thread.sleep(5000);
             } 
             catch (InterruptedException e) { 

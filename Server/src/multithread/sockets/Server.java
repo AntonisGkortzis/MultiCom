@@ -1,4 +1,8 @@
 package multithread.sockets;
+import monitor.ClientMonitor;
+import monitor.ReceivedAcknowledgmentsByHostMonitor;
+import monitor.StatusMonitor;
+import sender.HostToClientAckSender;
 import sharedresources.Commands;
 import sharedresources.Message;
 import sharedresources.MessageController;
@@ -33,6 +37,9 @@ public class Server {
     // Listen for incoming connections and handle them
     public static void main(String[] args) {
         System.out.println("Server Running with processID " + Misc.processID + " and port " + port + " ...");
+        
+        ClientMonitor clientMonitor = new ClientMonitor();
+        clientMonitor.start();
         
         //One to one communication between host and client
         HostToClient hostToClient = new HostToClient();

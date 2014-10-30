@@ -1,7 +1,8 @@
-package multithread.sockets;
+package monitor;
 
 import java.util.Iterator;
 
+import multithread.sockets.Server;
 import sharedresources.ClientAmountSendPair;
 import sharedresources.Commands;
 import sharedresources.ForwardMessage;

@@ -1,9 +1,10 @@
-package multithread.sockets;
+package sender;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import multithread.sockets.Server;
 import sharedresources.Message;
 
 public class HostToClientAckSender implements Runnable {

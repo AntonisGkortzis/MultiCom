@@ -1,6 +1,8 @@
 package sharedresources;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -16,6 +18,11 @@ public class ConnectedClientsList {
 		clients.add(client);
 	}
 	
+	/**
+	 * Returns true if a client with processID exists
+	 * @param processID
+	 * @return
+	 */
 	public static boolean clientExists(String processID){
 		for(ConnectedClient client : clients){
 			if(client.getProcessID().equals(processID)) {
@@ -25,8 +32,35 @@ public class ConnectedClientsList {
 		return false;
 	}
 	
-	public static int size() {
-	    return clients.size();
+	/**
+	 * Updates the Date of last seen of a client with processID.
+	 * May need to be extended in the future
+	 * @param processID
+	 */
+	public static void updateClient(String processID) {
+	    for(ConnectedClient client: clients) {
+	        if(client.getProcessID().equals(processID)); {
+	            client.setLastUpdate(new Date());
+	        }
+	    }
 	}
 
+	/**
+	 * Removes client with processID
+	 * @param processID
+	 */
+    public static void removeClient(String processID) {
+        Iterator<ConnectedClient> iterator = clients.iterator();
+        while(iterator.hasNext()) {
+            ConnectedClient client = iterator.next();
+            if(client.getProcessID().equals(processID)) {
+                iterator.remove();
+            }
+        }
+        
+    }
+
+    public static int size() {
+        return clients.size();
+    }
 }

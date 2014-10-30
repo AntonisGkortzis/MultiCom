@@ -20,6 +20,7 @@ public class Message implements Serializable {
         mHostChat,
         mHostVote,
         clientChat,
+        clientCommand, //Commands send by clients (initConnection,shutdown, heartbeat)
         mClientCommand,
         hostChat,
         acknowledgement
@@ -32,7 +33,7 @@ public class Message implements Serializable {
 	private long timestamp;				//The time that the message was sent
 	private String username;				//The name of the user sending the message.
 	private String processID;            //The id of the process sending the message.
-	private long id=0;					//An incrementing number as an id //TODO used for what?
+	private long id=0;					//An incrementing number as an id
 	private boolean clientAsReceiver;
 	private Socket socket;
 	private int timesSent;
@@ -43,7 +44,6 @@ public class Message implements Serializable {
 		this.messageType = type;
 		this.command = command;
 		this.processID = Misc.processID;
-//		this.id++;
 		this.text = text;
 		this.clientAsReceiver = false;
 		this.timesSent = 0;

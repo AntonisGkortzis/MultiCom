@@ -2,6 +2,7 @@
 package sharedresources;
 
 import java.net.Socket;
+import java.util.Date;
 
 
 /**
@@ -12,14 +13,14 @@ import java.net.Socket;
 public class ConnectedClient {
 	private String user;
     private String processID;
-    private Socket socket;
+    private Date lastUpdate; //TODO explain in report
 	
 	public ConnectedClient(){}
 	
-	public ConnectedClient(String processID, String user, Socket socket){
+	public ConnectedClient(String processID, String user){
 		this.processID = processID;
 		this.user = user;		
-		this.socket = socket;
+		this.setLastUpdate(new Date());
 	}
 	
 	public void setUser(String user){
@@ -38,12 +39,12 @@ public class ConnectedClient {
 	    return this.processID;
 	}
 
-	public Socket getSocket() {
-		return socket;
-	}
+    public Date getLastUpdate() {
+        return lastUpdate;
+    }
 
-	public void setSocket(Socket socket) {
-		this.socket = socket;
-	}
+    public void setLastUpdate(Date lastUpdate) {
+        this.lastUpdate = lastUpdate;
+    }
 	
 }

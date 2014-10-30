@@ -7,6 +7,8 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+
+import sender.SendStatusUpdate;
 import sharedresources.Host;
 import sharedresources.HostsList;
 import sharedresources.Commands;

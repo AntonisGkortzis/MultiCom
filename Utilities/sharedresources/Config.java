@@ -29,7 +29,12 @@ public final class Config {
 	/**
 	 * Delay for pinging other hosts 
 	 */
-	public final static long DELAY = 3000; //TODO set to correct delay
+	public final static int DELAY = 3000; //TODO set to correct delay
+	
+	/**
+	 * Delay of sending heartbeats to host by client
+	 */
+	public final static int clientHeartbeatDelay = 2500;
 	
 	public static int connectToPortFromHost = -1;
 

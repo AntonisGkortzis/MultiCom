@@ -50,16 +50,25 @@ public class OneToOneListener implements Runnable {
 				inStream = new ObjectInputStream(socket.getInputStream());
 				message = (Message)inStream.readObject();
 //				System.out.println("@ OneToOneListener received " + message.toString());
-				if(Commands.messageIsOfCommand(message, Commands.initOneToOneWithHost)) {
-				    //Not further action is needed as this is only a 
-				    //message to let the host know that there is a new client.
-					addNewClient(message.getProcessID(), message.getUsername());
-				} 
-				//If a host receives a shutdown message from client
-				else if(Commands.messageIsOfCommand(message, Commands.clientShutdown) && this.isHost) {
-				    System.out.println("Received a shutdown message from client, closing connection.");
-				    inStream.close();
-				    this.stop();
+				if(message.getMessageType().equals(Message.MessageType.clientCommand)) {
+    				if(Commands.messageIsOfCommand(message, Commands.initOneToOneWithHost)) {
+    				    //Not further action is needed as this is only a 
+    				    //message to let the host know that there is a new client.
+    					addNewClient(message.getProcessID(), message.getUsername());
+    				} 
+    				//If a host receives a shutdown message from client
+    				else if(Commands.messageIsOfCommand(message, Commands.clientShutdown)) {
+    				    System.out.println("Received a shutdown message from client, closing connection.");
+    				    //Remove clients since it has shutdown
+    				    ConnectedClientsList.removeClient(message.getProcessID());
+    				    inStream.close();
+    				    this.stop();
+    				}
+    				//Update last seen of a client (ClientMonitor monitors clients)
+    				else if(Commands.messageIsOfCommand(message, Commands.clientHeartBeat)) {
+//    				    System.out.println("Received a heartbeat message: " + message);
+    				    ConnectedClientsList.updateClient(message.getProcessID());
+    				}
 				}
 				//if the message is a chat message (sent from client to host)
 				else if(message.getMessageType().equals(Message.MessageType.hostChat)){ //ONLY HOSTS in this if!
@@ -127,9 +136,8 @@ public class OneToOneListener implements Runnable {
     
     private void addNewClient(String processID, String username) {
     	if(!ConnectedClientsList.clientExists(processID)) {
-	    	ConnectedClient newclient = new ConnectedClient(processID, username, this.socket);
+	    	ConnectedClient newclient = new ConnectedClient(processID, username);
 	        ConnectedClientsList.addClient(newclient); 
-	        HostsList.updateHost(Misc.processID, ConnectedClientsList.size(), Config.master);
     	}
     }
 }

@@ -7,7 +7,6 @@ package sharedresources;
  *
  */
 public class Commands { 
-	//XXX should this class be combined with Message somehow or is it OK like this?
 
 	private final static String delimiter = ";"; //Character used to separate keywords in commands
 	
@@ -18,11 +17,12 @@ public class Commands {
 	
 	/****ClientToHost*******/
 	public final static String initOneToOneWithHost = "IAmNowConnectedToYou";
+	public final static String clientHeartBeat = "IAmStillAlive";
 	public final static String chatMessage = "SendChatMessage";
 	public final static String ackForReceive = "SendAckForReceiveMessage";
 	public final static String clientShutdown = "IHaveShutdown";
 	/**
-	 * Client needs to connect. Send to hosts group
+	 * Client needs to connect. Send global multicast
 	 */
 	public final static String connectRequest = "SendConnectRequest";
 
