@@ -170,61 +170,16 @@ public class Client extends javax.swing.JFrame {
     	OneToManyListener oneToManyListener = new OneToManyListener(messageController, false);
     	oneToManyListener.start();
     	
-    	
-    	//Multicast to join network
+    	//Multicast to join network TODO in report
     	ClientToMHost clientToMHost = new ClientToMHost(this);
     	
-    	//Send connect request through global multicast
-    	clientToMHost.sendConnectRequest();
-    	
-    	boolean flag = true;
-    	long startWaitingForConnection = new Date().getTime();
-    	long waitBeforeResendConnectRequest = 5000; //wait this long for resending connection request
-    	int connectTries = 0;
-    	while(flag) {
-    	    long currentTime = new Date().getTime();
-    	    //Send a new connection request after some time TODO in report
-    	    if(currentTime-startWaitingForConnection>waitBeforeResendConnectRequest) {
-    	        clientToMHost.sendConnectRequest();
-    	        if(connectTries>2){
-    	        	showErrorMessage("No available hosts. Try again later.");
-    	        	return;
-    	        }
-    	        startWaitingForConnection = new Date().getTime(); //reset the time of the start
-    	    }
-    		try {
-    			/*
-    			 * It doesn't receive/pop a connection response without this Thread.sleep
-    			 * Probably because this Thread is consuming all processing power
-    			 */
-				Thread.sleep(500); //TODO Find an explanation for that
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-        	Message message = messageController.queueMClientCommand.pop();
-        	if(message!=null && Commands.messageIsOfCommand(message, Commands.hostFound)) {
-        		messageController.queueSentMessagesByClient.clear();
-        		
-                String[] messageParts = Commands.splitMessage(message);
-                if(Misc.processID.equals(messageParts[1])) { //This client requested a connection
-                    Config.connectToPortFromHost = Integer.parseInt(messageParts[3]);
-                    System.out.println("HOST IS FOUND Connect to port: " + Config.connectToPortFromHost);
-                    flag=false;
-                    oneToManyListener.stop();
-                    break;
-                }
-        	} else {
-        		connectTries++;        		
-        	}
-        }
+    	if(!this.attemptConnection(clientToMHost, oneToManyListener)) {
+    	    return;
+    	}
     	
     	MClientListener mClientListener = new MClientListener();
     	mClientListener.start();
     	
-    	
-    	
-//    	TODO Use info obtained from clientToMHost/oneToManyListener
     	clientToHost = new ClientToHost(this);
     	socketClient = clientToHost.getSocket();
     	
@@ -241,6 +196,66 @@ public class Client extends javax.swing.JFrame {
         
     }//GEN-LAST:event_ConnectToServerButtonActionPerformed
  
+    /**
+     * Try to establish a connection. Retry if there is no response
+     * @param clientToMHost
+     * @param oneToManyListener
+     */
+    private boolean attemptConnection(ClientToMHost clientToMHost, OneToManyListener oneToManyListener) {
+        //First attempt
+        clientToMHost.sendConnectRequest();
+        
+        //Sleep to give master time to respond
+        try {
+            Thread.sleep(250);
+        } catch (InterruptedException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
+        
+        //No response (in time) start sending request again from time to time (max 3 times)
+        boolean flag = true;
+        long startWaitingForConnection = new Date().getTime();
+        long waitBeforeResendConnectRequest = 3000; //wait this long for resending connection request
+        int connectTries = 0;
+        while(flag) {
+            //Check response
+            Message message = messageController.queueMClientCommand.pop();
+            if(message!=null && Commands.messageIsOfCommand(message, Commands.hostFound)) {
+                messageController.queueSentMessagesByClient.clear();
+                
+                String[] messageParts = Commands.splitMessage(message);
+                if(Misc.processID.equals(messageParts[1])) { //This client requested a connection
+                    Config.connectToPortFromHost = Integer.parseInt(messageParts[3]);
+                    System.out.println("HOST IS FOUND Connect to port: " + Config.connectToPortFromHost);
+                    oneToManyListener.stop();
+                    return true;
+                }
+            }
+            long currentTime = new Date().getTime();
+            //Send a new connection request after some time TODO in report
+            if(currentTime-startWaitingForConnection>waitBeforeResendConnectRequest) {
+                clientToMHost.sendConnectRequest();
+                connectTries++;
+                if(connectTries>2){
+                    showErrorMessage("No available hosts. Try again later.");
+                    return false;
+                }
+                startWaitingForConnection = new Date().getTime(); //reset the time of the start
+            }
+            try {
+                /*
+                 * It doesn't receive/pop a connection response without this Thread.sleep
+                 * Because this Thread is consuming all processing power
+                 */
+                Thread.sleep(500); //TODO Find an explanation for that
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        return true;
+    }
     /**
      * Used to send the first message to the host, so the host knows 
      * it has a new client and can update its client list

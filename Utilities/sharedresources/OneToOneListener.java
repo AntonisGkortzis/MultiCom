@@ -86,7 +86,7 @@ public class OneToOneListener implements Runnable {
 						}*/
 					}
 				}
-				//if the message is an acknowledgment sent by a Host to a Client
+				//if the message is an acknowledgment sent by a Host to a Client or vice versa
 				else if(message.getMessageType().equals(Message.MessageType.acknowledgement)){
 				    if(!this.isHost) {
 				        System.out.println("Ack received for message by client: " +message);
@@ -119,11 +119,10 @@ public class OneToOneListener implements Runnable {
     	Iterator<ForwardMessage> iterator = messageController.queueSentMessagesByHostToClient.iterator();
         while(iterator.hasNext()) {
         	ForwardMessage forwardMessage = iterator.next();
-//            System.out.println("Never here???? " + forwardMessage.getId());
             if(forwardMessage.getId() == Commands.getOriginalId(message)) { //correct message
             	System.out.println("@@ OneToOneListener clients: " + forwardMessage.getClients().size() + " ack size: " + messageController.queueSentMessagesByHostToClient.size());
-                System.out.println("@@ OneToOneListener (host): Removing client as I received an ack.");
                 if(forwardMessage.removeClient(message.getProcessID())) {
+                    System.out.println("@@ OneToOneListener (host): Removing client as I received an ack.");
                 	iterator.remove();
                 }
                 break;

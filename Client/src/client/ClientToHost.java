@@ -51,6 +51,9 @@ public class ClientToHost {
 			client.showErrorMessage("You are not connected.");
 			return false;
 		}
+		//Increment the number of times this message has been sent
+		message.incTimesSent();
+		
 		try {
 			ObjectOutputStream outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
 			outputStream.writeObject(message);

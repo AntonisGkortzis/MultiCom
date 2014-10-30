@@ -46,7 +46,7 @@ public class Message implements Serializable {
 //		this.id++;
 		this.text = text;
 		this.clientAsReceiver = false;
-		this.incTimesSent(0);
+		this.timesSent = 0;
 	}
 	
 	public Message(MessageType type, boolean command, String username, String text, long id){
@@ -130,7 +130,7 @@ public class Message implements Serializable {
 		return timesSent;
 	}
 
-	public void incTimesSent(int timesSent) {
+	public void incTimesSent() {
 		this.timesSent++;
 	}
 

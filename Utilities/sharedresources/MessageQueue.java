@@ -49,7 +49,6 @@ public class MessageQueue{
 	 * Removes and returns an object of a given index from the queue .
 	 */
 	public void remove(String processId, long id){
-//		if(!isEmpty()){
 	    Iterator<Message> iterator = this.queue.iterator();
 	    while(iterator.hasNext()) {
 	        Message message = iterator.next();
@@ -59,13 +58,6 @@ public class MessageQueue{
 	            iterator.remove();
 	        }
 	    }
-//			for(int i=0; i<size(); i++){
-//				if(this.queue.get(i).getUsername().equals(user) 
-//						&& this.queue.get(i).getId() == id){
-//					this.queue.remove(i);
-//				}
-//			}
-//		}
 	}
 	
 	public int size(){
@@ -82,7 +74,6 @@ public class MessageQueue{
 
 	public void clear() {
 		this.queue.clear();
-		
 	}
 
 }
