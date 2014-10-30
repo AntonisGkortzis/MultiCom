@@ -172,7 +172,7 @@ public class Client extends javax.swing.JFrame {
     OneToOneListener oneToOneListener = null;
     ReceivedAcknowledgmentsByClientMonitor ackMonitor = null;
     public void startConnection() {
-        if(messagePresenter!=null) messagePresenter.stop();
+        this.stopConnections();
         messagePresenter = new MessagePresenter(this);
         messagePresenter.start();
         
@@ -194,27 +194,32 @@ public class Client extends javax.swing.JFrame {
         socketClient = clientToHost.getSocket();
         isConnected = true;
 
-        if(mClientListener!=null) mClientListener.stop();
         mClientListener = new MClientListener(this);
         mClientListener.start();
         
-        if(clientHeartBeatToHost!=null) clientHeartBeatToHost.stop();
         clientHeartBeatToHost = new ClientHeartBeatToHost(this);
         clientHeartBeatToHost.start();
         
-        if(clientToHostAckSender!=null) clientToHostAckSender.stop();
         clientToHostAckSender = new ClientToHostAckSender(this);
         clientToHostAckSender.start();
 
-        if(oneToOneListener!=null) oneToOneListener.stop();
         oneToOneListener = new OneToOneListener(socketClient, messageController, false);
         oneToOneListener.start();
         
-        if(ackMonitor!=null) ackMonitor.stop();
         ackMonitor = new ReceivedAcknowledgmentsByClientMonitor(this);
         ackMonitor.start();
         
         sendFirstConnectMessageToHost();
+    }
+    
+    private void stopConnections() {
+        if(messagePresenter!=null) messagePresenter.stop();
+        if(mClientListener!=null) mClientListener.stop();
+        if(clientHeartBeatToHost!=null) clientHeartBeatToHost.stop();
+        if(clientToHostAckSender!=null) clientToHostAckSender.stop();
+        if(oneToOneListener!=null) oneToOneListener.stop();
+        if(ackMonitor!=null) ackMonitor.stop();
+
     }
     /**
      * Try to establish a connection. Retry if there is no response
@@ -381,6 +386,7 @@ public class Client extends javax.swing.JFrame {
     }
     
     public void showErrorMessage(String msg) {
+        this.stopConnections();
     	javax.swing.JOptionPane.showMessageDialog(new javax.swing.JFrame(), msg, "Error",
     	        javax.swing.JOptionPane.ERROR_MESSAGE);
     }
