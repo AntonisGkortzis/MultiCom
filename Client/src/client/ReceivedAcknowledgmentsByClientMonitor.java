@@ -20,17 +20,21 @@ public class ReceivedAcknowledgmentsByClientMonitor implements Runnable {
 	public void run() {
 		boolean flag = true;
 		while(flag) {
-			try {
-				Thread.sleep(2000);//TODO set a fixed delay in Config
+			if(Client.messageController.queueSentMessagesByClient.size() <= 0 ){
+			    try { //To stop the message from being directly resent
+			        Thread.sleep(2000);
+			    } catch (InterruptedException e) {
+			        e.printStackTrace();
+			        flag=false;
+			    }
+				continue;
+			}
+			try { //Delay between resent
+			    Thread.sleep(2000);//TODO set a fixed delay in Config
 			} 
 			catch (InterruptedException e) { 
-				e.printStackTrace();
-				flag = false;
-			}
-
-			if(Client.messageController.queueSentMessagesByClient.size() <= 0 ){
-				flag = false;
-				continue;
+			    e.printStackTrace();
+			    flag = false;
 			}
 			
 			//check if there are any unverified messages in the SentMessages queue

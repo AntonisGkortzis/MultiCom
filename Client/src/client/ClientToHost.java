@@ -58,7 +58,7 @@ public class ClientToHost {
 			ObjectOutputStream outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
 			outputStream.writeObject(message);
 			outputStream.flush();
-			System.out.println("@@ Client to Host--> send message: " + message.getText() + " id: " + message.getId());
+			System.out.println("@@ Client to Host--> send message: " + message.getText() + " id: " + message.getId() +  " times sent: " + message.getTimesSent());
 		} catch(IOException ex) {
 			client.showErrorMessage("Connection closed, is the server running?\n"+ex.getMessage());
 			client.closeSocket();
