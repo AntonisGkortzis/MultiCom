@@ -42,7 +42,7 @@ public class ReceivedAcknowledgmentsByHostFromMHostsMonitor implements Runnable 
 			        if(hostPair.getNrOfRetries()>2) { //remove host after some retries (not responding/sending acks)
                         iteratorPair.remove();
                         System.out.println("Too much retries, so remove host with PID: " + hostPair.getHost().getProcessID());
-                        if(forwardMessage.getHosts().size()<=0) { //no clients anymore so this message is done
+                        if(forwardMessage.getHosts().size()<=0) { //no hosts anymore so this message is done
                             iteratorMsg.remove();
                             System.out.println("No hosts anymore acknowledging, so remove ForwardMsg and give up resending it");
                             continue;

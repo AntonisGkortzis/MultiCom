@@ -88,4 +88,17 @@ public class ForwardMessage {
 		return hosts;
 	}
 
+	public boolean removeHost(String processID) {
+		Iterator<HostAmountSendPair> iterator = hosts.iterator();
+        HostAmountSendPair pair = null;
+        while(iterator.hasNext()) {
+            pair = iterator.next();
+            if(pair.isHost(processID)) {
+                iterator.remove();
+                return hosts.size() == 0;
+            }
+        }
+        return false;
+	}
+
 }

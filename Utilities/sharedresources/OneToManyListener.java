@@ -6,6 +6,7 @@ import java.io.ObjectInputStream;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.util.Iterator;
 
 import com.sun.corba.se.spi.activation.Server;
 
@@ -117,21 +118,42 @@ public class OneToManyListener implements Runnable {
 			String command = Commands.constructCommand(Commands.acknowledgement, message.getProcessID(), Long.toString(message.getId()));
 		    Message ack = new Message(Message.MessageType.acknowledgement, true, command);
 			//Adding acknowledgment to the Send queue for immediate sending
-//		    messageController.queueSend.push(ack);
+		    System.out.println("Host with pid " + Misc.processID + " creates and adds to SendQueue an aknowledgment for the received message " + ack.toString());
+		    messageController.queueSend.push(ack);
 			
 //			messageController.queueHostChat.push(message);
 
 		}
 		
 		//TODO Here we should check if the message is an acknowledgment and we should remove the HostAmountSendPair from the hosts of the forward message
-		
+		if(message.getMessageType().equals(Message.MessageType.acknowledgement) && isHost){
+			System.out.println("@@ OneToManyListeners -- Received an ack " + message.toString());
+			removeResendMessageToHost(message);
+		}
 		
 		//TODO explain queues and commands in report
 		messageController.pushMessageInCorrectQueue(message);
 		
 	}
 	
-	
+	/**
+     * Remove the client for a message as the client has sent an acknowledgement.
+     * @param message
+     */
+    private void removeResendMessageToHost(Message message) {
+    	Iterator<ForwardMessage> iterator = messageController.queueSentMessagesByHostToMHost.iterator();
+        while(iterator.hasNext()) {
+        	ForwardMessage forwardMessage = iterator.next();
+            if(forwardMessage.getId() == Commands.getOriginalId(message)) { //correct message
+//            	System.out.println("@@ OneToOneListener clients: " + forwardMessage.getClients().size() + " ack size: " + messageController.queueSentMessagesByHostToClient.size());
+                if(forwardMessage.removeHost(message.getProcessID())) {
+                    System.out.println("@@ OneToManyListener (host): Removing host as I received an ack.");
+                	iterator.remove();
+                }
+                break;
+            }
+        }
+    }
 
 
 
