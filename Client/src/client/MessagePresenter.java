@@ -21,7 +21,7 @@ public class MessagePresenter implements Runnable {
 			Message message = Client.messageController.queueClientReceivedMessages.pop();
 			
 			if(message != null){
-				client.AddTextToMainPanel(message.getTimestamp() + "|" + message.getUsername() + ": " + message.getText());
+				client.AddTextToMainPanel(/*message.getTimestamp() + "|" +*/ message.getUsername() + ": " + message.getText());
 			}
 			
 			try{

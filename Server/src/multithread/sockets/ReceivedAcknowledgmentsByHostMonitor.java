@@ -31,7 +31,7 @@ public class ReceivedAcknowledgmentsByHostMonitor implements Runnable {
 			if(Server.messageController.queueSentMessagesByHostToClient.size() <= 0 )
 				continue;
 			
-			System.out.println("@@ ReceivedAcksByHostsMonitor sentMessagesSize: " + Server.messageController.queueSentMessagesByHostToClient.size());
+//			System.out.println("@@ ReceivedAcksByHostsMonitor sentMessagesSize: " + Server.messageController.queueSentMessagesByHostToClient.size());
 			
 			//check if there are any unverified messages in the SentMessages queue
 			Iterator<ForwardMessage> iteratorMsg = Server.messageController.queueSentMessagesByHostToClient.iterator();
@@ -40,12 +40,14 @@ public class ReceivedAcknowledgmentsByHostMonitor implements Runnable {
 			    Iterator<ClientAmountSendPair> iteratorPair = forwardMessage.getClients().iterator();
 			    while(iteratorPair.hasNext()) {
 			        ClientAmountSendPair clientPair = iteratorPair.next();
+
+			        clientPair.incNrOfRetries();
 			        if(clientPair.getNrOfRetries()>2) { //remove client after some retries (not responding/sending acks)
                         iteratorPair.remove();
-                        System.out.println("Too much retries, so remove client");
+                        System.out.println("Too much retries, so remove client with PID: " + clientPair.getClient().getProcessID());
                         if(forwardMessage.getClients().size()<=0) { //no clients anymore so this message is done
                             iteratorMsg.remove();
-                            System.out.println("No clients anymore, so remove ForwardMsg");
+                            System.out.println("No clients anymore acknowledgeing, so remove ForwardMsg and give up resending it");
                             continue;
                         }
                         continue;
@@ -62,9 +64,14 @@ public class ReceivedAcknowledgmentsByHostMonitor implements Runnable {
                     message.setCommand(true);
                     message.setText(command);
                     Server.messageController.queueHostChat.push(message);
-                    clientPair.incNrOfRetries();
-
-                    System.out.println("@ReceivedAcksByHostsMonitor = Message sent " + forwardMessage.getMessage().getMessageType());
+                    
+                    try {
+                        Thread.sleep(500); //!!!! bigger than popper delay of HostToMClient
+                    } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+//                    System.out.println("@ReceivedAcksByHostsMonitor = Message sent " + message + " to pid: " + clientPair.getClient().getProcessID());
 			    }
 			}
 

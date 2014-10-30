@@ -62,17 +62,17 @@ public class OneToOneListener implements Runnable {
 				    this.stop();
 				}
 				//if the message is a chat message (sent from client to host)
-				else if(message.getMessageType().equals(Message.MessageType.hostChat)){
+				else if(message.getMessageType().equals(Message.MessageType.hostChat)){ //ONLY HOSTS in this if!
 				    //create the acknowledgement and store it in the queueAcknowledgments
 				    //Must BE placed before IF, because PID of sender is needed (pid is changed below)
 				    String command = Commands.constructCommand(Commands.acknowledgement, message.getProcessID(), Long.toString(message.getId()));
 				    Message ack = new Message(Message.MessageType.acknowledgement, true, command);
 				    ack.setSocket(socket);
-				    messageController.queueAcknowledgements.push(ack);
+				    messageController.queueAcknowledgements.push(ack); //Comment this if you want to test client retries
 				    
 				    //Must be after ack
 					if(!Commands.messageIsOfCommand(message, Commands.targetedResentMessage)){
-						if(this.isHost ){
+						if(this.isHost ){ //Only hosts in if(hostChat) so redundant?
 						    message.setProcessId(Misc.processID);
 		//				    System.out.println("OneToOneListener received a host chat message " + message.toString());
 						    messageController.queueHostChat.push(message); //to send it to the clients connected on this host
@@ -80,10 +80,7 @@ public class OneToOneListener implements Runnable {
 						    Message newMessage = new Message(Message.MessageType.mHostChat,true, message.getUsername(), command, Misc.getNextMessageId());
 						    
 						    messageController.queueSend.push(newMessage); //Send to other hosts    
-						} /*else {//[if isClient] Receive resent hostChat messages and store them to the queue
-							System.out.println("@@@ OneToOneListener pushing to ClientReceivedMessages queue: "+ message.toString());
-							messageController.queueClientReceivedMessages.push(message);
-						}*/
+						}
 					}
 				}
 				//if the message is an acknowledgment sent by a Host to a Client or vice versa
@@ -95,9 +92,7 @@ public class OneToOneListener implements Runnable {
 				        messageController.queueSentMessagesByClient.remove(processIdOfOriginalSender, Commands.getMessageIdTargetedMessageText(message));
 				    } else { //a host can receive an ack from a client
 				        removeResendMessageToClient(message);
-
 //                        System.out.println("Ack received for message by host: " +message.toString());				        
-				        
 				    }
 				}
 				
