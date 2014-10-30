@@ -32,7 +32,7 @@ public class Client extends javax.swing.JFrame {
     private Socket socketClient;
     private ClientToHost clientToHost;
     public static MessageController messageController = new MessageController();
-
+    public static boolean isConnected = false;
     
     /**
      * Creates new form ChatClient
@@ -182,6 +182,7 @@ public class Client extends javax.swing.JFrame {
     	
     	clientToHost = new ClientToHost(this);
     	socketClient = clientToHost.getSocket();
+    	isConnected = true;
     	
     	ClientHeartBeatToHost clientHeartBeatToHost = new ClientHeartBeatToHost(clientToHost);
     	clientHeartBeatToHost.start();

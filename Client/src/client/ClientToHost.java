@@ -49,6 +49,7 @@ public class ClientToHost {
 	public boolean sendMessage(Message message){
 		if (clientSocket == null) {
 			client.showErrorMessage("You are not connected.");
+			Client.isConnected = false;
 			return false;
 		}
 		//Increment the number of times this message has been sent
@@ -62,6 +63,7 @@ public class ClientToHost {
 		} catch(IOException ex) {
 			client.showErrorMessage("Connection closed, is the server running?\n"+ex.getMessage());
 			client.closeSocket();
+			Client.isConnected = false;
 			client.setSocket(null);
 //            ex.printStackTrace();
 			return false;

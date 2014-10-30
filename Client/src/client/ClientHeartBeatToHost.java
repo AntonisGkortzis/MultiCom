@@ -8,6 +8,7 @@ public class ClientHeartBeatToHost implements Runnable {
 
     
     private ClientToHost clientToHost;
+    
     public ClientHeartBeatToHost(ClientToHost clientToHost) {
         this.clientToHost = clientToHost;
     }
@@ -16,12 +17,14 @@ public class ClientHeartBeatToHost implements Runnable {
         Thread t = new Thread(this);
         t.start();
     }
+    
     @Override
     public void run() {
         boolean flag = true;
         String command = Commands.constructCommand(Commands.clientHeartBeat);
         Message message = new Message(Message.MessageType.clientCommand, true, command);
         while(flag) {
+            if(!Client.isConnected) return;
             try {
                 Thread.sleep(Config.clientHeartbeatDelay); //Must be lower than the declareDead in ClientMonitor of server
             } catch (InterruptedException e) {
