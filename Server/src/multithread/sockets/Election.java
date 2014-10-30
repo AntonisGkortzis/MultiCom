@@ -61,8 +61,6 @@ public class Election implements Runnable {
 	    		Message message = new Message(Message.MessageType.mHostStatus, true, command);
 	    		messageController.queueSend.push(message);
 	    		
-	//    		System.out.println("##-- Participants: " + HostsList.size() + " --##");
-	//    		
 	    		//STEP 2
 	    		//Sleep & Wait to receive as many status updates as possible
 	            Thread.sleep(2000); 
@@ -124,21 +122,26 @@ public class Election implements Runnable {
      */
     public Host getPreferredCandidate(){
     	//initialize the preferred candidate and the minimum (his) number of connected clients
-    	Host preferredCandidate = HostsList.getHostsList().get(0);
-    	int leastClients = preferredCandidate.getNrOfClients();
+    	Host preferredHost = HostsList.getHostsList().get(0);
         for(Host host : HostsList.getHostsList()){
         	//if the last update of the host is older than the election timestamp ignore him, because he is not part of the election
         	if(host.getLastUpdate().before(this.electionStart)){
         		continue;
         	}
-        	if(host.getNrOfClients() < leastClients || (host.getNrOfClients() == leastClients 
-        			&& host.getPort() < preferredCandidate.getPort())) {
-        	    leastClients = host.getNrOfClients();
-        		preferredCandidate = host;
+        	//host is chosen if it has less clients or
+        	// if it has the same nr of clients and lower port
+        	// if it has the same nr of clients and same ports the addresses are compared and lowest is picked
+        	if(host.getNrOfClients() < preferredHost.getNrOfClients() || 
+        	        (host.getNrOfClients() == preferredHost.getNrOfClients() 
+        	        && host.getPort() < preferredHost.getPort())
+        		|| (host.getNrOfClients()==preferredHost.getNrOfClients() 
+        		        && host.getPort()==preferredHost.getPort() 
+        		        && host.getAddress().compareTo(preferredHost.getAddress())<0)) {
+        		preferredHost = host;
         	}
         }
-        System.out.println("--> My ["+Misc.processID+"] preferred candidate is "+preferredCandidate.getProcessID());
-        return preferredCandidate;
+        System.out.println("--> My ["+Misc.processID+"] preferred candidate is "+preferredHost.getProcessID());
+        return preferredHost;
     }
     
     /**
