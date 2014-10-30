@@ -112,17 +112,26 @@ public class OneToManyListener implements Runnable {
 			long messageId = Misc.getNextMessageId();
 			message.setId(messageId); //This message must have a new unique id 
 			System.out.println("Host with pid " + Misc.processID + "received message form host with id " + message.getProcessID());
-
+			
+			//Creating acknowledgment for the received mHostChat message
+			String command = Commands.constructCommand(Commands.acknowledgement, message.getProcessID(), Long.toString(message.getId()));
+		    Message ack = new Message(Message.MessageType.acknowledgement, true, command);
+			//Adding acknowledgment to the Send queue for immediate sending
+//		    messageController.queueSend.push(ack);
+			
 //			messageController.queueHostChat.push(message);
-			
 
-			
 		}
+		
+		//TODO Here we should check if the message is an acknowledgment and we should remove the HostAmountSendPair from the hosts of the forward message
+		
 		
 		//TODO explain queues and commands in report
 		messageController.pushMessageInCorrectQueue(message);
 		
 	}
+	
+	
 
 
 

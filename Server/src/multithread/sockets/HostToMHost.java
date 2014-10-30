@@ -11,6 +11,7 @@ import java.net.SocketException;
 import sender.SendStatusUpdate;
 import sharedresources.ConnectedClient;
 import sharedresources.ConnectedClientsList;
+import sharedresources.ForwardMessage;
 import sharedresources.Host;
 import sharedresources.HostsList;
 import sharedresources.Commands;
@@ -54,8 +55,13 @@ public class HostToMHost implements Runnable{
             //Messages that are only to be sent
         	Message message = Server.messageController.queueSend.pop();
             if(message != null ){
-//            	System.out.println("QueueSend--> Sending " + message.toString());
+    			//Put the chat message in a queue for possible re-sending
+            	if(message.getMessageType().equals(Message.MessageType.mHostChat)){
+//            		System.out.println("&& Adding mHostChatTo resendQueue ["+message.toString()+"]" );
+            		addToRetryQueue(message);
+            	}
             	flag = sendMessage(message);
+            	
             }	
         	
             //Messages that contains commands that should be parsed and executed
@@ -165,7 +171,14 @@ public class HostToMHost implements Runnable{
         
     }
         
-    public static boolean sendMessage(Message message) { //
+    private void addToRetryQueue(Message message) {
+    	//create forward message with setting hosts as the receivers (true if receiver is host)  
+    	ForwardMessage forwardMessage = new ForwardMessage(message, message.getId(), true);
+        System.out.println("$$ HostToMHost adding forwarded message [" + forwardMessage.getMessage().toString() + "] ##");
+        Server.messageController.queueSentMessagesByHostToMHost.add(forwardMessage);
+	}
+
+	public static boolean sendMessage(Message message) { //
         InetAddress group;
         try {
             group = InetAddress.getByName(Config.multiCastAddress);

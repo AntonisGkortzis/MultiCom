@@ -2,6 +2,7 @@ package sharedresources;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 
 public class ForwardMessage {
@@ -9,17 +10,35 @@ public class ForwardMessage {
     private Message message;
     private long id;
     private ArrayList<ClientAmountSendPair> clients;
+    private ArrayList<HostAmountSendPair> hosts;
+    private boolean hostIsReceiver;
     
-    public ForwardMessage(Message message, long messageId) {
+    public ForwardMessage(Message message, long messageId, boolean hostIsReceiver) {
         this.message = message;
         this.id = messageId;
         clients = new ArrayList<ClientAmountSendPair>();
-        for(ConnectedClient client: ConnectedClientsList.clients) {
-            this.addClient(client);
+        hosts = new ArrayList<HostAmountSendPair>();
+        this.hostIsReceiver = hostIsReceiver;
+        if(hostIsReceiver){
+        	System.out.println(" -- Creating Forward message for hosts -- ");
+        	for(Host host: HostsList.getHostsList()) {
+	            this.addHost(host);
+	        }
+        } else {
+        	System.out.println(" -- Creating Forward message for clients -- ");
+        	for(ConnectedClient client: ConnectedClientsList.clients) {
+	            this.addClient(client);
+	        }
         }
     }
     
-    public void addClient(ConnectedClient client) {
+    private void addHost(Host host) {
+    	HostAmountSendPair pair = new HostAmountSendPair(host);
+        this.hosts.add(pair);
+		
+	}
+
+	public void addClient(ConnectedClient client) {
         ClientAmountSendPair pair = new ClientAmountSendPair(client);
         this.clients.add(pair);
     }
@@ -64,5 +83,9 @@ public class ForwardMessage {
     public void setClients(ArrayList<ClientAmountSendPair> clients) {
         this.clients = clients;
     }
+
+	public ArrayList<HostAmountSendPair> getHosts() {
+		return hosts;
+	}
 
 }

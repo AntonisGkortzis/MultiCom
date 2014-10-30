@@ -30,8 +30,12 @@ public class MessageController {
 	public MessageQueue queueSentMessagesByClient = new MessageQueue();
 	//Stores the sent messages by hosts to its clients.
 	public List<ForwardMessage> queueSentMessagesByHostToClient = new ArrayList<ForwardMessage>();
+	//Stores the sent messages by hosts to its hosts.
+	public List<ForwardMessage> queueSentMessagesByHostToMHost = new ArrayList<ForwardMessage>();
 	//Stores the messages that the Clients receives. Later these messages are popped and presented to the Client.
 	public MessageQueue queueClientReceivedMessages = new MessageQueue();
+	//Stores the received acknowledgments sent by hosts to other hosts for mHostChat messages
+	private MessageQueue queueAcknowledgementsFromMHosts = new MessageQueue();
 	
 
 	public void pushMessageInCorrectQueue(Message receivedMessage) {
@@ -52,6 +56,9 @@ public class MessageController {
     		this.queueMClientCommand.push(receivedMessage);
     	} else if(receivedMessage.getMessageType().equals(MessageType.hostChat)) {
     	    this.queueHostChat.push(receivedMessage);
+    	} else if(receivedMessage.getMessageType().equals(MessageType.acknowledgement)) {
+    		System.out.println("%% received ack from MHOST " + receivedMessage.toString());
+    		this.queueAcknowledgementsFromMHosts.push(receivedMessage);
     	}
     	else 
     	{

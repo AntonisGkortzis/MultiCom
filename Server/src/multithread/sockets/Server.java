@@ -1,7 +1,8 @@
 package multithread.sockets;
 import monitor.ClientMonitor;
 import monitor.LoadBalancer;
-import monitor.ReceivedAcknowledgmentsByHostMonitor;
+import monitor.ReceivedAcknowledgmentsByHostFromClientsMonitor;
+import monitor.ReceivedAcknowledgmentsByHostFromMHostsMonitor;
 import monitor.StatusMonitor;
 import sender.HostToClientAckSender;
 import sharedresources.Commands;
@@ -49,8 +50,12 @@ public class Server {
 //        OneToOneListener oneToOneListener = new OneToOneListener(hostToClient.getSocket(), Server.messageController);
 //        oneToOneListener.start();
         
-        ReceivedAcknowledgmentsByHostMonitor receivedAcknowledgmentsByHostMonitor = new ReceivedAcknowledgmentsByHostMonitor();
-        receivedAcknowledgmentsByHostMonitor.start();
+        ReceivedAcknowledgmentsByHostFromClientsMonitor receivedAcknowledgmentsByHostFromClientsMonitor = new ReceivedAcknowledgmentsByHostFromClientsMonitor();
+        receivedAcknowledgmentsByHostFromClientsMonitor.start();
+        
+        //TODO uncomment this to test the 3rd lvl of reliability.. Not yet working
+//        ReceivedAcknowledgmentsByHostFromMHostsMonitor receivedAcknowledgmentsByHostFromHostsMonitor = new ReceivedAcknowledgmentsByHostFromMHostsMonitor();
+//        receivedAcknowledgmentsByHostFromHostsMonitor.start();
         
         HostToClientAckSender hostToClientAckSender = new HostToClientAckSender();
         hostToClientAckSender.start();

@@ -87,7 +87,8 @@ public class HostToMClient implements Runnable {
     }
     
     private void addToRetryQueue(Message message) {
-        ForwardMessage forwardMessage = new ForwardMessage(message, message.getId());
+    	//create forward message with setting clients as the receiver (true if receiver is host)  
+        ForwardMessage forwardMessage = new ForwardMessage(message, message.getId(), false);
         System.out.println("@@ HostToMClient adding forwarded message " + forwardMessage.getMessage().toString());
         Server.messageController.queueSentMessagesByHostToClient.add(forwardMessage);
         
