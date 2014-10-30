@@ -13,6 +13,7 @@ import java.util.Date;
 import sharedresources.Commands;
 import sharedresources.Config;
 import sharedresources.Message;
+import sharedresources.Message.MessageType;
 import sharedresources.MessageController;
 import sharedresources.Misc;
 import sharedresources.OneToManyListener;
@@ -256,10 +257,14 @@ public class Client extends javax.swing.JFrame {
     }//GEN-LAST:event_SendMessageButtonActionPerformed
 
 	private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        // TODO tell the host that you closed?
+	    
         try {
         	if(socketClient != null) {
-        		// TODO Close everything here!
+        	    //Send a shutdown message
+        	    String command = Commands.constructCommand(Commands.clientShutdown);
+        	    Message shutdownMsg = new Message(MessageType.clientChat, true, command);
+        	    clientToHost.sendMessage(shutdownMsg);
+        		
         		socketClient.close();
         	}
         } catch (IOException ex) {

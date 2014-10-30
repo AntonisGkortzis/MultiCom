@@ -20,7 +20,7 @@ public class Commands {
 	public final static String initOneToOneWithHost = "IAmNowConnectedToYou";
 	public final static String chatMessage = "SendChatMessage";
 	public final static String ackForReceive = "SendAckForReceiveMessage";
-	
+	public final static String clientShutdown = "IHaveShutdown";
 	/**
 	 * Client needs to connect. Send to hosts group
 	 */

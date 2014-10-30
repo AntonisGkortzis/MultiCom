@@ -18,6 +18,7 @@ public class OneToOneListener implements Runnable {
     private boolean isHost;
 	
 	public static long messageId = 0;
+	boolean flag = true;
     
     public OneToOneListener(Socket socket, MessageController messageController, boolean isHost) {
     	this.socket = socket;
@@ -30,10 +31,19 @@ public class OneToOneListener implements Runnable {
 		t.start();
     }
     
+    public void stop() {
+        try {
+            this.socket.close();
+            this.flag = false;
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+    }
     public void run () {
     	ObjectInputStream inStream;
     	Message message;
-    	boolean flag = true;
 		
     	while(flag) {
 	    	try {
@@ -44,6 +54,12 @@ public class OneToOneListener implements Runnable {
 				    //Not further action is needed as this is only a 
 				    //message to let the host know that there is a new client.
 					addNewClient(message.getProcessID(), message.getUsername());
+				} 
+				//If a host receives a shutdown message from client
+				else if(Commands.messageIsOfCommand(message, Commands.clientShutdown) && this.isHost) {
+				    System.out.println("Received a shutdown message from client, closing connection.");
+				    inStream.close();
+				    this.stop();
 				}
 				//if the message is a chat message (sent from client to host)
 				else if(message.getMessageType().equals(Message.MessageType.hostChat)){
@@ -87,8 +103,9 @@ public class OneToOneListener implements Runnable {
 				
 				Thread.sleep(250);
 			} catch (IOException | ClassNotFoundException | InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+//				e.printStackTrace();
+			    System.out.println("Connection closed.");
+				this.stop();
 				flag = false;
 			}
     	}

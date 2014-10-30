@@ -52,8 +52,8 @@ public class OneToManyListener implements Runnable {
     	try {
     		if(socket != null){
 				socket.leaveGroup(group);
-				socket.close();
-				socket = null;
+//				socket.close();
+//				socket = null;
     		}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
