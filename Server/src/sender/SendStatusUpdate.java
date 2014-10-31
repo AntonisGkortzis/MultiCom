@@ -9,11 +9,8 @@ import sharedresources.Message;
 import sharedresources.Misc;
 
 public class SendStatusUpdate implements Runnable {
-	public SendStatusUpdate() {
-		
-	}
 
-	public void start() {
+    public void start() {
 		Thread t = new Thread(this);
 		t.start();
 	}
@@ -23,13 +20,14 @@ public class SendStatusUpdate implements Runnable {
 	    while(true) {
 	        //update yourself before sending status update
 	        HostsList.updateHost(Misc.processID, ConnectedClientsList.size(), Config.master);
-
-            String command = Commands.constructCommand(Commands.requestStatusUpdate, constructStatus());
-
-          	Message message = new Message(Message.MessageType.mHostStatus, command); 
+            
+//	        String command = Commands.constructCommand(Commands.requestStatusUpdate, constructStatus());
+//          	Message message = new Message(Message.MessageType.mHostStatus, command); 
+          	Message message = createStatusMessage();
+          	
           	Server.messageController.queueSend.push(message);
             try {
-                Thread.sleep(5000);
+                Thread.sleep(HostsList.declareDead/2); //must send faster or else you die while alive. And we don't like zombies
             } 
             catch (InterruptedException e) { 
                 e.printStackTrace();

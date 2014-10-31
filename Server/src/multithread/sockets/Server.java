@@ -6,7 +6,9 @@ import monitor.LoadBalancer;
 import monitor.ReceivedAcknowledgmentsByHostFromClientsMonitor;
 import monitor.ReceivedAcknowledgmentsByHostFromMHostsMonitor;
 import monitor.StatusMonitor;
+import sender.HostHeartbeatToMClient;
 import sender.HostToClientAckSender;
+import sender.SendStatusUpdate;
 import sharedresources.Commands;
 import sharedresources.Message;
 import sharedresources.MessageController;
@@ -72,9 +74,16 @@ public class Server {
         HostToMClient hostToMClient = new HostToMClient();
         hostToMClient.start();
 
+        //Send heartbeats to clients of local multicast //TODO remove
+//        HostHeartbeatToMClient hostHeartbeatToMClient = new HostHeartbeatToMClient();
+//        hostHeartbeatToMClient.start();
+        
         //Sending with global multicast
         HostToMHost hostToMHost = new HostToMHost();
         hostToMHost.start();
+        
+        SendStatusUpdate sendPing = new SendStatusUpdate();
+        sendPing.start();
         
         //Listen to global multicast
         OneToManyListener oneToManyListener = new OneToManyListener(messageController, true);
@@ -95,6 +104,7 @@ public class Server {
         
         LoadBalancer loadBalancer = new LoadBalancer();
         loadBalancer.start();
+        
     }
    
 }

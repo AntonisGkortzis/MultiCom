@@ -17,7 +17,7 @@ public class Commands {
 	
 	/****ClientToHost*******/
 	public final static String initOneToOneWithHost = "IAmNowConnectedToYou";
-	public final static String clientHeartBeat = "IAmStillAlive";
+	public final static String clientHeartbeat = "IAmStillAlive";
 	public final static String chatMessage = "SendChatMessage";
 	public final static String ackForReceive = "SendAckForReceiveMessage";
 	public final static String clientShutdown = "IHaveShutdown";
@@ -65,7 +65,8 @@ public class Commands {
 	 * Host to Multiple clients (local multicast)
 	 */
 	public final static String connectToNewHost = "AsAHosIAmOrderingYouToConnectToThisHost";
-	
+	public final static String hostHeartbeat = "HostIsStillAlive";
+//	public final static String hostShutdown = "HostHasShutDown";
 	
 	/***** HELPER FUNCTIONS ******/
 	

@@ -37,6 +37,11 @@ public final class Config {
 	public final static int clientHeartbeatDelay = 2500;
 	
 	/**
+	 * Delay of sending heartbeat to MClients by host
+	 */
+	public final static int hostHeartbeatDelay = 1000;
+	
+	/**
 	 * Amount of milliseconds messages should wait in hold-back queue, 
 	 * the bigger the delay the bigger the delay in receiving messages
 	 */

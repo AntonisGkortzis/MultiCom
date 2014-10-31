@@ -70,7 +70,12 @@ public class MClientListener implements Runnable {
                 	        int port = Integer.parseInt(messageParts[3]);
                 	        this.connectToDifferentHost(address, port);
                 	    }
-                	} else {
+                	// Update the time of when the host was last seen
+                	} else if (Commands.messageIsOfCommand(message, Commands.hostHeartbeat)) {
+                	    client.lastHostUpdate = new Date().getTime();
+                	}/* else if(Commands.messageIsOfCommand(message, Commands.hostShutdown)) {
+                	    System.out.println("Host shuts down");
+                	}*/ else {
                     	if(Commands.messageIsOfCommand(message, Commands.targetedResentMessage)) {
                     		if(!Commands.getStarterProcessID(message).equals(Misc.processID)){
                     			continue;

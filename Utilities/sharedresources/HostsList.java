@@ -7,7 +7,7 @@ import java.util.List;
 
 public  class HostsList {
     private static List<Host> hosts = new ArrayList<>();
-    public final static int declareDead = 10000; //MilliSeconds
+    public final static int declareDead = 5000; //MilliSeconds
     
     public HostsList(){}
     
@@ -166,9 +166,8 @@ public  class HostsList {
 		    if(host.getProcessID().equals(Misc.processID)) {
 		    	continue;
 		    }
-		    long lastUpdateOfHost = new Date().getTime();
+		    long lastUpdateOfHost = host.getLastUpdate().getTime();
 		    if(currentTime-lastUpdateOfHost > declareDead) {
-		    	System.out.println("@@@ -- current: " + currentTime +  " lastUpdateOfHost: " + lastUpdateOfHost +  "-- @@@");
 		    	System.out.println("##-- Removing a dead host now with pid: "+ host.getProcessID() + " port: " + host.getPort() + " --##");
 		    	itererator.remove();		    	
 		    }

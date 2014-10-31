@@ -9,11 +9,11 @@ import java.awt.Color;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Date;
-import java.util.PriorityQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 
 import monitor.HoldbackQueueMonitor;
+import monitor.HostMonitor;
 import monitor.ReceivedAcknowledgmentsByClientMonitor;
 import sharedresources.Commands;
 import sharedresources.Config;
@@ -34,13 +34,13 @@ public class Client extends javax.swing.JFrame {
      * 
      */
     private static final long serialVersionUID = 5095009435533641880L;
-    private Socket socketClient;
     public ClientToHost clientToHost;
     public MessageController messageController = new MessageController();
     public boolean isConnected = false;
     public boolean rerouteAttempt = false;
     public BlockingQueue<Message> holdbackQueue = new PriorityBlockingQueue<Message>();
-    
+    public long lastHostUpdate = 0;
+    public boolean tryingToConnect = false;
     /**
      * Creates new form ChatClient
      */
@@ -100,6 +100,7 @@ public class Client extends javax.swing.JFrame {
         jScrollPane2.setViewportView(EnterTextArea);
 
         SendMessageButton.setText("Send message");
+        SendMessageButton.setEnabled(false);
         SendMessageButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 SendMessageButtonActionPerformed(evt);
@@ -163,7 +164,7 @@ public class Client extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void ConnectToServerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ConnectToServerButtonActionPerformed
-    	if(socketClient !=null) {
+    	if(clientToHost!=null && clientToHost.getSocket() !=null) {
     		this.showErrorMessage("You are already connected.");
     		return;
     	}
@@ -174,11 +175,12 @@ public class Client extends javax.swing.JFrame {
  
     MessagePresenter messagePresenter = null;
     MClientListener mClientListener = null;
-    ClientHeartBeatToHost clientHeartBeatToHost = null;
+    ClientHeartbeatToHost clientHeartBeatToHost = null;
     ClientToHostAckSender clientToHostAckSender  = null;
     OneToOneListener oneToOneListener = null;
     ReceivedAcknowledgmentsByClientMonitor ackMonitor = null;
     HoldbackQueueMonitor holdbackQueueMonitor = null;
+//    HostMonitor hostMonitor = null; //TODO remove
     
     public void startConnection() {
         this.stopConnections();
@@ -203,25 +205,29 @@ public class Client extends javax.swing.JFrame {
         this.rerouteAttempt = false;
         
         clientToHost = new ClientToHost(this);
-        socketClient = clientToHost.getSocket();
         isConnected = true;
+        SendMessageButton.setEnabled(true);
 
         mClientListener = new MClientListener(this);
         mClientListener.start();
         
-        clientHeartBeatToHost = new ClientHeartBeatToHost(this);
+        clientHeartBeatToHost = new ClientHeartbeatToHost(this);
         clientHeartBeatToHost.start();
         
         clientToHostAckSender = new ClientToHostAckSender(this);
         clientToHostAckSender.start();
 
-        oneToOneListener = new OneToOneListener(socketClient, messageController, false);
+        oneToOneListener = new OneToOneListener(clientToHost.getSocket(), messageController, false);
         oneToOneListener.start();
         
         ackMonitor = new ReceivedAcknowledgmentsByClientMonitor(this);
         ackMonitor.start();
         
+//        hostMonitor = new HostMonitor(this); //TODO remove
+//        hostMonitor.start();
+        
         sendFirstConnectMessageToHost();
+        this.ConnectToServerButton.setEnabled(false);
     }
     
     /**
@@ -239,7 +245,8 @@ public class Client extends javax.swing.JFrame {
         if(oneToOneListener!=null) oneToOneListener.stop();
         if(ackMonitor!=null) ackMonitor.stop();
         if(holdbackQueueMonitor!=null) holdbackQueueMonitor.stop();
-
+        this.SendMessageButton.setEnabled(false);
+//        if(hostMonitor!=null) hostMonitor.stop(); //TODO remove
     }
     /**
      * Try to establish a connection. Retry if there is no response
@@ -247,6 +254,9 @@ public class Client extends javax.swing.JFrame {
      * @param oneToManyListener
      */
     private boolean attemptConnection(ClientToMHost clientToMHost, OneToManyListener oneToManyListener) {
+        if(this.tryingToConnect) return false;
+        if(this.holdbackQueueMonitor!=null) this.unloadHoldbackQueue();
+        this.tryingToConnect = true; // multiple places to false
         //First attempt
         clientToMHost.sendConnectRequest();
         
@@ -261,7 +271,7 @@ public class Client extends javax.swing.JFrame {
         //No response (in time) start sending request again from time to time (max 3 times)
         boolean flag = true;
         long startWaitingForConnection = new Date().getTime();
-        long waitBeforeResendConnectRequest = 3000; //wait this long for resending connection request
+        long waitBeforeResendConnectRequest = 4000; //wait this long for resending connection request
         int connectTries = 0;
         while(flag) {
             //Check response
@@ -274,6 +284,7 @@ public class Client extends javax.swing.JFrame {
                     Config.connectToPortFromHost = Integer.parseInt(messageParts[3]);
                     System.out.println("HOST IS FOUND Connect to port: " + Config.connectToPortFromHost);
                     oneToManyListener.stop();
+                    this.tryingToConnect = false;
                     return true;
                 }
             }
@@ -282,8 +293,10 @@ public class Client extends javax.swing.JFrame {
             if(currentTime-startWaitingForConnection>waitBeforeResendConnectRequest) {
                 clientToMHost.sendConnectRequest();
                 connectTries++;
-                if(connectTries>2){
+                if(connectTries>4){
                     showErrorMessage("No available hosts. Try again later.");
+                    this.tryingToConnect = false;
+                    this.ConnectToServerButton.setEnabled(true);
                     return false;
                 }
                 startWaitingForConnection = new Date().getTime(); //reset the time of the start
@@ -293,12 +306,13 @@ public class Client extends javax.swing.JFrame {
                  * It doesn't receive/pop a connection response without this Thread.sleep
                  * Because this Thread is consuming all processing power
                  */
-                Thread.sleep(500); //TODO Find an explanation for that
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
+        this.tryingToConnect = false;
         return true;
     }
     /**
@@ -312,7 +326,7 @@ public class Client extends javax.swing.JFrame {
     }
     
     private void SendMessageButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SendMessageButtonActionPerformed
-        if(clientToHost==null) {
+        if(clientToHost==null || clientToHost.getSocket()==null) {
             this.showErrorMessage("You are not connected.");
             return;
         }
@@ -328,13 +342,13 @@ public class Client extends javax.swing.JFrame {
     
 	private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         try {
-        	if(socketClient != null) {
+        	if(clientToHost!=null && clientToHost.getSocket() != null) {
         	    //Send a shutdown message
         	    String command = Commands.constructCommand(Commands.clientShutdown);
         	    Message shutdownMsg = new Message(MessageType.clientCommand, command);
         	    clientToHost.sendMessage(shutdownMsg);
         		
-        		socketClient.close();
+        	    clientToHost.getSocket().close();
         	}
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -372,9 +386,9 @@ public class Client extends javax.swing.JFrame {
     }
     
     public void closeSocket() {
-    	if(socketClient != null) {
+    	if(clientToHost!=null && clientToHost.getSocket() != null) {
     		try {
-				socketClient.close();
+    		    clientToHost.getSocket().close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -433,9 +447,4 @@ public class Client extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     // End of variables declaration//GEN-END:variables
-
-	public void setSocket(Socket socket) {
-		this.socketClient = socket;
-		
-	}
 }

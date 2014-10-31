@@ -50,7 +50,7 @@ public class Message implements Serializable, Comparable<Message> {
 		this.timesSent = 0;
 	}
 
-   public Message(MessageType type, String username, String text){
+	public Message(MessageType type, String username, String text){
         this(type, text);
         this.username = username;
     }

@@ -58,7 +58,7 @@ public class OneToOneListener implements Runnable {
     				    this.stop();
     				}
     				//Update last seen of a client (ClientMonitor monitors clients)
-    				else if(Commands.messageIsOfCommand(message, Commands.clientHeartBeat)) {
+    				else if(Commands.messageIsOfCommand(message, Commands.clientHeartbeat)) {
 //    				    System.out.println("Received a heartbeat message: " + message);
     				    ConnectedClientsList.updateClient(message.getProcessID());
     				}
@@ -129,11 +129,4 @@ public class OneToOneListener implements Runnable {
 	        ConnectedClientsList.addClient(newclient); 
     	}
     }
-    
-//    private void addToRetryQueueForHosts(Message message) {
-//        //create forward message with setting hosts as the receivers (true if receiver is host)  
-//        ForwardMessage forwardMessage = new ForwardMessage(message, message.getId(), true);
-//        System.out.println("$$ HostToMHost adding forwarded message [" + forwardMessage.getMessage() + "] ##");
-//        messageController.queueSentMessagesByHostToMHost.add(forwardMessage);
-//    }
 }

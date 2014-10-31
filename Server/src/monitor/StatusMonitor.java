@@ -1,15 +1,13 @@
 package monitor;
 
 import multithread.sockets.Election;
+import multithread.sockets.Server;
 import sharedresources.HostsList;
 
 public class StatusMonitor implements Runnable {
 
 	Thread t;
 	//TODO in REPORT
-	public StatusMonitor() {
-		
-	}
 	
 	public void start() {
 		t = new Thread(this);
@@ -26,7 +24,6 @@ public class StatusMonitor implements Runnable {
 				//Remove hosts that are found out to be dead
 				HostsList.findDeadHosts();
 				
-//				HostsList.printHostsVotes(); //DEBUG
                 //Check if there is a master alive, if not start the elections!
                 if(!HostsList.masterAlive()) {
                 	System.out.println("##-- No master alive, I will start elections --#");

@@ -63,7 +63,7 @@ public class ReceivedAcknowledgmentsByHostFromClientsMonitor implements Runnable
                     }
                     String command = Commands.constructCommand(Commands.targetedResentMessage, clientPair.getClient().getProcessID(), messageText);
                     message.setText(command);
-                    Server.messageController.queueHostChat.push(message);
+                    Server.messageController.queueHostChat.push(message); //TODO in holdback queue??
                     
                     try {
                         Thread.sleep(500); //!!!! bigger than popper delay of HostToMClient

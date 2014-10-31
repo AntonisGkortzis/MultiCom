@@ -4,13 +4,13 @@ import sharedresources.Commands;
 import sharedresources.Config;
 import sharedresources.Message;
 
-public class ClientHeartBeatToHost implements Runnable {
+public class ClientHeartbeatToHost implements Runnable {
 
     
     private Client client;
     private boolean flag;
     
-    public ClientHeartBeatToHost(Client client) {
+    public ClientHeartbeatToHost(Client client) {
         this.client = client;
     }
     
@@ -26,7 +26,7 @@ public class ClientHeartBeatToHost implements Runnable {
     @Override
     public void run() {
         this.flag = true;
-        String command = Commands.constructCommand(Commands.clientHeartBeat);
+        String command = Commands.constructCommand(Commands.clientHeartbeat);
         Message message = new Message(Message.MessageType.clientCommand, command);
         while(flag) {
             if(!client.isConnected) return;

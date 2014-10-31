@@ -38,8 +38,6 @@ public class HostToMHost implements Runnable{
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        SendStatusUpdate sendPing = new SendStatusUpdate();
-        sendPing.start();
     }
     
     public void start() {
@@ -131,10 +129,7 @@ public class HostToMHost implements Runnable{
             if(message != null && !message.getProcessID().equals(Misc.processID)){
                 Host host = Commands.getStatus(message);
                 if(!HostsList.hostExists(host)) {
-//                    host.setLastUpdate(new Date()); done in host
                 	HostsList.addHost(host);
-//                	System.out.println("I ["+Misc.processID+","+Server.port + "] added new Host [" 
-//                        	+ host.getProcessID() +","+ host.getPort() +"] to my Hosts list");
                 } else {
                 	HostsList.updateHost(host);
                 }

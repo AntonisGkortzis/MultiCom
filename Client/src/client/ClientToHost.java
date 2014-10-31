@@ -51,10 +51,12 @@ public class ClientToHost {
 			outputStream.flush();
 //			System.out.println("@@ Client to Host--> send message: " + message.getText() + " id: " + message.getId() +  " times sent: " + message.getTimesSent());
 		} catch(IOException ex) {
-			client.showErrorMessage("Connection closed, is the server running?\n"+ex.getMessage());
+//			client.showErrorMessage("Connection closed, is the server running?\n"+ex.getMessage());
 			client.closeSocket();
 			client.isConnected = false;
-			client.setSocket(null);
+			clientSocket=null; //so you are not connected message shows when clicking send
+			//Try to reconnect
+			client.startConnection();
 //            ex.printStackTrace();
 			return false;
 		}
