@@ -1,5 +1,6 @@
 package multithread.sockets;
 import monitor.ClientMonitor;
+import monitor.HoldbackQueueMonitor;
 import monitor.LoadBalancer;
 import monitor.ReceivedAcknowledgmentsByHostFromClientsMonitor;
 import monitor.ReceivedAcknowledgmentsByHostFromMHostsMonitor;
@@ -43,6 +44,9 @@ public class Server {
         ClientMonitor clientMonitor = new ClientMonitor();
         clientMonitor.start();
         
+        HoldbackQueueMonitor holdbackQueueMonitor = new HoldbackQueueMonitor();
+        holdbackQueueMonitor.start();
+        
         //One to one communication between host and client
         HostToClient hostToClient = new HostToClient();
         hostToClient.start();       
@@ -77,7 +81,7 @@ public class Server {
         statusMonitor.start();
         
         //Requesting Status updates from already existing host in order to build the HostsList
-        Message statusRequest = new Message(Message.MessageType.mHostCommand, true, Commands.requestStatusUpdate);
+        Message statusRequest = new Message(Message.MessageType.mHostCommand, Commands.requestStatusUpdate);
         messageController.queueSend.push(statusRequest);
         
         //A waiting time (Thread.sleep(2000)) exists at the beginning of the elections.

@@ -287,23 +287,31 @@ public class Client extends javax.swing.JFrame {
      */
     private void sendFirstConnectMessageToHost() {
         String command = Commands.constructCommand(Commands.initOneToOneWithHost);
-        Message initMessage = new Message(MessageType.clientCommand, true, command);
+        Message initMessage = new Message(MessageType.clientCommand, command);
         clientToHost.sendMessage(initMessage);
     }
     
     private void SendMessageButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SendMessageButtonActionPerformed
-    	clientToHost.sendMessage(this.EnterTextArea.getText());
-    	this.EnterTextArea.setText("");
+        if(clientToHost==null) {
+            this.showErrorMessage("You are not connected.");
+            return;
+        }
+        Message message = new Message(Message.MessageType.hostChat, this.getUserName(), this.EnterTextArea.getText(), Misc.getNextMessageId());
+
+        boolean success = clientToHost.sendMessage(message);
+        
+        //after sending the message we should store it in the SentMessages queue and wait for its acknowledgment
+        messageController.queueSentMessagesByClient.push(message);
+    	if(success) this.EnterTextArea.setText("");
 
     }//GEN-LAST:event_SendMessageButtonActionPerformed
     
 	private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-	    
         try {
         	if(socketClient != null) {
         	    //Send a shutdown message
         	    String command = Commands.constructCommand(Commands.clientShutdown);
-        	    Message shutdownMsg = new Message(MessageType.clientCommand, true, command);
+        	    Message shutdownMsg = new Message(MessageType.clientCommand, command);
         	    clientToHost.sendMessage(shutdownMsg);
         		
         		socketClient.close();

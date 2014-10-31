@@ -26,7 +26,7 @@ public class SendStatusUpdate implements Runnable {
 
             String command = Commands.constructCommand(Commands.requestStatusUpdate, constructStatus());
 
-          	Message message = new Message(Message.MessageType.mHostStatus,true, command); 
+          	Message message = new Message(Message.MessageType.mHostStatus, command); 
           	Server.messageController.queueSend.push(message);
             try {
                 Thread.sleep(5000);
@@ -43,6 +43,6 @@ public class SendStatusUpdate implements Runnable {
 	
 	public static Message createStatusMessage() {
         String command = Commands.constructCommand(Commands.statusUpdate, constructStatus()); 
-		return new Message(Message.MessageType.mHostStatus,true,command);
+		return new Message(Message.MessageType.mHostStatus,command);
 	}
 }

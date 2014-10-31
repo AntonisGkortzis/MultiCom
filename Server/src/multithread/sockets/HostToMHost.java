@@ -70,7 +70,7 @@ public class HostToMHost implements Runnable{
             		if(Config.master) {
                         Host suitableHost = HostsList.findSuitableHost();
                         String command = Commands.constructHostFound(suitableHost, message.getProcessID());
-                        Message newMessage = new Message(Message.MessageType.mClientCommand, true, command);
+                        Message newMessage = new Message(Message.MessageType.mClientCommand, command);
                         newMessage.setClientAsReceiver(true);//In order not to be stored by other hosts
                         sendMessage(newMessage);
                         System.out.println("@@ I ["+ Misc.processID+"/"+Server.port +"] am redirecting a client to host" 
@@ -115,7 +115,7 @@ public class HostToMHost implements Runnable{
                 	            if(i<ConnectedClientsList.size()) {
                 	                ConnectedClient client = ConnectedClientsList.clients.get(i);
                 	                String command = Commands.constructConnectToNewHost(toHost, client.getProcessID());
-                	                message = new Message(Message.MessageType.hostChat,true,command);
+                	                message = new Message(Message.MessageType.clientCommand,command);
                 	                Server.messageController.queueHostChat.push(message);
                 	                System.out.println("@@HostToMHost, send reconnect message to client: " + message);
                 	            }

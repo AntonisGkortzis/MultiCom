@@ -57,9 +57,19 @@ public class ConnectedClientsList {
                 iterator.remove();
             }
         }
-        
     }
 
+    public static void addHoldBackMessage(Message message) {
+        for(ConnectedClient client: clients) {
+            if(client.getProcessID().equals(message.getProcessID())) {
+                try {
+                    client.holdbackQueue.put(message);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
     public static int size() {
         return clients.size();
     }

@@ -36,16 +36,6 @@ public class ClientToHost {
 		return this.clientSocket;
 	}
 	
-	public void sendMessage(String text) {
-            Message message = new Message(Message.MessageType.hostChat, false, client.getUserName(), text, Misc.getNextMessageId());
-            sendMessage(message);
-            
-            //after sending the message we should store it at the SentMessages queue and wait for its acknowledgment
-            //initialize command is not acknowledged
-            if(!Commands.messageIsOfCommand(message, Commands.initOneToOneWithHost))
-            	client.messageController.queueSentMessagesByClient.push(message);
-	}
-	
 	public boolean sendMessage(Message message){
 		if (clientSocket == null) {
 			client.showErrorMessage("You are not connected.");

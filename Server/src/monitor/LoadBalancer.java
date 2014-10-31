@@ -55,7 +55,7 @@ public class LoadBalancer implements Runnable {
                 System.out.println("Master orders to reroute " + nrToReroute +" client(s), from " +
                         hostMaxNrOfClients.getProcessID() + " to " + hostMinNrOfClients.getProcessID());
                 String command = Commands.constructCommandLoadBalance(hostMaxNrOfClients, hostMinNrOfClients, nrToReroute);
-                Message message = new Message(Message.MessageType.mHostCommand, true, command);
+                Message message = new Message(Message.MessageType.mHostCommand, command);
                 Server.messageController.queueSend.push(message);
             }
             

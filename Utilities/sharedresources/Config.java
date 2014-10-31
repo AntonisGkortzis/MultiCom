@@ -36,6 +36,12 @@ public final class Config {
 	 */
 	public final static int clientHeartbeatDelay = 2500;
 	
+	/**
+	 * Amount of milliseconds messages should wait in hold-back queue, 
+	 * the bigger the delay the bigger the delay in receiving messages
+	 */
+    public final static long holdBackQueueDelay = 300;
+
 	public static int connectToPortFromHost = -1;
 
 }

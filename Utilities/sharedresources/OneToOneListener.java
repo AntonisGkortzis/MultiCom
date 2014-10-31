@@ -3,6 +3,7 @@ package sharedresources;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
+import java.util.Date;
 import java.util.Iterator;
 
 /**
@@ -67,25 +68,16 @@ public class OneToOneListener implements Runnable {
 				    //create the acknowledgement and store it in the queueAcknowledgments
 				    //Must BE placed before IF, because PID of sender is needed (pid is changed below)
 				    String command = Commands.constructCommand(Commands.acknowledgement, message.getProcessID(), Long.toString(message.getId()));
-				    Message ack = new Message(Message.MessageType.acknowledgement, true, command);
+				    Message ack = new Message(Message.MessageType.acknowledgement, command);
 				    ack.setSocket(socket);
 				    messageController.queueAcknowledgements.push(ack); //Comment this if you want to test client retries
 				    
 				    //Must be after ack
 					if(!Commands.messageIsOfCommand(message, Commands.targetedResentMessage)){
 						if(this.isHost ){ //Only hosts in if(hostChat) so redundant?
-						    message.setProcessId(Misc.processID);
-						    message.setId(Misc.getNextMessageId());
-		//				    System.out.println("OneToOneListener received a host chat message " + message.toString());
-						    messageController.queueHostChat.push(message); //to send it to the clients connected on this host
-						    command = Commands.constructCommand(Commands.forwardMessage, message.getText());
-						    Message newMessage = new Message(Message.MessageType.mHostChat,true, message.getUsername(), command, Misc.getNextMessageId());
-						    
-						    messageController.queueSend.push(newMessage); //Send to other hosts    
-						    
-						    //Put the chat message in a queue for possible re-sending to other hosts
-			                addToRetryQueueForHosts(newMessage);
-
+						    //Hold back queue
+						    message.setTimeReceived(new Date().getTime());
+						    ConnectedClientsList.addHoldBackMessage(message);
 						}
 					}
 				}
@@ -138,10 +130,10 @@ public class OneToOneListener implements Runnable {
     	}
     }
     
-    private void addToRetryQueueForHosts(Message message) {
-        //create forward message with setting hosts as the receivers (true if receiver is host)  
-        ForwardMessage forwardMessage = new ForwardMessage(message, message.getId(), true);
-        System.out.println("$$ HostToMHost adding forwarded message [" + forwardMessage.getMessage() + "] ##");
-        messageController.queueSentMessagesByHostToMHost.add(forwardMessage);
-    }
+//    private void addToRetryQueueForHosts(Message message) {
+//        //create forward message with setting hosts as the receivers (true if receiver is host)  
+//        ForwardMessage forwardMessage = new ForwardMessage(message, message.getId(), true);
+//        System.out.println("$$ HostToMHost adding forwarded message [" + forwardMessage.getMessage() + "] ##");
+//        messageController.queueSentMessagesByHostToMHost.add(forwardMessage);
+//    }
 }

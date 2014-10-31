@@ -62,7 +62,6 @@ public class ReceivedAcknowledgmentsByHostFromClientsMonitor implements Runnable
                         messageText = Commands.getTextParseTargetedMessageText(message);
                     }
                     String command = Commands.constructCommand(Commands.targetedResentMessage, clientPair.getClient().getProcessID(), messageText);
-                    message.setCommand(true);
                     message.setText(command);
                     Server.messageController.queueHostChat.push(message);
                     

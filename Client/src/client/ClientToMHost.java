@@ -42,7 +42,7 @@ public class ClientToMHost {
 			group = InetAddress.getByName(Config.multiCastAddress);
 			
 			String command = Commands.constructCommand(Commands.connectRequest);
-	        Message message = new Message(Message.MessageType.mHostCommand, true, client.getUserName(), command, Misc.getNextMessageId());
+	        Message message = new Message(Message.MessageType.mHostCommand, client.getUserName(), command);
 	    	System.out.println("Message " + message.getText());
 	    	
 	        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

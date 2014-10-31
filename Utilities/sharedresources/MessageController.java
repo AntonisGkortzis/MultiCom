@@ -56,7 +56,7 @@ public class MessageController {
     	} else if(receivedMessage.getMessageType().equals(MessageType.hostChat)) {
     	    this.queueHostChat.push(receivedMessage);
     	} else if(receivedMessage.getMessageType().equals(MessageType.acknowledgement)) {
-    		System.out.println("%% received ack from MHOST " + receivedMessage.toString());
+//    		System.out.println("%% received ack from MHOST " + receivedMessage.toString());
     		this.queueAcknowledgementsFromMHosts.push(receivedMessage);
     	}
     	else 

@@ -27,7 +27,7 @@ public class ClientHeartBeatToHost implements Runnable {
     public void run() {
         this.flag = true;
         String command = Commands.constructCommand(Commands.clientHeartBeat);
-        Message message = new Message(Message.MessageType.clientCommand, true, command);
+        Message message = new Message(Message.MessageType.clientCommand, command);
         while(flag) {
             if(!client.isConnected) return;
             try {

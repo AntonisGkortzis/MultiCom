@@ -82,7 +82,7 @@ public class MClientListener implements Runnable {
                     	
                     	//create the acknowledgement and store it in the queueAcknowledgments
                         String command = Commands.constructCommand(Commands.acknowledgement, Long.toString(message.getId()));
-                        Message ack = new Message(Message.MessageType.acknowledgement, true, command);
+                        Message ack = new Message(Message.MessageType.acknowledgement, command);
                         client.messageController.queueAcknowledgements.push(ack); //Comment this if you want to test the host retries
                 	}
                 	
@@ -109,7 +109,7 @@ public class MClientListener implements Runnable {
     private void connectToDifferentHost(String address, int port) {
         //First send a shutdown message to let current host know you are disconnecting
         String command = Commands.constructCommand(Commands.clientShutdown);
-        Message shutdownMsg = new Message(MessageType.clientCommand, true, command);
+        Message shutdownMsg = new Message(MessageType.clientCommand, command);
         client.clientToHost.sendMessage(shutdownMsg);
         //Okay connection closed. To the new connection!
         Config.connectToPortFromHost = port;

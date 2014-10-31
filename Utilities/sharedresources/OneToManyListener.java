@@ -116,7 +116,7 @@ public class OneToManyListener implements Runnable {
 				&& Commands.messageIsOfCommand(message, Commands.forwardMessage)) {		    
 		    //Creating acknowledgment for the received mHostChat message
 		    String command = Commands.constructCommand(Commands.acknowledgement, message.getProcessID(), Long.toString(message.getId()));
-		    Message ack = new Message(Message.MessageType.acknowledgement, true, command);
+		    Message ack = new Message(Message.MessageType.acknowledgement, command);
 		    //Adding acknowledgment to the Send queue for immediate sending
 		    System.out.println("Host with pid " + Misc.processID + " creates and adds to SendQueue an aknowledgment for the received message " + ack.toString());
 		    messageController.queueSend.push(ack); //comment this to check the resending of message to MHost

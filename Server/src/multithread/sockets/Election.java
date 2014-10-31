@@ -58,7 +58,7 @@ public class Election implements Runnable {
 	    		// When elections are started you have to send your status update
 	    		String command = Commands.constructCommand(Commands.statusUpdate, 
 	    				Commands.constructStatus(ConnectedClientsList.size(), Server.address, Server.port, Config.master));
-	    		Message message = new Message(Message.MessageType.mHostStatus, true, command);
+	    		Message message = new Message(Message.MessageType.mHostStatus, command);
 	    		messageController.queueSend.push(message);
 	    		
 	    		//STEP 2
@@ -107,7 +107,7 @@ public class Election implements Runnable {
         //STEP 3b
         //Creating adding (for sending) the voting message
         String command = Commands.constructVoteCommand(Commands.vote, starterProcessID ,  starterElectionTime, preferredCandidate.getProcessID());
-        Message vote = new Message(Message.MessageType.mHostVote, true, command);
+        Message vote = new Message(Message.MessageType.mHostVote, command);
         messageController.queueSend.push(vote);
         System.out.println("##-- I ["+Misc.processID+","+Server.port + "] vote for Host [" 
         		+ preferredCandidate.getProcessID() +","+ preferredCandidate.getPort() +"] --##");
@@ -159,7 +159,7 @@ public class Election implements Runnable {
             System.out.println("##-- In this election. #participants: " + nrOfParticipants + " #MaxVotes: " + mostVotedHost.getNrOfVotes() + " --##");
             if(mostVotedHost.getNrOfVotes() >  nrOfParticipants/2) { // majority
             	String command = Commands.constructElectionMessage(Commands.IAmTheMaster, this.starterProcessID, this.starterElectionTime);
-            	Message master = new Message(Message.MessageType.mHostCommand, true, command);
+            	Message master = new Message(Message.MessageType.mHostCommand, command);
             	messageController.queueSend.push(master);
             } else { //host does not have a majority, restart elections
                 System.out.println("##--## The election was not successfull. #Participants: " + 
@@ -177,7 +177,7 @@ public class Election implements Runnable {
 
 	public static void initElection() {
         String command = Commands.constructElectionMessage(Commands.startElection, Misc.processID, new Date().getTime());
-		Message electionsStart = new Message(Message.MessageType.mHostCommand, true, command);
+		Message electionsStart = new Message(Message.MessageType.mHostCommand, command);
 		Server.messageController.queueSend.push(electionsStart);
 		
 	}

@@ -5,10 +5,12 @@ import java.io.Serializable;
 import java.net.Socket;
 
 /**
- * This class is used for storing message information
+ * This class is used for storing message information. It must be comparable
+ * because messages can be stored in a priority queue. Without comparable
+ * it will result in runtime errors when a message is put in this queue.
  *
  */
-public class Message implements Serializable {
+public class Message implements Serializable, Comparable<Message> {
 
     /**
      * Enumeration to specify to type of process that needs to receive/send
@@ -28,7 +30,6 @@ public class Message implements Serializable {
     
     private static final long serialVersionUID = 1L;
 	private MessageType messageType;			// Different kinds of messages
-	private boolean command;			//TRUE if the message contains a command. FALSE if the message is ..just a message!
 	private String text;				//The text of the message
 	private long timestamp;				//The time that the message was sent
 	private String username;				//The name of the user sending the message.
@@ -37,21 +38,25 @@ public class Message implements Serializable {
 	private boolean clientAsReceiver;
 	private Socket socket;
 	private int timesSent;
+	private long timeReceived;         // The time on which the message is received in milliseconds
 	
 	public Message(){}
 	
-	public Message(MessageType type, boolean command, String text){
+	public Message(MessageType type, String text){
 		this.messageType = type;
-		this.command = command;
 		this.processID = Misc.processID;
 		this.text = text;
 		this.clientAsReceiver = false;
 		this.timesSent = 0;
 	}
-	
-	public Message(MessageType type, boolean command, String username, String text, long id){
-		this(type, command, text);
-		this.username = username;
+
+   public Message(MessageType type, String username, String text){
+        this(type, text);
+        this.username = username;
+    }
+	   
+	public Message(MessageType type, String username, String text, long id){
+		this(type, username, text);
 		this.id = id;
 	}
 	
@@ -65,10 +70,6 @@ public class Message implements Serializable {
 	
 	public MessageType getMessageType() {
 		return this.messageType;
-	}
-
-	public boolean isCommand(){
-		return this.command;
 	}
 	
     public String getProcessID() {
@@ -134,9 +135,21 @@ public class Message implements Serializable {
 		this.timesSent++;
 	}
 
-	public void setCommand(boolean b) {
-		this.command = b;
-		
-	}
+	/**
+	 * Ensure that comparing is done on message ID.
+	 */
+    @Override
+    public int compareTo(Message msg2) {
+        if(this.getId()<msg2.getId()) return 1;
+        return 0;
+    }
+
+    public long getTimeReceived() {
+        return timeReceived;
+    }
+
+    public void setTimeReceived(long timeReceived) {
+        this.timeReceived = timeReceived;
+    }
 
 }

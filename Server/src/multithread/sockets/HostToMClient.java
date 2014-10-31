@@ -76,7 +76,7 @@ public class HostToMClient implements Runnable {
                 socket.send(packet);
                 
     			//Put the chat message in a queue for possible re-sending
-    			if(!message.isCommand()) addToRetryQueue(message);
+    			if(message.getMessageType().equals(Message.MessageType.hostChat)) addToRetryQueue(message);
     			
             } catch (IOException e) {
                 e.printStackTrace();
