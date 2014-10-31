@@ -9,7 +9,12 @@ import java.awt.Color;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Date;
+import java.util.PriorityQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.PriorityBlockingQueue;
 
+import monitor.HoldbackQueueMonitor;
+import monitor.ReceivedAcknowledgmentsByClientMonitor;
 import sharedresources.Commands;
 import sharedresources.Config;
 import sharedresources.Message;
@@ -34,6 +39,8 @@ public class Client extends javax.swing.JFrame {
     public MessageController messageController = new MessageController();
     public boolean isConnected = false;
     public boolean rerouteAttempt = false;
+    public BlockingQueue<Message> holdbackQueue = new PriorityBlockingQueue<Message>();
+    
     /**
      * Creates new form ChatClient
      */
@@ -171,10 +178,15 @@ public class Client extends javax.swing.JFrame {
     ClientToHostAckSender clientToHostAckSender  = null;
     OneToOneListener oneToOneListener = null;
     ReceivedAcknowledgmentsByClientMonitor ackMonitor = null;
+    HoldbackQueueMonitor holdbackQueueMonitor = null;
+    
     public void startConnection() {
         this.stopConnections();
         messagePresenter = new MessagePresenter(this);
         messagePresenter.start();
+        
+        holdbackQueueMonitor = new HoldbackQueueMonitor(this);
+        holdbackQueueMonitor.start();
         
         //Listen for response of previous request (or should this be placed before clientomhost?
         OneToManyListener oneToManyListener = new OneToManyListener(messageController, false);
@@ -212,6 +224,13 @@ public class Client extends javax.swing.JFrame {
         sendFirstConnectMessageToHost();
     }
     
+    /**
+     * Handle every message still in the holdback queue
+     */
+    public void unloadHoldbackQueue() {
+        this.holdbackQueueMonitor.unload();
+    }
+    
     private void stopConnections() {
         if(messagePresenter!=null) messagePresenter.stop();
         if(mClientListener!=null) mClientListener.stop();
@@ -219,6 +238,7 @@ public class Client extends javax.swing.JFrame {
         if(clientToHostAckSender!=null) clientToHostAckSender.stop();
         if(oneToOneListener!=null) oneToOneListener.stop();
         if(ackMonitor!=null) ackMonitor.stop();
+        if(holdbackQueueMonitor!=null) holdbackQueueMonitor.stop();
 
     }
     /**

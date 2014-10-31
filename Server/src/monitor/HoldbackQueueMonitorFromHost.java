@@ -31,15 +31,19 @@ public class HoldbackQueueMonitorFromHost implements Runnable {
                 e.printStackTrace();
             }
             long currentTime = new Date().getTime();
-            for(Host host: HostsList.getHostsList()) {
-                if(host.holdbackQueue.peek()!= null 
-                        && currentTime - host.holdbackQueue.peek().getTimeReceived() > Config.holdBackQueueDelay) 
-                {
-                    //The message is ready to be delivered.
-                    Message message = host.holdbackQueue.poll(); //pop message
-                    
-                    //Prepare message for delivery queues
-                    addMessageToDeliveryQueue(message);
+            for(Host host: HostsList.getHostsList()) { //Go through all holdback queues
+                while(!host.holdbackQueue.isEmpty()) { //handle all messages of 1 client
+                    if(host.holdbackQueue.peek()!= null 
+                            && currentTime - host.holdbackQueue.peek().getTimeReceived() > Config.holdBackQueueDelay) 
+                    {
+                        //The message is ready to be delivered.
+                        Message message = host.holdbackQueue.poll(); //pop message
+                        
+                        //Prepare message for delivery queues
+                        addMessageToDeliveryQueue(message);
+                    } else { //First message is not ready
+                        break;
+                    }
                 }
             }
         }

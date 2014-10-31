@@ -6,6 +6,7 @@ import java.io.ObjectInputStream;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.util.Date;
 
 import sharedresources.Commands;
 import sharedresources.Config;
@@ -67,7 +68,7 @@ public class MClientListener implements Runnable {
                 	        System.out.println("@@ MClientListener. I will reconnect to new host. Msg: " + message);
                 	        String address = messageParts[2];
                 	        int port = Integer.parseInt(messageParts[3]);
-                	        connectToDifferentHost(address, port);
+                	        this.connectToDifferentHost(address, port);
                 	    }
                 	} else {
                     	if(Commands.messageIsOfCommand(message, Commands.targetedResentMessage)) {
@@ -77,13 +78,16 @@ public class MClientListener implements Runnable {
                     			message.setText(Commands.getTextParseTargetedMessageText(message));
                     		}
                     	}
-//                    	System.out.println("Client received: " + message.getText() + " id: " + message.getId());
-                    	client.messageController.queueClientReceivedMessages.push(message);
+                    	System.out.println("Client received: " + message.getText() + " id: " + message.getId());
                     	
                     	//create the acknowledgement and store it in the queueAcknowledgments
                         String command = Commands.constructCommand(Commands.acknowledgement, Long.toString(message.getId()));
                         Message ack = new Message(Message.MessageType.acknowledgement, command);
                         client.messageController.queueAcknowledgements.push(ack); //Comment this if you want to test the host retries
+
+                        //Store in holdback queue
+                        message.setTimeReceived(new Date().getTime());
+                        this.client.holdbackQueue.put(message);
                 	}
                 	
                 } catch(ClassNotFoundException ex) {
@@ -107,7 +111,10 @@ public class MClientListener implements Runnable {
     }
 
     private void connectToDifferentHost(String address, int port) {
-        //First send a shutdown message to let current host know you are disconnecting
+        //First handle every message in the holdbackQueue
+        client.unloadHoldbackQueue();
+        
+        //Then send a shutdown message to let current host know you are disconnecting
         String command = Commands.constructCommand(Commands.clientShutdown);
         Message shutdownMsg = new Message(MessageType.clientCommand, command);
         client.clientToHost.sendMessage(shutdownMsg);

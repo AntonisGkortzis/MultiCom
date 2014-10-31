@@ -36,15 +36,19 @@ public class HoldbackQueueMonitorFromClient implements Runnable {
                 e.printStackTrace();
             }
             long currentTime = new Date().getTime();
-            for(ConnectedClient client: ConnectedClientsList.clients) {
-                if(client.holdbackQueue.peek()!= null 
-                        && currentTime - client.holdbackQueue.peek().getTimeReceived() > Config.holdBackQueueDelay) 
-                {
-                    //The message is ready to be delivered.
-                    Message message = client.holdbackQueue.poll(); //pop message
-                    
-                    //Prepare message for delivery queues
-                    storeMessageInDeliveryQueues(message);
+            for(ConnectedClient client: ConnectedClientsList.clients) { //Go through all holdback queues
+                while(!client.holdbackQueue.isEmpty()) { //handle all messages of 1 client
+                    if(client.holdbackQueue.peek()!= null 
+                            && currentTime - client.holdbackQueue.peek().getTimeReceived() > Config.holdBackQueueDelay) 
+                    {
+                        //The message is ready to be delivered.
+                        Message message = client.holdbackQueue.poll(); //pop message
+                        
+                        //Prepare message for delivery queues
+                        storeMessageInDeliveryQueues(message);
+                    } else { //First message is not ready
+                        break;
+                    }
                 }
             }
         }

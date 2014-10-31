@@ -1,7 +1,8 @@
-package client;
+package monitor;
 
 import java.util.Iterator;
 
+import client.Client;
 import sharedresources.Message;
 import sharedresources.Misc;
 

@@ -34,7 +34,7 @@ public class Message implements Serializable, Comparable<Message> {
 	private long timestamp;				//The time that the message was sent
 	private String username;				//The name of the user sending the message.
 	private String processID;            //The id of the process sending the message.
-	private long id=0;					//An incrementing number as an id
+	private long id=0;					//An incrementing number as an id, TODO in report mention that it is used both by order (priority queue) and reliability(ack)
 	private boolean clientAsReceiver;
 	private Socket socket;
 	private int timesSent;
