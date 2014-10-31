@@ -55,11 +55,10 @@ public class HostToMHost implements Runnable{
             //Messages that are only to be sent
         	Message message = Server.messageController.queueSend.pop();
             if(message != null ){
-    			//Put the chat message in a queue for possible re-sending
-            	if(message.getMessageType().equals(Message.MessageType.mHostChat)){
-//            		System.out.println("&& Adding mHostChatTo resendQueue ["+message.toString()+"]" );
-            		addToRetryQueue(message);
-            	}
+//            	if(message.getMessageType().equals(Message.MessageType.mHostChat)){
+////            		System.out.println("&& Adding mHostChatTo resendQueue ["+message.toString()+"]" );
+//            		addToRetryQueue(message);
+//            	}
             	flag = sendMessage(message);
             	
             }	
@@ -171,13 +170,6 @@ public class HostToMHost implements Runnable{
         
     }
         
-    private void addToRetryQueue(Message message) {
-    	//create forward message with setting hosts as the receivers (true if receiver is host)  
-    	ForwardMessage forwardMessage = new ForwardMessage(message, message.getId(), true);
-        System.out.println("$$ HostToMHost adding forwarded message [" + forwardMessage.getMessage() + "] ##");
-        Server.messageController.queueSentMessagesByHostToMHost.add(forwardMessage);
-	}
-
 	public static boolean sendMessage(Message message) { //
         InetAddress group;
         try {

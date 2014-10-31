@@ -2,10 +2,8 @@ package sharedresources;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Iterator;
-
 
 /**
  * This class is used for a listener of a one to one connection.
@@ -30,17 +28,6 @@ public class OneToOneListener implements Runnable {
 		t = new Thread(this);
 		t.start();
     }
-//    
-//    public void stop() {
-//        try {
-//            this.socket.close();
-//            this.flag = false;
-//        } catch (IOException e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
-//        
-//    }
 
     public void stop() {
         this.flag = false;
@@ -88,12 +75,17 @@ public class OneToOneListener implements Runnable {
 					if(!Commands.messageIsOfCommand(message, Commands.targetedResentMessage)){
 						if(this.isHost ){ //Only hosts in if(hostChat) so redundant?
 						    message.setProcessId(Misc.processID);
+						    message.setId(Misc.getNextMessageId());
 		//				    System.out.println("OneToOneListener received a host chat message " + message.toString());
 						    messageController.queueHostChat.push(message); //to send it to the clients connected on this host
 						    command = Commands.constructCommand(Commands.forwardMessage, message.getText());
 						    Message newMessage = new Message(Message.MessageType.mHostChat,true, message.getUsername(), command, Misc.getNextMessageId());
 						    
 						    messageController.queueSend.push(newMessage); //Send to other hosts    
+						    
+						    //Put the chat message in a queue for possible re-sending to other hosts
+			                addToRetryQueueForHosts(newMessage);
+
 						}
 					}
 				}
@@ -144,5 +136,12 @@ public class OneToOneListener implements Runnable {
 	    	ConnectedClient newclient = new ConnectedClient(processID, username);
 	        ConnectedClientsList.addClient(newclient); 
     	}
+    }
+    
+    private void addToRetryQueueForHosts(Message message) {
+        //create forward message with setting hosts as the receivers (true if receiver is host)  
+        ForwardMessage forwardMessage = new ForwardMessage(message, message.getId(), true);
+        System.out.println("$$ HostToMHost adding forwarded message [" + forwardMessage.getMessage() + "] ##");
+        messageController.queueSentMessagesByHostToMHost.add(forwardMessage);
     }
 }

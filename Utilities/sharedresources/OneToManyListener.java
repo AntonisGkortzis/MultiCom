@@ -104,6 +104,11 @@ public class OneToManyListener implements Runnable {
 		{
 			return;
 		}
+		//message is an acknowledgment and remove the HostAmountSendPair from the hosts of the forward message
+		if(message.getMessageType().equals(Message.MessageType.acknowledgement) && isHost){
+		    System.out.println("@@ OneToManyListeners -- Received an ack " + message.toString());
+		    removeResendMessageToHost(message);
+		}
 		
 		//For forwarding messages to clients
 		if(message.getMessageType().equals(Message.MessageType.mHostChat) 
@@ -114,23 +119,15 @@ public class OneToManyListener implements Runnable {
 		    Message ack = new Message(Message.MessageType.acknowledgement, true, command);
 		    //Adding acknowledgment to the Send queue for immediate sending
 		    System.out.println("Host with pid " + Misc.processID + " creates and adds to SendQueue an aknowledgment for the received message " + ack.toString());
-		    messageController.queueSend.push(ack);
+		    messageController.queueSend.push(ack); //comment this to check the resending of message to MHost
 		    
 		    //Must be placed after ack as changing the message id messes up the ack above
 			message.setMessageType(Message.MessageType.hostChat); //TODO don't we have to change pid to one from this host?
 			long messageId = Misc.getNextMessageId();
 			message.setId(messageId); //This message must have a new unique id 
 			System.out.println("Host with pid " + Misc.processID + "received message from host with id " + message.getProcessID());
-			
-//			messageController.queueHostChat.push(message);
-
 		}
 		
-		//TODO Here we should check if the message is an acknowledgment and we should remove the HostAmountSendPair from the hosts of the forward message
-		if(message.getMessageType().equals(Message.MessageType.acknowledgement) && isHost){
-			System.out.println("@@ OneToManyListeners -- Received an ack " + message.toString());
-			removeResendMessageToHost(message);
-		}
 		
 		//TODO explain queues and commands in report
 		messageController.pushMessageInCorrectQueue(message);
