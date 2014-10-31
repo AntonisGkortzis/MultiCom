@@ -174,7 +174,7 @@ public class HostToMHost implements Runnable{
     private void addToRetryQueue(Message message) {
     	//create forward message with setting hosts as the receivers (true if receiver is host)  
     	ForwardMessage forwardMessage = new ForwardMessage(message, message.getId(), true);
-        System.out.println("$$ HostToMHost adding forwarded message [" + forwardMessage.getMessage().toString() + "] ##");
+        System.out.println("$$ HostToMHost adding forwarded message [" + forwardMessage.getMessage() + "] ##");
         Server.messageController.queueSentMessagesByHostToMHost.add(forwardMessage);
 	}
 

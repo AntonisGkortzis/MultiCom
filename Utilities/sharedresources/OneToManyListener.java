@@ -108,18 +108,19 @@ public class OneToManyListener implements Runnable {
 		//For forwarding messages to clients
 		if(message.getMessageType().equals(Message.MessageType.mHostChat) 
 				&& isHost 
-				&& Commands.messageIsOfCommand(message, Commands.forwardMessage)) {
-			message.setMessageType(Message.MessageType.hostChat);
-			long messageId = Misc.getNextMessageId();
-			message.setId(messageId); //This message must have a new unique id 
-			System.out.println("Host with pid " + Misc.processID + "received message form host with id " + message.getProcessID());
-			
-			//Creating acknowledgment for the received mHostChat message
-			String command = Commands.constructCommand(Commands.acknowledgement, message.getProcessID(), Long.toString(message.getId()));
+				&& Commands.messageIsOfCommand(message, Commands.forwardMessage)) {		    
+		    //Creating acknowledgment for the received mHostChat message
+		    String command = Commands.constructCommand(Commands.acknowledgement, message.getProcessID(), Long.toString(message.getId()));
 		    Message ack = new Message(Message.MessageType.acknowledgement, true, command);
-			//Adding acknowledgment to the Send queue for immediate sending
+		    //Adding acknowledgment to the Send queue for immediate sending
 		    System.out.println("Host with pid " + Misc.processID + " creates and adds to SendQueue an aknowledgment for the received message " + ack.toString());
 		    messageController.queueSend.push(ack);
+		    
+		    //Must be placed after ack as changing the message id messes up the ack above
+			message.setMessageType(Message.MessageType.hostChat); //TODO don't we have to change pid to one from this host?
+			long messageId = Misc.getNextMessageId();
+			message.setId(messageId); //This message must have a new unique id 
+			System.out.println("Host with pid " + Misc.processID + "received message from host with id " + message.getProcessID());
 			
 //			messageController.queueHostChat.push(message);
 
@@ -144,7 +145,7 @@ public class OneToManyListener implements Runnable {
     	Iterator<ForwardMessage> iterator = messageController.queueSentMessagesByHostToMHost.iterator();
         while(iterator.hasNext()) {
         	ForwardMessage forwardMessage = iterator.next();
-            if(forwardMessage.getId() == Commands.getOriginalId(message)) { //correct message
+            if(forwardMessage.getId() == Commands.getOriginalIdOfHostForwardMessage(message)) { //correct message
 //            	System.out.println("@@ OneToOneListener clients: " + forwardMessage.getClients().size() + " ack size: " + messageController.queueSentMessagesByHostToClient.size());
                 if(forwardMessage.removeHost(message.getProcessID())) {
                     System.out.println("@@ OneToManyListener (host): Removing host as I received an ack.");

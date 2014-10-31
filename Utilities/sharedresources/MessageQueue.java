@@ -3,13 +3,15 @@ package sharedresources;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * This class is used for building a queue for the messages send over the network.
  * 
  */
 public class MessageQueue{
-	private List<Message> queue = new ArrayList<>();
+	private BlockingQueue<Message> queue = new LinkedBlockingQueue<>();
 	
 	public MessageQueue(){}
 	
@@ -39,10 +41,11 @@ public class MessageQueue{
 	 * Removes and returns the first object from the queue.
 	 */
 	public Message pop(){
-		if(!isEmpty())
-			return this.queue.remove(0);
-		else
-			return null;
+//		if(!isEmpty())
+//			return this.queue.remove(0);
+//		else
+//			return null;
+	    return this.queue.poll();
 	}
 	
 	/*
@@ -68,12 +71,15 @@ public class MessageQueue{
 		return this.queue.isEmpty();
 	}
 
-	public Message get(int i) {
-		return this.queue.get(i);
-	}
+//	public Message get(int i) {
+//		return this.queue.get(i);
+//	}
 
 	public void clear() {
 		this.queue.clear();
 	}
 
+	public Iterator<Message> iterator() {
+	    return this.queue.iterator();
+	}
 }

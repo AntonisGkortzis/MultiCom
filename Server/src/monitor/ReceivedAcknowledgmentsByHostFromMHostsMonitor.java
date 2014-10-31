@@ -3,7 +3,6 @@ package monitor;
 import java.util.Iterator;
 
 import multithread.sockets.Server;
-import sharedresources.Commands;
 import sharedresources.ForwardMessage;
 import sharedresources.HostAmountSendPair;
 import sharedresources.Message;
@@ -26,7 +25,7 @@ public class ReceivedAcknowledgmentsByHostFromMHostsMonitor implements Runnable 
 				e.printStackTrace();
 				flag = false;
 			}
-			System.out.println("Acks size: " + Server.messageController.queueSentMessagesByHostToMHost.size());
+//			System.out.println("Acks size: " + Server.messageController.queueSentMessagesByHostToMHost.size());
 			if(Server.messageController.queueSentMessagesByHostToMHost.size() <= 0 )
 				continue;
 						
@@ -66,13 +65,13 @@ public class ReceivedAcknowledgmentsByHostFromMHostsMonitor implements Runnable 
                     message.setText(command);
                     Server.messageController.queueHostChat.push(message);
                     */
+//                    System.out.println("@ReceivedAcksByHostsMonitor = Message sent " + message + " to pid: " + clientPair.getClient().getProcessID());
                     try {
-                        Thread.sleep(500); //!!!! bigger than popper delay of HostToMClient
+                        Thread.sleep(500); //!!!! bigger than popper delay of HostToMHost
                     } catch (InterruptedException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
-//                    System.out.println("@ReceivedAcksByHostsMonitor = Message sent " + message + " to pid: " + clientPair.getClient().getProcessID());
 			    }
 			}
 

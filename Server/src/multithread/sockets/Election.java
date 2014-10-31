@@ -85,7 +85,8 @@ public class Election implements Runnable {
     	} catch (InterruptedException e) {
             // TODO Auto-generated catch block
     		
-            e.printStackTrace();
+//            e.printStackTrace();
+    	    System.out.println("Election interrupted.");
             Server.electionState = ElectionStates.normal;
             return;
         }

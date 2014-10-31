@@ -176,7 +176,7 @@ public class Commands {
 	}
 	
 	private static String getMessagePart(Message message, int i) {
-	    String[] messageParts = message.getText().split(delimiter);
+	    String[] messageParts = message.getText().split(delimiter,-1);
         return messageParts[i];
 	}
 
@@ -195,4 +195,8 @@ public class Commands {
 	public static String getTextParseTargetedMessageText(Message message) {
 		return getMessagePart(message, 2);
 	}
+
+    public static long getOriginalIdOfHostForwardMessage(Message message) {
+        return Long.parseLong(getMessagePart(message, 2));
+    }
 }

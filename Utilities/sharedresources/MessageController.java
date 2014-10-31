@@ -1,7 +1,7 @@
 package sharedresources;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import sharedresources.Message.MessageType;;
 
@@ -18,7 +18,6 @@ public class MessageController {
 	public MessageQueue queueHostChat = new MessageQueue();
     
 	public MessageQueue queueMClientCommand = new MessageQueue();
-//	public MessageQueue queueClientChat = new MessageQueue();
 	
 	// This one is just for sending and NOT for storing received messages
 	public MessageQueue queueSend = new MessageQueue();
@@ -29,9 +28,9 @@ public class MessageController {
 	//Stores the sent messages by clients. These messages will be removed after receiving their acknowledgment. Otherwise sent again
 	public MessageQueue queueSentMessagesByClient = new MessageQueue();
 	//Stores the sent messages by hosts to its clients.
-	public List<ForwardMessage> queueSentMessagesByHostToClient = new ArrayList<ForwardMessage>();
+	public BlockingQueue<ForwardMessage> queueSentMessagesByHostToClient = new LinkedBlockingQueue<ForwardMessage>();
 	//Stores the sent messages by hosts to its hosts.
-	public List<ForwardMessage> queueSentMessagesByHostToMHost = new ArrayList<ForwardMessage>();
+	public BlockingQueue<ForwardMessage> queueSentMessagesByHostToMHost = new LinkedBlockingQueue<ForwardMessage>();
 	//Stores the messages that the Clients receives. Later these messages are popped and presented to the Client.
 	public MessageQueue queueClientReceivedMessages = new MessageQueue();
 	//Stores the received acknowledgments sent by hosts to other hosts for mHostChat messages

@@ -54,8 +54,8 @@ public class Server {
         receivedAcknowledgmentsByHostFromClientsMonitor.start();
         
         //TODO uncomment this to test the 3rd lvl of reliability.. Not yet working
-//        ReceivedAcknowledgmentsByHostFromMHostsMonitor receivedAcknowledgmentsByHostFromHostsMonitor = new ReceivedAcknowledgmentsByHostFromMHostsMonitor();
-//        receivedAcknowledgmentsByHostFromHostsMonitor.start();
+        ReceivedAcknowledgmentsByHostFromMHostsMonitor receivedAcknowledgmentsByHostFromHostsMonitor = new ReceivedAcknowledgmentsByHostFromMHostsMonitor();
+        receivedAcknowledgmentsByHostFromHostsMonitor.start();
         
         HostToClientAckSender hostToClientAckSender = new HostToClientAckSender();
         hostToClientAckSender.start();
