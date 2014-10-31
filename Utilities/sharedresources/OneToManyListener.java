@@ -6,6 +6,7 @@ import java.io.ObjectInputStream;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.util.Date;
 import java.util.Iterator;
 
 import com.sun.corba.se.spi.activation.Server;
@@ -121,11 +122,12 @@ public class OneToManyListener implements Runnable {
 		    System.out.println("Host with pid " + Misc.processID + " creates and adds to SendQueue an aknowledgment for the received message " + ack.toString());
 		    messageController.queueSend.push(ack); //comment this to check the resending of message to MHost
 		    
-		    //Must be placed after ack as changing the message id messes up the ack above
-			message.setMessageType(Message.MessageType.hostChat); //TODO don't we have to change pid to one from this host?
-			long messageId = Misc.getNextMessageId();
-			message.setId(messageId); //This message must have a new unique id 
-			System.out.println("Host with pid " + Misc.processID + "received message from host with id " + message.getProcessID());
+            //Hold back queue
+            message.setTimeReceived(new Date().getTime());
+            HostsList.addHoldBackMessage(message);
+            
+            //Message is hold back so do not push it in a queue yet
+		    return;
 		}
 		
 		

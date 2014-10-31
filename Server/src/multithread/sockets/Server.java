@@ -1,6 +1,7 @@
 package multithread.sockets;
 import monitor.ClientMonitor;
-import monitor.HoldbackQueueMonitor;
+import monitor.HoldbackQueueMonitorFromClient;
+import monitor.HoldbackQueueMonitorFromHost;
 import monitor.LoadBalancer;
 import monitor.ReceivedAcknowledgmentsByHostFromClientsMonitor;
 import monitor.ReceivedAcknowledgmentsByHostFromMHostsMonitor;
@@ -44,8 +45,11 @@ public class Server {
         ClientMonitor clientMonitor = new ClientMonitor();
         clientMonitor.start();
         
-        HoldbackQueueMonitor holdbackQueueMonitor = new HoldbackQueueMonitor();
-        holdbackQueueMonitor.start();
+        HoldbackQueueMonitorFromClient holdbackQueueMonitorFromClient = new HoldbackQueueMonitorFromClient();
+        holdbackQueueMonitorFromClient.start();
+        
+        HoldbackQueueMonitorFromHost holdbackQueueMonitorFromHost = new HoldbackQueueMonitorFromHost();
+        holdbackQueueMonitorFromHost.start();
         
         //One to one communication between host and client
         HostToClient hostToClient = new HostToClient();

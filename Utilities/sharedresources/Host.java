@@ -1,6 +1,8 @@
 package sharedresources;
 
 import java.util.Date;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.PriorityBlockingQueue;
 
 /**
  * Information about host
@@ -15,9 +17,8 @@ public class Host {
     private int nrOfClients;
     private Date lastUpdate; //TODO explain in Report that this time is only relevant to current host
 	private int votes;
-    
-    public Host(){}
-    
+    public BlockingQueue<Message> holdbackQueue; //TODO explain in report
+        
     public Host(int nrOfClients, String address, int port, boolean isMaster){
         this.setNrOfClients(nrOfClients);
         this.setAddress(address);
@@ -25,6 +26,7 @@ public class Host {
         this.setMaster(isMaster);
         this.setProcessID(Misc.processID);
         this.votes=0;
+        this.holdbackQueue = new PriorityBlockingQueue<Message>();
     }
     
     public Host(int nrOfClients, String address, int port, boolean isMaster, String processID){

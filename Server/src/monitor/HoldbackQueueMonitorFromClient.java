@@ -11,11 +11,11 @@ import sharedresources.ForwardMessage;
 import sharedresources.Message;
 import sharedresources.Misc;
 
-public class HoldbackQueueMonitor implements Runnable {
+public class HoldbackQueueMonitorFromClient implements Runnable {
 
     private boolean flag;
     
-    public HoldbackQueueMonitor() {}
+    public HoldbackQueueMonitorFromClient() {}
     
     public void start() {
         Thread t = new Thread(this);

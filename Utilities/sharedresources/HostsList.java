@@ -90,8 +90,6 @@ public  class HostsList {
         Host mostVotedHost = null;
         
         for(Host host : hosts){
-//        	System.out.println("@@@@ pid: " +host.getProcessID() +", port: "+host.getPort()+ ", nofClients: " 
-//					+ host.getNrOfClients() +", Votes: " + host.getNrOfVotes());
             if(host.getNrOfVotes()>max) {
                 mostVotedHost = host;
                 max = host.getNrOfVotes();
@@ -111,11 +109,9 @@ public  class HostsList {
 	public static void updateHostVote(String processID) {
 		for(Host host: hosts) {
             if(host.getProcessID().equals(processID)) {
-//            	System.out.println("\t\tvote for " + processID + " counted. ");
                 host.setNrOfVotes(host.getNrOfVotes()+1);
             }
         }
-		
 	}
 
 	public static void setMasterAndResetVotes(String processID) {
@@ -128,7 +124,6 @@ public  class HostsList {
 			host.setNrOfVotes(0);
             if(host.getProcessID().equals(processID)) {
                 host.setMaster(true);
-//                System.out.println("##-- Master is host with processId: "+ processID +" and port: " + host.getPort() + " --##");
             } else {
             	host.setMaster(false);
             }
@@ -155,21 +150,12 @@ public  class HostsList {
 					+ host.getNrOfClients() +", Votes: " + host.getNrOfVotes() + " isMaster: " + host.isMaster());
 		}
 	}
-	
-//	public static void resetVotes(){ // XXX implemented in resetMasterAndVotes?
-//		System.out.println("---> Resetting votes <----");
-//		for(Host host: hosts) {
-//			host.setNrOfVotes(0);
-//		}
-//	}
 
 	/**
 	 * Finds hosts that are not responding anymore by checking their last update time
 	 */
 	public static void findDeadHosts() {
-//		Calendar calendar = Calendar.getInstance();
-//		calendar.setTime(new Date());
-		long currentTime = new Date().getTime();//calendar.getTimeInMillis();
+		long currentTime = new Date().getTime();
 		
 		Iterator<Host> itererator = hosts.iterator();
 		Host host = null;
@@ -180,16 +166,13 @@ public  class HostsList {
 		    if(host.getProcessID().equals(Misc.processID)) {
 		    	continue;
 		    }
-//		    calendar.setTime(host.getLastUpdate());
-		    long lastUpdateOfHost = new Date().getTime();//calendar.getTimeInMillis();
+		    long lastUpdateOfHost = new Date().getTime();
 		    if(currentTime-lastUpdateOfHost > declareDead) {
 		    	System.out.println("@@@ -- current: " + currentTime +  " lastUpdateOfHost: " + lastUpdateOfHost +  "-- @@@");
 		    	System.out.println("##-- Removing a dead host now with pid: "+ host.getProcessID() + " port: " + host.getPort() + " --##");
 		    	itererator.remove();		    	
 		    }
-		    
 		}
-		
 	}
 
 	/**
@@ -216,5 +199,17 @@ public  class HostsList {
             }
         }
         return null;
+    }
+    
+    public static void addHoldBackMessage(Message message) {
+        for(Host host: hosts) {
+            if(host.getProcessID().equals(message.getProcessID())) {
+                try {
+                    host.holdbackQueue.put(message);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }
