@@ -63,9 +63,14 @@ public class Client extends javax.swing.JFrame {
 //        PortTextField = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         MainPanelTextArea = new javax.swing.JTextArea();
+        this.MainPanelTextArea.setWrapStyleWord(true);
+        this.MainPanelTextArea.setLineWrap(true);
+        this.MainPanelTextArea.setEditable(false);
         jLabel3 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         EnterTextArea = new javax.swing.JTextArea();
+        this.EnterTextArea.setLineWrap(true);
+        this.EnterTextArea.setWrapStyleWord(true);
         SendMessageButton = new javax.swing.JButton();
         ServerStatusLabel = new javax.swing.JLabel();
 
@@ -420,7 +425,10 @@ public class Client extends javax.swing.JFrame {
     }
     
     public void AddTextToMainPanel(String text){
-        this.MainPanelTextArea.setText(this.MainPanelTextArea.getText() + text + "\n");
+        //adding text in the main panel area
+    	this.MainPanelTextArea.setText(this.MainPanelTextArea.getText() + text + "\n");
+        //moving the cursor at the end of the last message
+    	this.MainPanelTextArea.setCaretPosition(this.MainPanelTextArea.getDocument().getLength());
     }
     
     public String getTextFromMainPanel(){
