@@ -7,12 +7,14 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.util.Date;
+import java.util.zip.CRC32;
 
 import sharedresources.Commands;
 import sharedresources.Config;
 import sharedresources.Message;
 import sharedresources.Misc;
 import sharedresources.Message.MessageType;
+import utils.CRC32Calculator;
 
 /**
  * This class is used for listening to messages send by MultiCast from a host.
@@ -85,14 +87,18 @@ public class MClientListener implements Runnable {
                     	}
                     	System.out.println("Client received: " + message.getText() + " id: " + message.getId());
                     	
-                    	//create the acknowledgement and store it in the queueAcknowledgments
-                        String command = Commands.constructCommand(Commands.acknowledgement, Long.toString(message.getId()));
-                        Message ack = new Message(Message.MessageType.acknowledgement, command);
-                        client.messageController.queueAcknowledgements.push(ack); //Comment this if you want to test the host retries
-
-                        //Store in holdback queue
-                        message.setTimeReceived(new Date().getTime());
-                        this.client.holdbackQueue.put(message);
+                    	if(message.getChecksum() == CRC32Calculator.getChecksum(message.getText())){
+	                    	//create the acknowledgement and store it in the queueAcknowledgments
+	                        String command = Commands.constructCommand(Commands.acknowledgement, Long.toString(message.getId()));
+	                        Message ack = new Message(Message.MessageType.acknowledgement, command);
+	                        client.messageController.queueAcknowledgements.push(ack); //Comment this if you want to test the host retries
+	
+	                        //Store in holdback queue
+	                        message.setTimeReceived(new Date().getTime());
+	                        this.client.holdbackQueue.put(message);
+                    	} else {
+                    		System.out.println("## Message is corrupted - CRC32 verification failed ##");
+                    	}
                 	}
                 	
                 } catch(ClassNotFoundException ex) {
