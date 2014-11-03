@@ -12,6 +12,8 @@ import java.util.Date;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 
+import javax.swing.JTextPane;
+
 import monitor.HoldbackQueueMonitor;
 import monitor.HostMonitor;
 import monitor.ReceivedAcknowledgmentsByClientMonitor;
@@ -41,6 +43,8 @@ public class Client extends javax.swing.JFrame {
     public BlockingQueue<Message> holdbackQueue = new PriorityBlockingQueue<Message>();
     public long lastHostUpdate = 0;
     public boolean tryingToConnect = false;
+    
+    public static KnownClients knownClients = new KnownClients();
     /**
      * Creates new form ChatClient
      */
@@ -62,9 +66,8 @@ public class Client extends javax.swing.JFrame {
         UsernameTextField = new javax.swing.JTextField();
 //        PortTextField = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        MainPanelTextArea = new javax.swing.JTextArea();
-        this.MainPanelTextArea.setWrapStyleWord(true);
-        this.MainPanelTextArea.setLineWrap(true);
+        MainPanelTextArea = new javax.swing.JTextPane();
+        this.MainPanelTextArea.setContentType("text/html");
         this.MainPanelTextArea.setEditable(false);
         jLabel3 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -94,8 +97,8 @@ public class Client extends javax.swing.JFrame {
 
         UsernameTextField.setText("username");
 
-        MainPanelTextArea.setColumns(20);
-        MainPanelTextArea.setRows(5);
+//        MainPanelTextArea.setC(20);
+//        MainPanelTextArea.setRows(5);
         jScrollPane1.setViewportView(MainPanelTextArea);
 
         jLabel3.setText("Enter your text here:");
@@ -133,6 +136,8 @@ public class Client extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(ConnectToServerButton))
                     .addGroup(layout.createSequentialGroup()
+//                		.addComponent(MainPanelTextArea)
+//                		.addGap(0, 0 ,Short.MAX_VALUE)
                         .addComponent(jLabel3)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(jScrollPane2)
@@ -425,10 +430,19 @@ public class Client extends javax.swing.JFrame {
     }
     
     public void AddTextToMainPanel(String text){
-        //adding text in the main panel area
-    	this.MainPanelTextArea.setText(this.MainPanelTextArea.getText() + text + "\n");
+    	StringBuilder s = new StringBuilder("<html><body>");
+    	if(this.MainPanelTextArea.getText().contains("</p>"))
+    		s.append(this.MainPanelTextArea.getText().substring(this.MainPanelTextArea.getText().indexOf("</p>"), this.MainPanelTextArea.getText().lastIndexOf("</body>")));
+    	else
+    		s.append(this.MainPanelTextArea.getText().substring(0, this.MainPanelTextArea.getText().lastIndexOf("</body>")));
+
+    	s.append(text + "<br></body></html>");
+        
+    	//adding text in the main panel area
+    	this.MainPanelTextArea.setText(s.toString());
         //moving the cursor at the end of the last message
     	this.MainPanelTextArea.setCaretPosition(this.MainPanelTextArea.getDocument().getLength());
+    	System.out.println(this.MainPanelTextArea.getText());
     }
     
     public String getTextFromMainPanel(){
@@ -445,7 +459,7 @@ public class Client extends javax.swing.JFrame {
     private javax.swing.JButton ConnectToServerButton;
     private javax.swing.JTextArea EnterTextArea;
     private javax.swing.JTextField UsernameTextField;
-    private javax.swing.JTextArea MainPanelTextArea;
+    private JTextPane MainPanelTextArea;
 //    private javax.swing.JTextField PortTextField;
     private javax.swing.JButton SendMessageButton;
     private javax.swing.JLabel ServerStatusLabel;
