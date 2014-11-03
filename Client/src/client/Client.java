@@ -342,7 +342,6 @@ public class Client extends javax.swing.JFrame {
             return;
         }
         
-        System.out.println("Size: " + this.EnterTextArea.getText().getBytes().length);
         if(this.EnterTextArea.getText().getBytes().length > 300){
         	this.showErrorMessage("Message cannot be sent. Reduce the size.");
         	return;
@@ -450,7 +449,6 @@ public class Client extends javax.swing.JFrame {
     	this.MainPanelTextArea.setText(s.toString());
         //moving the cursor at the end of the last message
     	this.MainPanelTextArea.setCaretPosition(this.MainPanelTextArea.getDocument().getLength());
-    	System.out.println(this.MainPanelTextArea.getText());
     }
     
     public String getTextFromMainPanel(){

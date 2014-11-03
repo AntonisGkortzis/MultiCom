@@ -28,7 +28,9 @@ public class HoldbackQueueMonitor implements Runnable {
      * Handle every message still in the holdback queue
      */
     public void unload() {
-        System.out.println("Unloading all the messages from my holdback queue");
+        if(!this.client.holdbackQueue.isEmpty()) {
+        	System.out.println("Unloading all the messages from my holdback queue");
+        }
         while(!this.client.holdbackQueue.isEmpty()) {
             this.handleMessage(this.client.holdbackQueue.poll());
         }

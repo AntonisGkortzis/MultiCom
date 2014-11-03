@@ -42,7 +42,7 @@ public class Server {
     
     // Listen for incoming connections and handle them
     public static void main(String[] args) {
-        System.out.println("Server Running with processID " + Misc.processID + " and port " + port + " ...");
+        System.out.println("Server Running with processID " + Misc.processID);
         
         ClientMonitor clientMonitor = new ClientMonitor();
         clientMonitor.start();
@@ -56,9 +56,6 @@ public class Server {
         //One to one communication between host and client
         HostToClient hostToClient = new HostToClient();
         hostToClient.start();       
-        
-//        OneToOneListener oneToOneListener = new OneToOneListener(hostToClient.getSocket(), Server.messageController);
-//        oneToOneListener.start();
         
         ReceivedAcknowledgmentsByHostFromClientsMonitor receivedAcknowledgmentsByHostFromClientsMonitor = new ReceivedAcknowledgmentsByHostFromClientsMonitor();
         receivedAcknowledgmentsByHostFromClientsMonitor.start();

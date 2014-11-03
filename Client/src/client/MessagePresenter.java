@@ -26,7 +26,6 @@ public class MessagePresenter implements Runnable {
 			
 			if(message != null){
 				Client.knownClients.clientExists(message.getUsername());
-				System.out.println("Username: " + message.getUsername());
 				client.AddTextToMainPanel("<b style=\"color:"+Client.knownClients.getColor(message.getUsername())+"\">" + message.getUsername() + "</b>: " + message.getText());
 			}
 			
