@@ -7,9 +7,9 @@ import java.util.Hashtable;
 public class KnownClients {
 	private Hashtable<Object, Object> clientColors;
 	private HashSet<String> knownClients;
-	private String colors[] = {"Black","Red","Orange","Yellow","Purple",
-			"Blue","Maroon","Navy","Silver","Green",
-			"Gray","Aqua","Olive","Lime","Fuchsia"};
+	private String colors[] = {"Black","Red","Blue","Maroon","Green","Orange","Purple",
+			"Navy","Silver","Gray","Aqua","Olive","Lime","Fuchsia","Yellow"};
+			
 	private static int counter = 0;
 	
 	public KnownClients(){
