@@ -6,6 +6,8 @@ import java.net.Socket;
 import java.util.Date;
 import java.util.Iterator;
 
+import utils.CRC32Calculator;
+
 /**
  * This class is used for a listener of a one to one connection.
  * 
@@ -64,7 +66,8 @@ public class OneToOneListener implements Runnable {
     				}
 				}
 				//if the message is a chat message (sent from client to host)
-				else if(message.getMessageType().equals(Message.MessageType.hostChat)){ //ONLY HOSTS in this if!
+				else if(message.getMessageType().equals(Message.MessageType.hostChat)//ONLY HOSTS in this if!
+						&& message.getChecksum() == CRC32Calculator.getChecksum(message.getText())){//Create an acknowledgment only if the message checksum is the same as the messages text 
 				    //create the acknowledgement and store it in the queueAcknowledgments
 				    //Must BE placed before IF, because PID of sender is needed (pid is changed below)
 				    String command = Commands.constructCommand(Commands.acknowledgement, message.getProcessID(), Long.toString(message.getId()));

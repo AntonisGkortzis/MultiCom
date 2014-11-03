@@ -4,6 +4,8 @@ package sharedresources;
 import java.io.Serializable;
 import java.net.Socket;
 
+import utils.CRC32Calculator;
+
 /**
  * This class is used for storing message information. It must be comparable
  * because messages can be stored in a priority queue. Without comparable
@@ -40,6 +42,8 @@ public class Message implements Serializable, Comparable<Message> {
 	private int timesSent;
 	private long timeReceived;         			// The time on which the message is received in milliseconds
 	private long timeSent;						// The time on which the message is sent in milliseconds
+	private long checkSum;
+	
 	
 	public Message(){}
 	
@@ -49,6 +53,7 @@ public class Message implements Serializable, Comparable<Message> {
 		this.text = text;
 		this.clientAsReceiver = false;
 		this.timesSent = 0;
+		this.checkSum = CRC32Calculator.getChecksum(text);
 	}
 
 	public Message(MessageType type, String username, String text){
@@ -103,6 +108,16 @@ public class Message implements Serializable, Comparable<Message> {
 	
 	public void setText(String text){
 		this.text = text;
+		//Calculate the new Checksum every time that the text is changed
+		this.updateCheckSum(text);
+	}
+
+	private void updateCheckSum(String text) {
+		this.checkSum = CRC32Calculator.getChecksum(text);
+	}
+	
+	public long getChecksum(){
+		return this.checkSum;
 	}
 
 	public void setMessageType(MessageType type) {

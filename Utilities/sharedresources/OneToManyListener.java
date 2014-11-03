@@ -9,6 +9,8 @@ import java.net.MulticastSocket;
 import java.util.Date;
 import java.util.Iterator;
 
+import utils.CRC32Calculator;
+
 import com.sun.corba.se.spi.activation.Server;
 
 /**
@@ -114,7 +116,8 @@ public class OneToManyListener implements Runnable {
 		//For forwarding messages to clients
 		if(message.getMessageType().equals(Message.MessageType.mHostChat) 
 				&& isHost 
-				&& Commands.messageIsOfCommand(message, Commands.forwardMessage)) {		    
+				&& Commands.messageIsOfCommand(message, Commands.forwardMessage)
+				&& message.getChecksum() == CRC32Calculator.getChecksum(message.getText())) {		    
 		    //Creating acknowledgment for the received mHostChat message
 		    String command = Commands.constructCommand(Commands.acknowledgement, message.getProcessID(), Long.toString(message.getId()));
 		    Message ack = new Message(Message.MessageType.acknowledgement, command);
