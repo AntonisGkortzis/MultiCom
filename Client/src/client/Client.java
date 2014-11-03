@@ -7,6 +7,7 @@ package client;
 
 import java.awt.Color;
 import java.io.IOException;
+import java.lang.instrument.Instrumentation;
 import java.net.Socket;
 import java.util.Date;
 import java.util.concurrent.BlockingQueue;
@@ -25,6 +26,7 @@ import sharedresources.MessageController;
 import sharedresources.Misc;
 import sharedresources.OneToManyListener;
 import sharedresources.OneToOneListener;
+import utils.ObjectSizeFetcher;
 /**
  * This class is used to create the Gui of the client and to start communication with the hosts. 
  * The connections started are:
@@ -43,6 +45,7 @@ public class Client extends javax.swing.JFrame {
     public BlockingQueue<Message> holdbackQueue = new PriorityBlockingQueue<Message>();
     public long lastHostUpdate = 0;
     public boolean tryingToConnect = false;
+    private ObjectSizeFetcher objectSizeFetcher = new ObjectSizeFetcher();
     
     public static KnownClients knownClients = new KnownClients();
     /**
@@ -341,7 +344,10 @@ public class Client extends javax.swing.JFrame {
             return;
         }
         Message message = new Message(Message.MessageType.hostChat, this.getUserName(), this.EnterTextArea.getText(), Misc.getNextMessageId());
-
+//        if(ObjectSizeFetcher.getObjectSize(message)>1024){
+//        	this.showErrorMessage("Message cannot be sent. Reduce the size.");
+//        	return;
+//        }
         boolean success = clientToHost.sendMessage(message);
         
         //after sending the message we should store it in the SentMessages queue and wait for its acknowledgment
