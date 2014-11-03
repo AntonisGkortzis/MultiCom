@@ -30,15 +30,16 @@ public class Message implements Serializable, Comparable<Message> {
     
     private static final long serialVersionUID = 1L;
 	private MessageType messageType;			// Different kinds of messages
-	private String text;				//The text of the message
-	private long timestamp;				//The time that the message was sent
-	private String username;				//The name of the user sending the message.
-	private String processID;            //The id of the process sending the message.
-	private long id=0;					//An incrementing number as an id, TODO in report mention that it is used both by order (priority queue) and reliability(ack)
+	private String text;						//The text of the message
+	private long timestamp;						//The time that the message was sent
+	private String username;					//The name of the user sending the message.
+	private String processID;          			//The id of the process sending the message.
+	private long id=0;							//An incrementing number as an id, TODO in report mention that it is used both by order (priority queue) and reliability(ack)
 	private boolean clientAsReceiver;
 	private Socket socket;
 	private int timesSent;
-	private long timeReceived;         // The time on which the message is received in milliseconds
+	private long timeReceived;         			// The time on which the message is received in milliseconds
+	private long timeSent;						// The time on which the message is sent in milliseconds
 	
 	public Message(){}
 	
@@ -151,5 +152,13 @@ public class Message implements Serializable, Comparable<Message> {
     public void setTimeReceived(long timeReceived) {
         this.timeReceived = timeReceived;
     }
+
+	public long getTimeSent() {
+		return timeSent;
+	}
+
+	public void setTimeSent(long timeSent) {
+		this.timeSent = timeSent;
+	}
 
 }

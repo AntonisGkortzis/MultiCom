@@ -31,7 +31,7 @@ public class MClientListener implements Runnable {
     public MClientListener(Client client) {
         this.client = client;
         try {
-            socket = new MulticastSocket(Config.connectToPortFromHost + 1);
+            socket = new MulticastSocket(Config.connectToPortFromHost );
             group = InetAddress.getByName(Config.multiCastAddress);
             socket.joinGroup(group);
         } catch (IOException e) {

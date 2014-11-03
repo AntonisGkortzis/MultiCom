@@ -35,8 +35,8 @@ public class LoadBalancer implements Runnable {
             if(!Config.master && !Server.electionState.equals(Server.ElectionStates.normal)) continue;
             
             double total = 0;
-            Host hostMaxNrOfClients = HostsList.getHostsList().get(0);
-            Host hostMinNrOfClients = HostsList.getHostsList().get(0);
+            Host hostMaxNrOfClients = HostsList.getHostsList().peek();
+            Host hostMinNrOfClients = HostsList.getHostsList().peek();
             for(Host host: HostsList.getHostsList()) {
                 total+=host.getNrOfClients();
                 if(host.getNrOfClients()<hostMinNrOfClients.getNrOfClients()) {

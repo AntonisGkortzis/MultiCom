@@ -100,7 +100,7 @@ public class Server {
         //A waiting time (Thread.sleep(2000)) exists at the beginning of the elections.
         
         // For starting Elections on host's start up
-        Election.initElection();
+//        Election.initElection();
         
         LoadBalancer loadBalancer = new LoadBalancer();
         loadBalancer.start();

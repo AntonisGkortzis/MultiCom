@@ -1,12 +1,12 @@
 package sharedresources;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public  class HostsList {
-    private static List<Host> hosts = new ArrayList<>();
+    private static BlockingQueue<Host> hosts = new LinkedBlockingQueue<>();
     public final static int declareDead = 5000; //MilliSeconds
     
     public HostsList(){}
@@ -102,7 +102,7 @@ public  class HostsList {
         return hosts.size();
     }
     
-    public static List<Host> getHostsList(){
+    public static BlockingQueue<Host> getHostsList(){
     	return hosts;
     }
 

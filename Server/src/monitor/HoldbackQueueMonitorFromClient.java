@@ -81,6 +81,7 @@ public class HoldbackQueueMonitorFromClient implements Runnable {
     private void addToRetryQueueForHosts(Message message) {
         //create forward message with setting hosts as the receivers (true if receiver is host)  
         ForwardMessage forwardMessage = new ForwardMessage(message, message.getId(), true);
+        message.setTimeSent(new Date().getTime()); //to know when to resent it
         System.out.println("$$ HostToMHost adding forwarded message [" + forwardMessage.getMessage() + "] ##");
         Server.messageController.queueSentMessagesByHostToMHost.add(forwardMessage);
     }

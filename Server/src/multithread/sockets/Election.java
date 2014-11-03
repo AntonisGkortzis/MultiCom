@@ -123,7 +123,7 @@ public class Election implements Runnable {
      */
     public Host getPreferredCandidate(){
     	//initialize the preferred candidate and the minimum (his) number of connected clients
-    	Host preferredHost = HostsList.getHostsList().get(0);
+    	Host preferredHost = HostsList.getHostsList().peek();
         for(Host host : HostsList.getHostsList()){
         	//if the last update of the host is older than the election timestamp ignore him, because he is not part of the election
         	if(host.getLastUpdate().before(this.electionStart)){

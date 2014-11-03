@@ -26,9 +26,11 @@ public class StatusMonitor implements Runnable {
 				
                 //Check if there is a master alive, if not start the elections!
                 if(!HostsList.masterAlive()) {
-                	System.out.println("##-- No master alive, I will start elections --#");
                 	//OH NO, there is no master alive. Let's elect:
-                	Election.initElection();
+                	if(Server.electionState.equals(Server.ElectionStates.normal)) {
+                		System.out.println("##-- No master alive, I will start elections --#");
+                		Election.initElection();
+                	}
                 }
 			} catch (InterruptedException e) {
 				e.printStackTrace();

@@ -351,6 +351,7 @@ public class Client extends javax.swing.JFrame {
         boolean success = clientToHost.sendMessage(message);
         
         //after sending the message we should store it in the SentMessages queue and wait for its acknowledgment
+        message.setTimeSent(new Date().getTime());
         messageController.queueSentMessagesByClient.push(message);
     	if(success) this.EnterTextArea.setText("");
 

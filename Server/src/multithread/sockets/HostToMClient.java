@@ -7,11 +7,10 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.util.Date;
 
 import sharedresources.Commands;
 import sharedresources.Config;
-import sharedresources.ConnectedClient;
-import sharedresources.ConnectedClientsList;
 import sharedresources.ForwardMessage;
 import sharedresources.Message;
 
@@ -72,7 +71,7 @@ public class HostToMClient implements Runnable {
                 ObjectOutputStream os = new ObjectOutputStream(outputStream);
                 os.writeObject(message);
                 byte[] data = outputStream.toByteArray();
-                DatagramPacket packet = new DatagramPacket(data, data.length, group, Server.port + 1); //TODO fix this "hard coded" port
+                DatagramPacket packet = new DatagramPacket(data, data.length, group, Server.port ); //TODO fix this "hard coded" port
                 socket.send(packet);
                 
     			//Put the chat message in a queue for possible re-sending
@@ -88,6 +87,7 @@ public class HostToMClient implements Runnable {
     
     private void addToRetryQueue(Message message) {
         ForwardMessage forwardMessage = new ForwardMessage(message, message.getId(), false);
+        message.setTimeSent(new Date().getTime());
         System.out.println("@@ HostToMClient adding forwarded message " + forwardMessage.getMessage().toString());
         Server.messageController.queueSentMessagesByHostToClient.add(forwardMessage);
         
