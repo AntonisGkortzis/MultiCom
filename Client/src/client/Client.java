@@ -86,14 +86,10 @@ public class Client extends javax.swing.JFrame {
 			
 			@Override
 			public void keyTyped(KeyEvent e) {
-				// TODO Auto-generated method stub
-				
 			}
 			
 			@Override
 			public void keyReleased(KeyEvent e) {
-				// TODO Auto-generated method stub
-				
 			}
 			
 			@Override
@@ -425,7 +421,6 @@ public class Client extends javax.swing.JFrame {
     		try {
     		    clientToHost.getSocket().close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
     	}

@@ -164,9 +164,7 @@ public class Election implements Runnable {
             } else { //host does not have a majority, restart elections
                 System.out.println("##--## The election was not successfull. #Participants: " + 
                         nrOfParticipants + " #MostVotes: " + mostVotedHost.getNrOfVotes() +" ##--##");
-                Election.initElection(); //restart election
-                //TODO explain restart in report
-                
+                Election.initElection(); //restart election                
             }
         }
     }
@@ -182,7 +180,7 @@ public class Election implements Runnable {
 		
 	}
 
-	/** TODO in report
+	/**
 	 * Checks if the election message belongs to the current election.
 	 * 
 	 * This means that the processID and time of the latest starter

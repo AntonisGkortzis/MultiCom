@@ -69,11 +69,11 @@ public class HostToMClient implements Runnable {
                 ObjectOutputStream os = new ObjectOutputStream(outputStream);
                 os.writeObject(message);
                 byte[] data = outputStream.toByteArray();
-                DatagramPacket packet = new DatagramPacket(data, data.length, group, Server.port ); //TODO fix this "hard coded" port
+                DatagramPacket packet = new DatagramPacket(data, data.length, group, Server.port );
                 socket.send(packet);
                 
     			//Put the chat message in a queue for possible re-sending
-    			if(message.getMessageType().equals(Message.MessageType.hostChat)) addToRetryQueue(message);
+    			if(!Commands.messageIsOfCommand(message, Commands.targetedResentMessage)) addToRetryQueue(message);
     			
             } catch (IOException e) {
                 e.printStackTrace();
@@ -87,6 +87,5 @@ public class HostToMClient implements Runnable {
         ForwardMessage forwardMessage = new ForwardMessage(message, message.getId(), false);
         message.setTimeSent(new Date().getTime());
         Server.messageController.queueSentMessagesByHostToClient.add(forwardMessage);
-        
     }
 }

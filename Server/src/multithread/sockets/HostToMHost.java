@@ -148,7 +148,7 @@ public class HostToMHost implements Runnable{
             
             
             try {
-                Thread.sleep(150); //TODO put delay in config. Must be faster than push from ping for now
+                Thread.sleep(150);
             } 
             catch (InterruptedException e) { 
                 e.printStackTrace();

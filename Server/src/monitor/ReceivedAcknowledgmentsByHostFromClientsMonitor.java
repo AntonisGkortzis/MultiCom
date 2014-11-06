@@ -32,7 +32,6 @@ public class ReceivedAcknowledgmentsByHostFromClientsMonitor implements Runnable
 			if(Server.messageController.queueSentMessagesByHostToClient.size() <= 0 )
 				continue;
 			
-			
 			//check if there are any unverified messages in the SentMessages queue
 			Iterator<ForwardMessage> iteratorMsg = Server.messageController.queueSentMessagesByHostToClient.iterator();
 			while(iteratorMsg.hasNext()) {
@@ -45,7 +44,6 @@ public class ReceivedAcknowledgmentsByHostFromClientsMonitor implements Runnable
 			    	message.setTimeSent(currentTime);
 				    while(iteratorPair.hasNext()) {
 				        ClientAmountSendPair clientPair = iteratorPair.next();
-					    clientPair.incNrOfRetries();
 				        if(clientPair.getNrOfRetries()>2) { //remove client after some retries (not responding/sending acks)
 	                        iteratorPair.remove();
 	                        System.out.println("%ACK%-- Stop sending the message to Messenger " + clientPair.getClient().getProcessID() + 
@@ -66,6 +64,7 @@ public class ReceivedAcknowledgmentsByHostFromClientsMonitor implements Runnable
 	                    String command = Commands.constructCommand(Commands.targetedResentMessage, clientPair.getClient().getProcessID(), messageText);
 	                    message.setText(command);
 	                    Server.messageController.queueHostChat.push(message);
+	                    clientPair.incNrOfRetries();
 	                    
 	                    try {
 	                        Thread.sleep(500); //!!!! bigger than popper delay of HostToMClient

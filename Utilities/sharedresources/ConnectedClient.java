@@ -14,8 +14,8 @@ import java.util.concurrent.PriorityBlockingQueue;
 public class ConnectedClient {
 	private String user;
     private String processID;
-    private Date lastUpdate; //TODO explain in report
-	public BlockingQueue<Message> holdbackQueue; //TODO explain in report
+    private Date lastUpdate;
+	public BlockingQueue<Message> holdbackQueue;
 	
 	public ConnectedClient(){}
 	

@@ -43,7 +43,6 @@ public class HoldbackQueueMonitorFromClient implements Runnable {
                     {
                         //The message is ready to be delivered.
                         Message message = client.holdbackQueue.poll(); //pop message
-                        
                         //Prepare message for delivery queues
                         storeMessageInDeliveryQueues(message);
                     } else { //First message is not ready

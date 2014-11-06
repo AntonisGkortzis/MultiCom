@@ -39,7 +39,7 @@ public class MessagePresenter implements Runnable {
 			}
 			
 			try {
-				Thread.sleep(150); // TODO put in Config
+				Thread.sleep(150);
 			} catch (InterruptedException ex){
 				ex.printStackTrace();
 				flag = false;
