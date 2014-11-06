@@ -29,13 +29,12 @@ public class ReceivedAcknowledgmentsByClientMonitor implements Runnable {
 		flag = true;
 		while(flag) {
 			try { //Delay between resent
-			    Thread.sleep(200);//TODO set a fixed delay in Config
+			    Thread.sleep(200);
 			} 
 			catch (InterruptedException e) { 
 			    e.printStackTrace();
 			    flag = false;
 			}
-			
 			
 			//check if there are any unverified messages in the SentMessages queue
 			Iterator<Message> iterator = client.messageController.queueSentMessagesByClient.iterator();
@@ -48,13 +47,10 @@ public class ReceivedAcknowledgmentsByClientMonitor implements Runnable {
 	                if(message.getTimesSent() > 2){
 	                    iterator.remove();
 	                } else {
-	//                  System.out.println("@@ RecAckMonitorClient: resending msg, nrOfTimes: " + message.getTimesSent());
 	                    flag = client.clientToHost.sendMessage(message);
 	                }
 			    }
 			}
-
-          	
 		}
 	}
 

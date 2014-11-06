@@ -11,8 +11,6 @@ import java.util.Iterator;
 
 import utils.CRC32Calculator;
 
-import com.sun.corba.se.spi.activation.Server;
-
 /**
  * This class is used to listen for messages send with Multicast to multiple hosts
  * Messages are of type:
@@ -45,7 +43,6 @@ public class OneToManyListener implements Runnable {
             e.printStackTrace();
         }
 	}
-
     
     public void start() {
         t = new Thread(this);
@@ -56,14 +53,10 @@ public class OneToManyListener implements Runnable {
     	try {
     		if(socket != null){
 				socket.leaveGroup(group);
-//				socket.close();
-//				socket = null;
     		}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-//    	t.stop();
     	flag = false;
     	
     }
@@ -84,7 +77,6 @@ public class OneToManyListener implements Runnable {
             	flag = false;
             }
         }
-
 	}
 	
 	private void handleMessage(Message message) {
@@ -97,7 +89,8 @@ public class OneToManyListener implements Runnable {
 		if(message.getProcessID().equals(Misc.processID) 
 				&& !Commands.messageIsOfCommand(message, Commands.IAmTheMaster)
 				&& !Commands.messageIsOfCommand(message, Commands.startElection)
-				&& !Commands.messageIsOfCommand(message, Commands.vote)){
+				&& !Commands.messageIsOfCommand(message, Commands.vote)
+				&& !Commands.messageIsOfCommand(message, Commands.loadBalance)){
 			return;
 		}
 		//Messages destined for clients only
@@ -109,7 +102,6 @@ public class OneToManyListener implements Runnable {
 		}
 		//message is an acknowledgment and remove the HostAmountSendPair from the hosts of the forward message
 		if(message.getMessageType().equals(Message.MessageType.acknowledgement) && isHost){
-		    System.out.println("@@ OneToManyListeners -- Received an ack " + message.toString());
 		    removeResendMessageToHost(message);
 		}
 		
@@ -122,7 +114,6 @@ public class OneToManyListener implements Runnable {
 		    String command = Commands.constructCommand(Commands.acknowledgement, message.getProcessID(), Long.toString(message.getId()));
 		    Message ack = new Message(Message.MessageType.acknowledgement, command);
 		    //Adding acknowledgment to the Send queue for immediate sending
-		    System.out.println("Host with pid " + Misc.processID + " creates and adds to SendQueue an aknowledgment for the received message " + ack.toString());
 		    messageController.queueSend.push(ack); //comment this to check the resending of message to MHost
 		    
             //Hold back queue
@@ -133,10 +124,7 @@ public class OneToManyListener implements Runnable {
 		    return;
 		}
 		
-		
-		//TODO explain queues and commands in report
 		messageController.pushMessageInCorrectQueue(message);
-		
 	}
 	
 	/**
@@ -148,16 +136,12 @@ public class OneToManyListener implements Runnable {
         while(iterator.hasNext()) {
         	ForwardMessage forwardMessage = iterator.next();
             if(forwardMessage.getId() == Commands.getOriginalIdOfHostForwardMessage(message)) { //correct message
-//            	System.out.println("@@ OneToOneListener clients: " + forwardMessage.getClients().size() + " ack size: " + messageController.queueSentMessagesByHostToClient.size());
                 if(forwardMessage.removeHost(message.getProcessID())) {
-                    System.out.println("@@ OneToManyListener (host): Removing host as I received an ack.");
                 	iterator.remove();
                 }
                 break;
             }
         }
     }
-
-
 
 }

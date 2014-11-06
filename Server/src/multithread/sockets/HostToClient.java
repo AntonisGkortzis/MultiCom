@@ -23,11 +23,9 @@ public class HostToClient implements Runnable{
         }
         Server.port = serverSocket.getLocalPort();
         Server.address = serverSocket.getInetAddress().getHostAddress();
-        System.out.println("Listening for clients on port: " + Server.port);
         
         // Add yourselves to the list of hosts
         Host newHost = new Host(ConnectedClientsList.size(), Server.address, Server.port, Config.master);
-//        newHost.setLastUpdate(new Date()); done in addhost
         HostsList.addHost(newHost);
         
     }
@@ -52,7 +50,6 @@ public class HostToClient implements Runnable{
     		try {
 				socket = serverSocket.accept();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
     		OneToOneListener oneToOneListener = new OneToOneListener(socket, Server.messageController, true);
@@ -63,7 +60,6 @@ public class HostToClient implements Runnable{
         try {
 			socket.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
     }

@@ -22,14 +22,14 @@ public final class Config {
 	 */
 	public final static int hostMultiCastGroup = 5000;
 	
-    public static boolean master = false; // TODO Must be set by election process
+    public static boolean master = false;
 
 	//DELAYS
 	
 	/**
 	 * Delay for pinging other hosts 
 	 */
-	public final static int DELAY = 3000; //TODO set to correct delay
+	public final static int DELAY = 3000;
 	
 	/**
 	 * Delay of sending heartbeats to host by client

@@ -28,11 +28,10 @@ public class LoadBalancer implements Runnable {
             try {
                 Thread.sleep(10000);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             //Only the master can perform load balancing and not during election
-            if(!Config.master && !Server.electionState.equals(Server.ElectionStates.normal)) continue;
+            if(!(Config.master && Server.electionState.equals(Server.ElectionStates.normal))) continue;
             
             double total = 0;
             Host hostMaxNrOfClients = HostsList.getHostsList().peek();
@@ -51,9 +50,9 @@ public class LoadBalancer implements Runnable {
             int nrToReroute =hostMaxNrOfClients.getNrOfClients() - (int)averageNrOfClients;
             
             //Reroute nrToReroute clients from MaxHost to MinHost 
-            if(total>1 && nrToReroute>0 && !hostMaxNrOfClients.getProcessID().equals(hostMinNrOfClients.getProcessID())) {
-                System.out.println("Master orders to reroute " + nrToReroute +" client(s), from " +
-                        hostMaxNrOfClients.getProcessID() + " to " + hostMinNrOfClients.getProcessID());
+            if(total>1 && nrToReroute>0 && !hostMaxNrOfClients.getProcessID().equals(hostMinNrOfClients.getProcessID()) && Config.master) {
+                System.out.println("@@-- I, ####### the Master, am ordering to reroute " + nrToReroute +" Messenger(s), from " +
+                        hostMaxNrOfClients.getProcessID() + " to " + hostMinNrOfClients.getProcessID() + " --@@");
                 String command = Commands.constructCommandLoadBalance(hostMaxNrOfClients, hostMinNrOfClients, nrToReroute);
                 Message message = new Message(Message.MessageType.mHostCommand, command);
                 Server.messageController.queueSend.push(message);

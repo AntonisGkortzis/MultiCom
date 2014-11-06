@@ -146,8 +146,8 @@ public  class HostsList {
 
 	public static void printHostsVotes(){
 		for(Host host: hosts) {
-			System.out.println("\tpid: " +host.getProcessID() +", port: "+host.getPort()+ ", nofClients: " 
-					+ host.getNrOfClients() +", Votes: " + host.getNrOfVotes() + " isMaster: " + host.isMaster());
+			System.out.println("\tHost: " + host.getProcessID() +"/"+host.getPort()+ ", #Messengers: " 
+					+ host.getNrOfClients() +", #Votes: " + host.getNrOfVotes());
 		}
 	}
 
@@ -168,7 +168,7 @@ public  class HostsList {
 		    }
 		    long lastUpdateOfHost = host.getLastUpdate().getTime();
 		    if(currentTime-lastUpdateOfHost > declareDead) {
-		    	System.out.println("##-- Removing a dead host now with pid: "+ host.getProcessID() + " port: " + host.getPort() + " --##");
+		    	System.out.println("@@-- Removing a dead Host "+ host.getProcessID() + "/" + host.getPort() + " --@@");
 		    	itererator.remove();		    	
 		    }
 		}
@@ -211,4 +211,5 @@ public  class HostsList {
             }
         }
     }
+
 }

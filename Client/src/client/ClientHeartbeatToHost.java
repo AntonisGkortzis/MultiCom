@@ -5,7 +5,6 @@ import sharedresources.Config;
 import sharedresources.Message;
 
 public class ClientHeartbeatToHost implements Runnable {
-
     
     private Client client;
     private boolean flag;
@@ -22,7 +21,6 @@ public class ClientHeartbeatToHost implements Runnable {
     
     public void stop() {
         this.flag = false;
-//        t.interrupt();
     }
     
     @Override

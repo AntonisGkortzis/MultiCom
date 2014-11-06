@@ -3,6 +3,7 @@ package monitor;
 import java.util.Date;
 
 import multithread.sockets.Server;
+import sharedresources.Commands;
 import sharedresources.Config;
 import sharedresources.Host;
 import sharedresources.HostsList;
@@ -62,7 +63,7 @@ public class HoldbackQueueMonitorFromHost implements Runnable {
         message.setId(messageId); //This message must have a new unique id 
         //Send the message to the clients of the host
         Server.messageController.queueHostChat.push(message);
-        System.out.println("Host with pid " + Misc.processID + "received message from host with id " + message.getProcessID());
+        System.out.println("##-- Received forwarded message with text '" + Commands.getParseMessageText(message) + "' from Host " + message.getProcessID() + " --##");
     }
 
 }

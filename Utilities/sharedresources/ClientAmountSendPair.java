@@ -30,5 +30,4 @@ public class ClientAmountSendPair {
         this.client = client;
     }
     
-    
 }

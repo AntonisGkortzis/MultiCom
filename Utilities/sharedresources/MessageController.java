@@ -39,33 +39,20 @@ public class MessageController {
 
 	public void pushMessageInCorrectQueue(Message receivedMessage) {
     	if(receivedMessage.getMessageType().equals(MessageType.mHostCommand)) {
-//    		System.out.print(" mHostCommand [message: "+receivedMessage.toString()+"]\n");
     	    this.queueMHostsCommand.push(receivedMessage);
     	} else if(receivedMessage.getMessageType().equals(MessageType.mHostChat))  {
-//    		System.out.print(" mHostChat [message: "+receivedMessage.toString()+"]\n");
     		this.queueMHostsChat.push(receivedMessage);
     	} else if(receivedMessage.getMessageType().equals(MessageType.mHostStatus))  {
-//    		System.out.print(" mHostStatus [message: "+receivedMessage.toString()+"]\n");
     		this.queueMHostsStatus.push(receivedMessage);
     	} else if(receivedMessage.getMessageType().equals(MessageType.mHostVote)) {
-//    		System.out.print(" mHostVote [message: "+receivedMessage.toString()+"]\n");
     		this.queueMHostsVote.push(receivedMessage);
     	} else if(receivedMessage.getMessageType().equals(MessageType.mClientCommand)) {
-//    		System.out.print(" mClientCommand [message: "+receivedMessage.toString()+"]\n");
     		this.queueMClientCommand.push(receivedMessage);
     	} else if(receivedMessage.getMessageType().equals(MessageType.hostChat)) {
     	    this.queueHostChat.push(receivedMessage);
     	} else if(receivedMessage.getMessageType().equals(MessageType.acknowledgement)) {
-//    		System.out.println("%% received ack from MHOST " + receivedMessage.toString());
     		this.queueAcknowledgementsFromMHosts.push(receivedMessage);
     	}
-    	else 
-    	{
-    		System.err.println("$$ Message " + receivedMessage.getMessageType() + " is not pushed $$");
-    	}
-    
-
-		
 	}
 	
 }

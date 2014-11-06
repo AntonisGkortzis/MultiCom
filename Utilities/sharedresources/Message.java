@@ -18,7 +18,7 @@ public class Message implements Serializable, Comparable<Message> {
      * Enumeration to specify to type of process that needs to receive/send
      * @author mark
      */
-    public static enum MessageType { //TODO explain in report (globally no details)
+    public static enum MessageType {
         mHostCommand,
         mHostStatus,
         mHostChat,
@@ -37,7 +37,7 @@ public class Message implements Serializable, Comparable<Message> {
 	private String username;					//The name of the user sending the message.
 	private String processID;          			//The id of the process sending the message.
 	private String originalSendersProcessID;	//The id of the original sender.
-	private long id=0;							//An incrementing number as an id, TODO in report mention that it is used both by order (priority queue) and reliability(ack)
+	private long id=0;							//An incrementing number as an id
 	private boolean clientAsReceiver;
 	private Socket socket;
 	private int timesSent;

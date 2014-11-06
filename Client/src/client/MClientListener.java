@@ -7,8 +7,6 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.util.Date;
-import java.util.zip.CRC32;
-
 import sharedresources.Commands;
 import sharedresources.Config;
 import sharedresources.Message;
@@ -67,17 +65,15 @@ public class MClientListener implements Runnable {
                 	    String[] messageParts = Commands.splitMessage(message);
                 	    String processId = messageParts[1];
                 	    if(processId.equals(Misc.processID)) {
-                	        System.out.println("@@ MClientListener. I will reconnect to new host. Msg: " + message);
+                	    	int port = Integer.parseInt(messageParts[3]);
+                	        System.out.println("@@-- I will reconnect to new Host " + message.getProcessID() + "/" + port + " --@@");
                 	        String address = messageParts[2];
-                	        int port = Integer.parseInt(messageParts[3]);
                 	        this.connectToDifferentHost(address, port);
                 	    }
                 	// Update the time of when the host was last seen
                 	} else if (Commands.messageIsOfCommand(message, Commands.hostHeartbeat)) {
                 	    client.lastHostUpdate = new Date().getTime();
-                	}/* else if(Commands.messageIsOfCommand(message, Commands.hostShutdown)) {
-                	    System.out.println("Host shuts down");
-                	}*/ else {
+                	} else {
                     	if(Commands.messageIsOfCommand(message, Commands.targetedResentMessage)) {
                     		if(!Commands.getStarterProcessID(message).equals(Misc.processID)){
                     			continue;
@@ -85,7 +81,7 @@ public class MClientListener implements Runnable {
                     			message.setText(Commands.getTextParseTargetedMessageText(message));
                     		}
                     	}
-                    	System.out.println("Client received: " + message.getText() + " id: " + message.getId());
+                    	System.out.println("##-- Messenger received: '" + message.getText() + "' with id: " + message.getId() + " --##");
                     	
                     	if(message.getChecksum() == CRC32Calculator.getChecksum(message.getText())){
 	                    	//create the acknowledgement and store it in the queueAcknowledgments
@@ -97,7 +93,7 @@ public class MClientListener implements Runnable {
 	                        message.setTimeReceived(new Date().getTime());
 	                        this.client.holdbackQueue.put(message);
                     	} else {
-                    		System.out.println("## Message is corrupted - CRC32 verification failed ##");
+                    		System.out.println("##-- Message is corrupted - CRC32 verification failed --##");
                     	}
                 	}
                 	
@@ -108,17 +104,14 @@ public class MClientListener implements Runnable {
             }
 
         } catch (IOException | InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         try {
             socket.leaveGroup(group);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         socket.close();
-        
     }
 
     private void connectToDifferentHost(String address, int port) {
@@ -133,7 +126,5 @@ public class MClientListener implements Runnable {
         Config.connectToPortFromHost = port;
         client.rerouteAttempt = true;
         client.startConnection();
-        
-        
     }
 }

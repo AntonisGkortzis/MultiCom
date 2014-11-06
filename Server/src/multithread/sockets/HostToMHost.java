@@ -11,7 +11,6 @@ import java.net.SocketException;
 import sender.SendStatusUpdate;
 import sharedresources.ConnectedClient;
 import sharedresources.ConnectedClientsList;
-import sharedresources.ForwardMessage;
 import sharedresources.Host;
 import sharedresources.HostsList;
 import sharedresources.Commands;
@@ -35,7 +34,6 @@ public class HostToMHost implements Runnable{
         try {
             socket = new DatagramSocket(0);
         } catch (SocketException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -46,19 +44,14 @@ public class HostToMHost implements Runnable{
     }
 
     @Override
-    public void run() { //TODO MAke sure that this is only sending chat messages (distributing)
+    public void run() { 
         boolean flag=true;
         while (flag) {
         	
             //Messages that are only to be sent
         	Message message = Server.messageController.queueSend.pop();
             if(message != null ){
-//            	if(message.getMessageType().equals(Message.MessageType.mHostChat)){
-////            		System.out.println("&& Adding mHostChatTo resendQueue ["+message.toString()+"]" );
-//            		addToRetryQueue(message);
-//            	}
             	flag = sendMessage(message);
-            	
             }	
         	
             //Messages that contains commands that should be parsed and executed
@@ -71,8 +64,8 @@ public class HostToMHost implements Runnable{
                         Message newMessage = new Message(Message.MessageType.mClientCommand, command);
                         newMessage.setClientAsReceiver(true);//In order not to be stored by other hosts
                         sendMessage(newMessage);
-                        System.out.println("@@ I ["+ Misc.processID+"/"+Server.port +"] am redirecting a client to host" 
-                        + suitableHost.getProcessID() + "/" +suitableHost.getPort());
+                        System.out.println("@@-- I, the Master, am directing a new Messenger "+ message.getProcessID() +" to Host: " 
+                        + suitableHost.getProcessID() + "/" +suitableHost.getPort() + "--@@");
             		}
             	//If you parse a received message that requests a status update then send a status update
                 } else if(Commands.messageIsOfCommand(message, Commands.requestStatusUpdate)) { 
@@ -81,9 +74,6 @@ public class HostToMHost implements Runnable{
                 	sendMessage(statusMessage);
                 //Participate in the elections if you parse a received message about elections
                 } else if(Commands.messageIsOfCommand(message, Commands.startElection)) {
-//                	Election.starterProcessID = Commands.getStarterProcessID(message);
-//                	Election.starterElectionTime = Commands.getStarterTime(message);
-                	System.out.println("\n###-- Request for starting elections from "+message.getProcessID() + " parsed. --###");
                 	// In case that the receiver is already in an elections then reset the elections and re-initialize them 
                 	if(!Server.electionState.equals(Server.ElectionStates.normal) 
                 			&& election != null){ 
@@ -98,27 +88,30 @@ public class HostToMHost implements Runnable{
 	                	HostsList.setMasterAndResetVotes(message.getProcessID());
 	                	//Elections STEP 5b
 	                	Server.electionState = Server.ElectionStates.normal;
-	                	System.out.println("##-- Am I ["+Misc.processID+"/"+Server.port+"] the Master? " + Config.master);
+	                	System.out.println("##-- Elections are finished. Am I the Master? " + (Config.master ? "Yes":"No") + " --##");
+	                	System.out.println("##################################\n");
                 	}
                 } else if(Commands.messageIsOfCommand(message, Commands.loadBalance)){
                 	String[] messageParts = Commands.splitMessage(message);
                 	String fromHostPid = messageParts[1];
                 	if(fromHostPid.equals(Misc.processID)) {
                 	    String toHostPid = messageParts[2];
-                	    System.out.println("I received a load balance message. Route clients to " + toHostPid);
+                	    int nrOfClients = Integer.parseInt(messageParts[3]);
                 	    Host toHost = HostsList.getHost(toHostPid);
+                	    System.out.println("\n############# Load Balancing #############");
+                	    System.out.println("##-- I received a load balance order. Re-route " + nrOfClients + " Messenger(s) to " + toHostPid + "/" + toHost.getPort() + " --##");
                 	    if(toHost!=null) {
-                	        int nrOfClients = Integer.parseInt(messageParts[3]);
                 	        for(int i=0; i<nrOfClients; i++) {
                 	            if(i<ConnectedClientsList.size()) {
                 	                ConnectedClient client = ConnectedClientsList.clients.get(i);
                 	                String command = Commands.constructConnectToNewHost(toHost, client.getProcessID());
                 	                message = new Message(Message.MessageType.clientCommand,command);
                 	                Server.messageController.queueHostChat.push(message);
-                	                System.out.println("@@HostToMHost, send reconnect message to client: " + message);
+                	                System.out.println("@@-- I am ordering Messenger "+ client.getProcessID() + " to move to Host " + toHostPid + "/" + toHost.getPort() + " --@@");
                 	            }
                 	        }
                 	    }
+                	    System.out.println("##########################################\n");
                 	}
                 }
             }
@@ -143,9 +136,7 @@ public class HostToMHost implements Runnable{
             				|| Server.electionState.equals(Server.ElectionStates.voted))){
 
             	//Only update if this message was part of the last election
-//            	System.out.println("@@@@--" + message.getText() + "   " + this.election.getStarterProcessID() + " " + this.election.getStarterElectionTime() +  " " +  "-- @@@@");
             	if(this.election.isMessageForCurrentElection(message)) {
-//            		System.out.println("@@@@-- accept vote --@@@@");
             		HostsList.updateHostVote(Commands.getVote(message));
             	}
             }	
@@ -169,7 +160,6 @@ public class HostToMHost implements Runnable{
         InetAddress group;
         try {
             group = InetAddress.getByName(Config.multiCastAddress);
-//            System.out.println("@HostToMultipleHosts\n\tSending message [" + message.getMessageType() + "]: "+ message.getText());
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             ObjectOutputStream os = new ObjectOutputStream(outputStream);
             os.writeObject(message);
@@ -177,7 +167,6 @@ public class HostToMHost implements Runnable{
             DatagramPacket packet = new DatagramPacket(data, data.length, group, Config.hostMultiCastGroup);
             socket.send(packet);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             return false;
         }

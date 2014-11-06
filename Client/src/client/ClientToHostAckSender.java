@@ -27,20 +27,17 @@ public class ClientToHostAckSender implements Runnable {
         while(flag){
             Message message = client.messageController.queueAcknowledgements.pop();
             if(message != null ){
-                System.out.println("@ Client to HostACK Sending acknowledgment " + message.toString());
                 client.clientToHost.sendMessage(message);
             }   
             
             try {
-                Thread.sleep(150); //TODO put delay in config. Must be faster than push from ping for now
+                Thread.sleep(150);
             } 
             catch (InterruptedException e) { 
                 e.printStackTrace();
                 flag=false;
             }
-            
         }
-
     }
 
 }

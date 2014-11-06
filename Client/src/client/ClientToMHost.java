@@ -11,7 +11,6 @@ import java.net.SocketException;
 import sharedresources.Commands;
 import sharedresources.Config;
 import sharedresources.Message;
-import sharedresources.Misc;
 
 /**
  * This class is used when starting a client which wants to connect to a host.
@@ -31,7 +30,6 @@ public class ClientToMHost {
         try {
             socket = new DatagramSocket(0);
         } catch (SocketException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
    	}
@@ -43,7 +41,7 @@ public class ClientToMHost {
 			
 			String command = Commands.constructCommand(Commands.connectRequest);
 	        Message message = new Message(Message.MessageType.mHostCommand, client.getUserName(), command);
-	    	System.out.println("Message " + message.getText());
+	    	System.out.println("@@-- Sending connection request --@@");
 	    	
 	        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 	        ObjectOutputStream os = new ObjectOutputStream(outputStream);
@@ -52,7 +50,6 @@ public class ClientToMHost {
 	        DatagramPacket packet = new DatagramPacket(data, data.length, group, Config.hostMultiCastGroup);
 	        socket.send(packet);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

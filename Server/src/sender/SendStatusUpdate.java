@@ -21,8 +21,6 @@ public class SendStatusUpdate implements Runnable {
 	        //update yourself before sending status update
 	        HostsList.updateHost(Misc.processID, ConnectedClientsList.size(), Config.master);
             
-//	        String command = Commands.constructCommand(Commands.requestStatusUpdate, constructStatus());
-//          	Message message = new Message(Message.MessageType.mHostStatus, command); 
           	Message message = createStatusMessage();
           	
           	Server.messageController.queueSend.push(message);

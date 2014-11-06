@@ -19,12 +19,10 @@ public class ForwardMessage {
         hosts = new LinkedBlockingQueue<HostAmountSendPair>();
         
         if(!hostIsReceiver) {
-            System.out.println(" -- Creating Forward message for clients -- ");
         	for(ConnectedClient client: ConnectedClientsList.clients) {
                 this.addClient(client);
             }
         } else {
-            System.out.println(" -- Creating Forward message for hosts -- ");
             for(Host host: HostsList.getHostsList()) {
                 if(Misc.processID.equals(host.getProcessID())) continue;
                 this.addHost(host);

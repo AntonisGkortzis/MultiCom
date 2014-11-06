@@ -44,7 +44,6 @@ public class OneToOneListener implements Runnable {
 	    	try {
 				inStream = new ObjectInputStream(socket.getInputStream());
 				message = (Message)inStream.readObject();
-//				System.out.println("@ OneToOneListener received " + message.toString());
 				if(message.getMessageType().equals(Message.MessageType.clientCommand)) {
     				if(Commands.messageIsOfCommand(message, Commands.initOneToOneWithHost)) {
     				    //Not further action is needed as this is only a 
@@ -53,7 +52,7 @@ public class OneToOneListener implements Runnable {
     				} 
     				//If a host receives a shutdown message from client
     				else if(Commands.messageIsOfCommand(message, Commands.clientShutdown)) {
-    				    System.out.println("Received a shutdown message from client, closing connection.");
+    				    System.out.println("##-- Received a shutdown message from Messenger " + message.getProcessID() + " --##");
     				    //Remove clients since it has shutdown
     				    ConnectedClientsList.removeClient(message.getProcessID());
     				    inStream.close();
@@ -61,7 +60,6 @@ public class OneToOneListener implements Runnable {
     				}
     				//Update last seen of a client (ClientMonitor monitors clients)
     				else if(Commands.messageIsOfCommand(message, Commands.clientHeartbeat)) {
-//    				    System.out.println("Received a heartbeat message: " + message);
     				    ConnectedClientsList.updateClient(message.getProcessID());
     				}
 				}
@@ -87,20 +85,17 @@ public class OneToOneListener implements Runnable {
 				//if the message is an acknowledgment sent by a Host to a Client or vice versa
 				else if(message.getMessageType().equals(Message.MessageType.acknowledgement)){
 				    if(!this.isHost) {
-				        System.out.println("Ack received for message by client: " +message);
 				        //remove the original message form the SentMessages queue
 				        String processIdOfOriginalSender = Commands.getPidParseTargetedMessageText(message);
 				        messageController.queueSentMessagesByClient.remove(processIdOfOriginalSender, Commands.getMessageIdTargetedMessageText(message));
 				    } else { //a host can receive an ack from a client
 				        removeResendMessageToClient(message);
-//                        System.out.println("Ack received for message by host: " +message.toString());				        
 				    }
 				}
 				
 				Thread.sleep(250);
 			} catch (IOException | ClassNotFoundException | InterruptedException e) {
-//				e.printStackTrace();
-			    System.out.println("Connection closed.");
+			    System.out.println("##-- Connection closed --##");
 				this.stop();
 				flag = false;
 			}
@@ -116,9 +111,7 @@ public class OneToOneListener implements Runnable {
         while(iterator.hasNext()) {
         	ForwardMessage forwardMessage = iterator.next();
             if(forwardMessage.getId() == Commands.getOriginalId(message)) { //correct message
-//            	System.out.println("@@ OneToOneListener clients: " + forwardMessage.getClients().size() + " ack size: " + messageController.queueSentMessagesByHostToClient.size());
                 if(forwardMessage.removeClient(message.getProcessID())) {
-                    System.out.println("@@ OneToOneListener (host): Removing client as I received an ack.");
                 	iterator.remove();
                 }
                 break;

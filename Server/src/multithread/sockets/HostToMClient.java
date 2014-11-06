@@ -29,7 +29,6 @@ public class HostToMClient implements Runnable {
         try {
             socket = new DatagramSocket(); //port is random
         } catch (SocketException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -62,7 +61,6 @@ public class HostToMClient implements Runnable {
         if(message != null){     
         	if(Commands.messageIsOfCommand(message, Commands.forwardMessage)){
         		message.setText(Commands.getParseMessageText(message));
-        		System.out.println("@@ Formatted (forwarded) message " + message.toString());
         	}
         	
             try {
@@ -88,7 +86,6 @@ public class HostToMClient implements Runnable {
     private void addToRetryQueue(Message message) {
         ForwardMessage forwardMessage = new ForwardMessage(message, message.getId(), false);
         message.setTimeSent(new Date().getTime());
-        System.out.println("@@ HostToMClient adding forwarded message " + forwardMessage.getMessage().toString());
         Server.messageController.queueSentMessagesByHostToClient.add(forwardMessage);
         
     }

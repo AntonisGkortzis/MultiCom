@@ -35,9 +35,6 @@ import sharedresources.OneToOneListener;
  *  - Client to multiple hosts communication
  */
 public class Client extends javax.swing.JFrame {
-    /**
-     * 
-     */
     private static final long serialVersionUID = 5095009435533641880L;
     public ClientToHost clientToHost;
     public MessageController messageController = new MessageController();
@@ -120,8 +117,6 @@ public class Client extends javax.swing.JFrame {
 
         jLabel1.setText("Nickname:");
 
-//        jLabel2.setText("Port:");
-
         ConnectToServerButton.setText(this.connectButtonText);
         ConnectToServerButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -131,14 +126,11 @@ public class Client extends javax.swing.JFrame {
 
         UsernameTextField.setText("user");
 
-//        MainPanelTextArea.setC(20);
-//        MainPanelTextArea.setRows(5);
         jScrollPane1.setViewportView(MainPanelTextArea);
 
         jLabel3.setText("Enter your text here:");
 
         EnterTextArea.setColumns(20);
-//        EnterTextArea.setRows(5);
         jScrollPane2.setViewportView(EnterTextArea);
 
         SendMessageButton.setText("Send message");
@@ -164,14 +156,10 @@ public class Client extends javax.swing.JFrame {
                         .addGap(3, 3, 3)
                         .addComponent(UsernameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
-/*                        .addComponent(jLabel2)
-*/                        .addGap(6, 6, 6)
-//                        .addComponent(PortTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(6, 6, 6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(ConnectToServerButton))
                     .addGroup(layout.createSequentialGroup()
-//                		.addComponent(MainPanelTextArea)
-//                		.addGap(0, 0 ,Short.MAX_VALUE)
                         .addComponent(jLabel3)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(jScrollPane2)
@@ -187,10 +175,8 @@ public class Client extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-/*                    .addComponent(jLabel2)
-*/                    .addComponent(ConnectToServerButton)
+                    .addComponent(ConnectToServerButton)
                     .addComponent(UsernameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-//                    .addComponent(PortTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -224,7 +210,6 @@ public class Client extends javax.swing.JFrame {
     OneToOneListener oneToOneListener = null;
     ReceivedAcknowledgmentsByClientMonitor ackMonitor = null;
     HoldbackQueueMonitor holdbackQueueMonitor = null;
-//    HostMonitor hostMonitor = null; //TODO remove
     
     public void startConnection() {
         this.stopConnections();
@@ -234,11 +219,11 @@ public class Client extends javax.swing.JFrame {
         holdbackQueueMonitor = new HoldbackQueueMonitor(this);
         holdbackQueueMonitor.start();
         
-        //Listen for response of previous request (or should this be placed before clientomhost?
+        //Listen for response of previous request
         OneToManyListener oneToManyListener = new OneToManyListener(messageController, false);
         oneToManyListener.start();
         
-        //Multicast to join network TODO in report
+        //Multicast to join network
         ClientToMHost clientToMHost = new ClientToMHost(this);
         
         //RerouteAttempt is true when a client changes hosts
@@ -268,9 +253,6 @@ public class Client extends javax.swing.JFrame {
         ackMonitor = new ReceivedAcknowledgmentsByClientMonitor(this);
         ackMonitor.start();
         
-//        hostMonitor = new HostMonitor(this); //TODO remove
-//        hostMonitor.start();
-        
         sendFirstConnectMessageToHost();
         this.ConnectToServerButton.setEnabled(false);
         
@@ -293,7 +275,6 @@ public class Client extends javax.swing.JFrame {
         if(ackMonitor!=null) ackMonitor.stop();
         if(holdbackQueueMonitor!=null) holdbackQueueMonitor.stop();
         this.SendMessageButton.setEnabled(false);
-//        if(hostMonitor!=null) hostMonitor.stop(); //TODO remove
     }
     /**
      * Try to establish a connection. Retry if there is no response
@@ -313,9 +294,7 @@ public class Client extends javax.swing.JFrame {
         try {
             Thread.sleep(250);
         } catch (InterruptedException e1) {
-            // TODO Auto-generated catch block
-//            e1.printStackTrace();
-        	System.out.println("Stop attempt to make a connection");
+        	System.out.println("##-- Stop attempt to make a connection --##");
         	return false;
         }
         
@@ -333,14 +312,14 @@ public class Client extends javax.swing.JFrame {
                 String[] messageParts = Commands.splitMessage(message);
                 if(Misc.processID.equals(messageParts[1])) { //This client requested a connection
                     Config.connectToPortFromHost = Integer.parseInt(messageParts[3]);
-                    System.out.println("HOST IS FOUND Connect to port: " + Config.connectToPortFromHost);
+                    System.out.println("##-- Connecting to Host: " + Config.connectToPortFromHost + " --##");
                     oneToManyListener.stop();
                     this.tryingToConnect = false;
                     return true;
                 }
             }
             long currentTime = new Date().getTime();
-            //Send a new connection request after some time TODO in report
+            //Send a new connection request after some time
             if(currentTime-startWaitingForConnection>waitBeforeResendConnectRequest) {
                 clientToMHost.sendConnectRequest();
                 connectTries++;
@@ -359,7 +338,6 @@ public class Client extends javax.swing.JFrame {
                  */
                 Thread.sleep(500);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -461,16 +439,6 @@ public class Client extends javax.swing.JFrame {
         return UsernameTextField.getText();
     }
     
-    
-//    /**
-//     * @Deprecated
-//     * must be replaced by the port number received from the Master Host
-//     */
-//    @Deprecated
-//    public int getPort(){
-//        return Integer.parseInt(PortTextField.getText());
-//    }
-    
     public void setServerStatus(String status, boolean flag){
         this.ServerStatusLabel.setText(status);
         if(flag) 
@@ -509,11 +477,9 @@ public class Client extends javax.swing.JFrame {
     private javax.swing.JTextField EnterTextArea;
     private static javax.swing.JTextField UsernameTextField;
     private JTextPane MainPanelTextArea;
-//    private javax.swing.JTextField PortTextField;
     private javax.swing.JButton SendMessageButton;
     private javax.swing.JLabel ServerStatusLabel;
     private javax.swing.JLabel jLabel1;
-//    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;

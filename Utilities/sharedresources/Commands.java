@@ -66,7 +66,6 @@ public class Commands {
 	 */
 	public final static String connectToNewHost = "AsAHosIAmOrderingYouToConnectToThisHost";
 	public final static String hostHeartbeat = "HostIsStillAlive";
-//	public final static String hostShutdown = "HostHasShutDown";
 	
 	/***** HELPER FUNCTIONS ******/
 	

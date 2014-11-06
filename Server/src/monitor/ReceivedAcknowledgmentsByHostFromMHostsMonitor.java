@@ -23,13 +23,12 @@ public class ReceivedAcknowledgmentsByHostFromMHostsMonitor implements Runnable 
 		boolean flag = true;
 		while(flag) {
 			try {
-				Thread.sleep(200);//TODO set a fixed delay in Config
+				Thread.sleep(200);
 			}
 			catch (InterruptedException e) { 
 				e.printStackTrace();
 				flag = false;
 			}
-//			System.out.println("Acks size: " + Server.messageController.queueSentMessagesByHostToMHost.size());
 			if(Server.messageController.queueSentMessagesByHostToMHost.size() <= 0 )
 				continue;
 						
@@ -49,10 +48,11 @@ public class ReceivedAcknowledgmentsByHostFromMHostsMonitor implements Runnable 
 				        hostPair.incNrOfRetries();
 				        if(hostPair.getNrOfRetries()>2) { //remove host after some retries (not responding/sending acks)
 	                        iteratorPair.remove();
-	                        System.out.println("Too much retries, so remove host with PID: " + hostPair.getHost().getProcessID());
+	                        System.out.println("%ACK%-- Stop sending the message to Host " + hostPair.getHost().getProcessID() + 
+	                        		" because of too many retries --%ACK%");
 	                        if(forwardMessage.getHosts().size()<=0) { //no hosts anymore so this message is done
 	                            iteratorMsg.remove();
-	                            System.out.println("No hosts anymore acknowledging, so remove ForwardMsg and give up resending it");
+	                            System.out.println("%ACK%-- No Hosts anymore to resent this message to, so give up resending it --%ACK%");
 	                            continue;
 	                        }
 	                        continue;
@@ -61,19 +61,15 @@ public class ReceivedAcknowledgmentsByHostFromMHostsMonitor implements Runnable 
 	                    //adding the message to the Send queue for immediate re-sending
 	                    Server.messageController.queueSend.push(message);
 	                    
-	//                    System.out.println("@ReceivedAcksByHostsMonitor = Message sent " + message + " to pid: " + clientPair.getClient().getProcessID());
 	                    try {
 	                        Thread.sleep(500); //!!!! bigger than popper delay of HostToMHost
 	                    } catch (InterruptedException e) {
-	                        // TODO Auto-generated catch block
 	                        e.printStackTrace();
 	                    }
 				    }
 			    }
 			}
-
 		}
-
 	}
-
+	
 }

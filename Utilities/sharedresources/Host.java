@@ -15,9 +15,9 @@ public class Host {
     private String processID;
     private boolean isMaster;
     private int nrOfClients;
-    private Date lastUpdate; //TODO explain in Report that this time is only relevant to current host
+    private Date lastUpdate;
 	private int votes;
-    public BlockingQueue<Message> holdbackQueue; //TODO explain in report
+    public BlockingQueue<Message> holdbackQueue;
         
     public Host(int nrOfClients, String address, int port, boolean isMaster){
         this.setNrOfClients(nrOfClients);
@@ -95,6 +95,4 @@ public class Host {
 		return this.votes;
 	}
 
-
-        
 }

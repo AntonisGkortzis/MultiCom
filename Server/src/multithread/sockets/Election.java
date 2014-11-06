@@ -18,8 +18,6 @@ public class Election implements Runnable {
     private Date electionStart; //To prevent votes from hosts participating too late. Their latest status update is too old
     Thread t;
     
-    //TODO in report explain ignoring of old elections. Especially that we are
-    //sending the time of the starter, but not for comparison with own clock!!
     private String starterProcessID; //PID of the host starting the election
     private long starterElectionTime; //Time of the host starting the election at start of election
     
@@ -39,16 +37,17 @@ public class Election implements Runnable {
     public void stop(){
     	Server.electionState = ElectionStates.normal; 
     	t.interrupt();
-//    	t.stop();
     }
     
     
     public void startElection() {
-    	
+    	System.out.println();
+    	System.out.println("######## Master Elections ########");
+    	System.out.println("##-- Host " + Misc.processID + "/"+ Server.port 
+    			+ " starts participating in the elections triggered by Host " + starterProcessID + " --##");
     	try {
     		while(!Thread.interrupted()) {	
 	    		Thread.sleep(2000);
-	    		System.out.println("##-- Host: " + Server.port + " starts participating in the Master's election [candidates: "+HostsList.size()+"] --##");
 	    		
 	    		//STEP 1a
 	    		// Go into the voting state
@@ -65,7 +64,8 @@ public class Election implements Runnable {
 	    		//Sleep & Wait to receive as many status updates as possible
 	            Thread.sleep(2000); 
 	            
-	            if(HostsList.size()>1) {
+	            System.out.println("##-- " + HostsList.nrOfElectionParticipants(electionStart) + " Host(s) participating in the Elections --##");
+	            if(HostsList.nrOfElectionParticipants(electionStart)>1) {
 		            this.voteOnPreferredHostAndSend();
 		            
 		            //Wait to receive as many votes as possible
@@ -73,26 +73,26 @@ public class Election implements Runnable {
 		            
 		            this.electionResults();
 	            } else { //this host is the only host so you are the master
-	            	System.out.println("##-- Only one host, so I took the liberty of announcing myself Master --##");
+	            	System.out.println("@@-- Only one participant found. Declaring myself as the Master --@@");
 	            	Config.master = true;
 	            	HostsList.setMasterAndResetVotes(Misc.processID);
 	            	Server.electionState = ElectionStates.normal;
 	            }
-	//    		System.out.println("##-- Host: " + Server.port + " exits the election. --##");
 	            break;
     		}
                         
     	} catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-    		
 //            e.printStackTrace();
-    	    System.out.println("Election interrupted.");
+    	    System.out.println("##-- Elections interrupted --##");
             Server.electionState = ElectionStates.normal;
             return;
         }
-    	System.out.println("--- HostList of host " + Misc.processID);
+    	System.out.println("##-- Received votes from participants --##");
     	HostsList.printHostsVotes();
-
+    	
+    	if(HostsList.nrOfElectionParticipants(electionStart)<=1) {
+        	System.out.println("##################################\n");
+    	}
     }
     
     
@@ -141,7 +141,7 @@ public class Election implements Runnable {
         		preferredHost = host;
         	}
         }
-        System.out.println("--> My ["+Misc.processID+"] preferred candidate is "+preferredHost.getProcessID());
+        System.out.println("@@-- I vote for Host " + preferredHost.getProcessID() +"/" + preferredHost.getPort() + " --@@");
         return preferredHost;
     }
     

@@ -36,7 +36,7 @@ public class ClientMonitor implements Runnable {
                 ConnectedClient client = iterator.next();
                 if(currentTime - client.getLastUpdate().getTime() > this.declareDead) {
                     //Client can be declared dead so remove it from the list
-                    System.out.println("@@ ClientMonitor: remove a dead client");
+                    System.out.println("@@-- Removing the dead Messenger " + client.getProcessID() + " --@@");
                     iterator.remove();
                 }
             }
