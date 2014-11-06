@@ -414,8 +414,8 @@ public class Client extends javax.swing.JFrame {
         setServerStatus("Connection failed..", false);
 
     }
-    public String getUserName(){
-        return this.UsernameTextField.getText();
+    public static String getUserName(){
+        return UsernameTextField.getText();
     }
     
     
@@ -464,7 +464,7 @@ public class Client extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton ConnectToServerButton;
     private javax.swing.JTextArea EnterTextArea;
-    private javax.swing.JTextField UsernameTextField;
+    private static javax.swing.JTextField UsernameTextField;
     private JTextPane MainPanelTextArea;
 //    private javax.swing.JTextField PortTextField;
     private javax.swing.JButton SendMessageButton;

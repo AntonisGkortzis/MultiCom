@@ -17,6 +17,9 @@ public class KnownClients {
 	}
 	
 	public boolean clientExists(String client){
+		if(Client.getUserName().equals(client)){
+			return true;
+		}
 		boolean flag = this.knownClients.add(client);
 		
 		if(flag) {
@@ -31,7 +34,10 @@ public class KnownClients {
 	}
 
 	public String getColor(String client){
-		return colors[(int)clientColors.get(client)];
+		if(Client.getUserName().equals(client)) 
+			return colors[0];
+		else
+			return colors[(int)clientColors.get(client)];
 	}
 	
 }

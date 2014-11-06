@@ -36,6 +36,7 @@ public class Message implements Serializable, Comparable<Message> {
 	private long timestamp;						//The time that the message was sent
 	private String username;					//The name of the user sending the message.
 	private String processID;          			//The id of the process sending the message.
+	private String originalSendersProcessID;	//The id of the original sender.
 	private long id=0;							//An incrementing number as an id, TODO in report mention that it is used both by order (priority queue) and reliability(ack)
 	private boolean clientAsReceiver;
 	private Socket socket;
@@ -54,6 +55,7 @@ public class Message implements Serializable, Comparable<Message> {
 		this.clientAsReceiver = false;
 		this.timesSent = 0;
 		this.checkSum = CRC32Calculator.getChecksum(text);
+		this.setOriginalSendersProcessID(Misc.processID);
 	}
 
 	public Message(MessageType type, String username, String text){
@@ -174,6 +176,14 @@ public class Message implements Serializable, Comparable<Message> {
 
 	public void setTimeSent(long timeSent) {
 		this.timeSent = timeSent;
+	}
+
+	public String getOriginalSendersProcessID() {
+		return originalSendersProcessID;
+	}
+
+	public void setOriginalSendersProcessID(String originalSendersProcessID) {
+		this.originalSendersProcessID = originalSendersProcessID;
 	}
 
 }

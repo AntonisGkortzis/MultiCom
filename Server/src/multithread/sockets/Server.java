@@ -35,7 +35,7 @@ public class Server {
     	normal, // when no election is taking place
     	voting, //upon receiving the "startElection" command
     	voted, // Once a vote is made
-    	finished // The election is finished and a new leader is born
+//    	finished // The election is finished and a new leader is born //Not used
     }
     
     public static ElectionStates electionState = ElectionStates.normal;
