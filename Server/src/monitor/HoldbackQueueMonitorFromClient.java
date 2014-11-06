@@ -66,7 +66,8 @@ public class HoldbackQueueMonitorFromClient implements Runnable {
         Server.messageController.queueHostChat.push(message); //to send it to the clients connected on this host
         
         String command = Commands.constructCommand(Commands.forwardMessage, message.getText());
-        Message newMessage = new Message(Message.MessageType.mHostChat, message.getUsername(), command, Misc.getNextMessageId());                    
+        Message newMessage = new Message(Message.MessageType.mHostChat, message.getUsername(), command, Misc.getNextMessageId());
+        newMessage.setOriginalSendersProcessID(message.getOriginalSendersProcessID());
         Server.messageController.queueSend.push(newMessage); //Send to other hosts    
         
         //Put the chat message in a queue for possible re-sending to other hosts

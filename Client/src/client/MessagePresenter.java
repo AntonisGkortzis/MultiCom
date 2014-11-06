@@ -1,6 +1,7 @@
 package client;
 
 import sharedresources.Message;
+import sharedresources.Misc;
 
 public class MessagePresenter implements Runnable {
 	private Client client;
@@ -25,15 +26,19 @@ public class MessagePresenter implements Runnable {
 			
 			
 			if(message != null){
-				Client.knownClients.clientExists(message.getUsername());
-				String username = message.getUsername();
-				if(message.getUsername().equals(Client.getUserName())){
+				Client.knownClients.clientExists(message.getOriginalSendersProcessID());
+				//The name presented on the Messenger will have a format of originalSender'sProcessId | username
+				String username = message.getOriginalSendersProcessID() + " | " + message.getUsername();
+				
+				//If you are the sender and receiver of this message the name presented in the Messenger is "You"
+				if(message.getOriginalSendersProcessID().equals(Misc.processID)){
 					username = "You";
 				}
-				client.AddTextToMainPanel("<b style=\"color:"+Client.knownClients.getColor(message.getUsername())+"\">" + username + "</b>: " + message.getText());
+				//present the name with a unique color
+				client.AddTextToMainPanel("<b style=\"color:" + Client.knownClients.getColor(message.getOriginalSendersProcessID()) + "\">" + username + "</b><br/>" + message.getText());
 			}
 			
-			try{
+			try {
 				Thread.sleep(150); // TODO put in Config
 			} catch (InterruptedException ex){
 				ex.printStackTrace();

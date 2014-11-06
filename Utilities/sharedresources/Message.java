@@ -55,7 +55,7 @@ public class Message implements Serializable, Comparable<Message> {
 		this.clientAsReceiver = false;
 		this.timesSent = 0;
 		this.checkSum = CRC32Calculator.getChecksum(text);
-		this.setOriginalSendersProcessID(Misc.processID);
+		this.originalSendersProcessID = Misc.processID;
 	}
 
 	public Message(MessageType type, String username, String text){
