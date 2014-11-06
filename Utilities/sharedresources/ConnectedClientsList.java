@@ -1,16 +1,16 @@
 package sharedresources;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * This class is used to maintain a list of connected clients to a host. 
  * The purpose of this class is to know to which clients acknowledgments have to be send
  */
 public class ConnectedClientsList {
-	public static List<ConnectedClient> clients = new ArrayList<>();
+	public static BlockingQueue<ConnectedClient> clients = new LinkedBlockingQueue<>();
 	
 	public ConnectedClientsList(){}
 	

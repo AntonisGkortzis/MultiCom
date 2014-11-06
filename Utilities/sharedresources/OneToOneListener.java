@@ -42,6 +42,9 @@ public class OneToOneListener implements Runnable {
 		
     	while(flag) {
 	    	try {
+	    	    if(socket==null) {
+	    	        return;
+	    	    }
 				inStream = new ObjectInputStream(socket.getInputStream());
 				message = (Message)inStream.readObject();
 				if(message.getMessageType().equals(Message.MessageType.clientCommand)) {
@@ -97,7 +100,6 @@ public class OneToOneListener implements Runnable {
 			} catch (IOException | ClassNotFoundException | InterruptedException e) {
 			    System.out.println("##-- Connection closed --##");
 				this.stop();
-				flag = false;
 			}
     	}
     }

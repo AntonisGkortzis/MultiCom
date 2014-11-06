@@ -7,6 +7,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.util.Iterator;
 
 import sender.SendStatusUpdate;
 import sharedresources.ConnectedClient;
@@ -101,14 +102,17 @@ public class HostToMHost implements Runnable{
                 	    System.out.println("\n############# Load Balancing #############");
                 	    System.out.println("##-- I received a load balance order. Re-route " + nrOfClients + " Messenger(s) to " + toHostPid + "/" + toHost.getPort() + " --##");
                 	    if(toHost!=null) {
-                	        for(int i=0; i<nrOfClients; i++) {
-                	            if(i<ConnectedClientsList.size()) {
-                	                ConnectedClient client = ConnectedClientsList.clients.get(i);
-                	                String command = Commands.constructConnectToNewHost(toHost, client.getProcessID());
-                	                message = new Message(Message.MessageType.clientCommand,command);
-                	                Server.messageController.queueHostChat.push(message);
-                	                System.out.println("@@-- I am ordering Messenger "+ client.getProcessID() + " to move to Host " + toHostPid + "/" + toHost.getPort() + " --@@");
-                	            }
+                	        Iterator<ConnectedClient> iterator = ConnectedClientsList.clients.iterator();
+                	        
+                	        int i = 0;
+                	        while(iterator.hasNext()) {
+                	            if(i>=nrOfClients) break;
+                	            ConnectedClient client = iterator.next();
+                	            i++;
+                	            String command = Commands.constructConnectToNewHost(toHost, client.getProcessID());
+                                message = new Message(Message.MessageType.clientCommand,command);
+                                Server.messageController.queueHostChat.push(message);
+                                System.out.println("@@-- I am ordering Messenger "+ client.getProcessID() + " to move to Host " + toHostPid + "/" + toHost.getPort() + " --@@");
                 	        }
                 	    }
                 	    System.out.println("##########################################\n");

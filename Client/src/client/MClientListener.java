@@ -69,6 +69,7 @@ public class MClientListener implements Runnable {
                 	        System.out.println("@@-- I will reconnect to new Host " + message.getProcessID() + "/" + port + " --@@");
                 	        String address = messageParts[2];
                 	        this.connectToDifferentHost(address, port);
+                	        System.out.println("##-- Now connected to Host " + message.getProcessID() + "/" + port + " --##");
                 	    }
                 	// Update the time of when the host was last seen
                 	} else if (Commands.messageIsOfCommand(message, Commands.hostHeartbeat)) {
