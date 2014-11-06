@@ -39,7 +39,6 @@ public class Client extends javax.swing.JFrame {
     public ClientToHost clientToHost;
     public MessageController messageController = new MessageController();
     public boolean isConnected = false;
-    public boolean rerouteAttempt = false;
     public BlockingQueue<Message> holdbackQueue = new PriorityBlockingQueue<Message>();
     public long lastHostUpdate = 0;
     public boolean tryingToConnect = false;
@@ -227,13 +226,11 @@ public class Client extends javax.swing.JFrame {
         ClientToMHost clientToMHost = new ClientToMHost(this);
         
         //RerouteAttempt is true when a client changes hosts
-        if(!this.rerouteAttempt && !this.attemptConnection(clientToMHost, oneToManyListener)) {
+        if(!this.attemptConnection(clientToMHost, oneToManyListener)) {
         	this.ConnectToServerButton.setText(this.connectButtonText);
             return;
         }
 
-        this.rerouteAttempt = false;
-        
         clientToHost = new ClientToHost(this);
         isConnected = true;
         SendMessageButton.setEnabled(true);
@@ -284,7 +281,6 @@ public class Client extends javax.swing.JFrame {
     private boolean attemptConnection(ClientToMHost clientToMHost, OneToManyListener oneToManyListener) {
     	this.ConnectToServerButton.setText("Connecting...");
         if(this.tryingToConnect) return false;
-        this.repaint();
         if(this.holdbackQueueMonitor!=null) this.unloadHoldbackQueue();
         this.tryingToConnect = true; // multiple places to false
         //First attempt
@@ -295,6 +291,7 @@ public class Client extends javax.swing.JFrame {
             Thread.sleep(250);
         } catch (InterruptedException e1) {
         	System.out.println("##-- Stop attempt to make a connection --##");
+        	this.tryingToConnect = false;
         	return false;
         }
         
@@ -342,7 +339,7 @@ public class Client extends javax.swing.JFrame {
             }
         }
         this.tryingToConnect = false;
-        return true;
+        return false;
     }
     /**
      * Used to send the first message to the host, so the host knows 

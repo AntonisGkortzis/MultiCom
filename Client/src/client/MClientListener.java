@@ -125,7 +125,6 @@ public class MClientListener implements Runnable {
         client.clientToHost.sendMessage(shutdownMsg);
         //Okay connection closed. To the new connection!
         Config.connectToPortFromHost = port;
-        client.rerouteAttempt = true;
         client.startConnection();
     }
 }
