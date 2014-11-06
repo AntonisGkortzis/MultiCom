@@ -13,6 +13,7 @@ import sharedresources.Commands;
 import sharedresources.Config;
 import sharedresources.ForwardMessage;
 import sharedresources.Message;
+import sharedresources.Message.MessageType;
 
 /**
  * This class is used for communication with a host and multiple clients.
@@ -73,7 +74,7 @@ public class HostToMClient implements Runnable {
                 socket.send(packet);
                 
     			//Put the chat message in a queue for possible re-sending
-    			if(!Commands.messageIsOfCommand(message, Commands.targetedResentMessage)) addToRetryQueue(message);
+    			if(!Commands.messageIsOfCommand(message, Commands.targetedResentMessage) && message.getMessageType().equals(MessageType.hostChat)) addToRetryQueue(message);
     			
             } catch (IOException e) {
                 e.printStackTrace();

@@ -105,8 +105,7 @@ public class HostToMHost implements Runnable{
                 	        Iterator<ConnectedClient> iterator = ConnectedClientsList.clients.iterator();
                 	        
                 	        int i = 0;
-                	        while(iterator.hasNext()) {
-                	            if(i>=nrOfClients) break;
+                	        while(iterator.hasNext() && i<nrOfClients) {
                 	            ConnectedClient client = iterator.next();
                 	            i++;
                 	            String command = Commands.constructConnectToNewHost(toHost, client.getProcessID());

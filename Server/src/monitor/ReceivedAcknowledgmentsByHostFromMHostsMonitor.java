@@ -45,7 +45,6 @@ public class ReceivedAcknowledgmentsByHostFromMHostsMonitor implements Runnable 
 				    while(iteratorPair.hasNext()) {
 				        HostAmountSendPair hostPair = iteratorPair.next();
 	
-				        hostPair.incNrOfRetries();
 				        if(hostPair.getNrOfRetries()>2) { //remove host after some retries (not responding/sending acks)
 	                        iteratorPair.remove();
 	                        System.out.println("%ACK%-- Stop sending the message to Host " + hostPair.getHost().getProcessID() + 
@@ -60,6 +59,7 @@ public class ReceivedAcknowledgmentsByHostFromMHostsMonitor implements Runnable 
 	                    
 	                    //adding the message to the Send queue for immediate re-sending
 	                    Server.messageController.queueSend.push(message);
+	                    hostPair.incNrOfRetries();
 	                    
 	                    try {
 	                        Thread.sleep(500); //!!!! bigger than popper delay of HostToMHost
