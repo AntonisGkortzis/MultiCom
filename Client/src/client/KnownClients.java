@@ -8,7 +8,7 @@ import sharedresources.Misc;
 public class KnownClients {
 	private Hashtable<Object, Object> clientColors;
 	private HashSet<String> knownClients;
-	private String colors[] = {"Black","Orange","Blue","Maroon","Green","Red","Navy","Purple",
+	private String colors[] = {"Black","Blue","Green", "Red","Maroon", "Orange","Navy","Purple",
 			"Silver","Gray","Aqua","Olive","Lime","Fuchsia","Yellow"};
 			
 	private static int counter = 0;

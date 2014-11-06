@@ -9,18 +9,20 @@ public class ClientHeartbeatToHost implements Runnable {
     
     private Client client;
     private boolean flag;
+	private Thread t;
     
     public ClientHeartbeatToHost(Client client) {
         this.client = client;
     }
     
     public void start() {
-        Thread t = new Thread(this);
+        this.t = new Thread(this);
         t.start();
     }
     
     public void stop() {
         this.flag = false;
+//        t.interrupt();
     }
     
     @Override
@@ -28,20 +30,14 @@ public class ClientHeartbeatToHost implements Runnable {
         this.flag = true;
         String command = Commands.constructCommand(Commands.clientHeartbeat);
         Message message = new Message(Message.MessageType.clientCommand, command);
-        while(flag) {
+        while(!Thread.interrupted() && flag) {
             if(!client.isConnected) return;
             try {
                 Thread.sleep(Config.clientHeartbeatDelay); //Must be lower than the declareDead in ClientMonitor of server
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                flag = false;
             }
-            
             client.clientToHost.sendMessage(message);
-            
         }
-        
-
     }
-
 }

@@ -6,17 +6,19 @@
 package client;
 
 import java.awt.Color;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.IOException;
-import java.lang.instrument.Instrumentation;
-import java.net.Socket;
 import java.util.Date;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 
+import javax.swing.BorderFactory;
 import javax.swing.JTextPane;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 
 import monitor.HoldbackQueueMonitor;
-import monitor.HostMonitor;
 import monitor.ReceivedAcknowledgmentsByClientMonitor;
 import sharedresources.Commands;
 import sharedresources.Config;
@@ -44,6 +46,7 @@ public class Client extends javax.swing.JFrame {
     public BlockingQueue<Message> holdbackQueue = new PriorityBlockingQueue<Message>();
     public long lastHostUpdate = 0;
     public boolean tryingToConnect = false;
+    private String connectButtonText = "Connect";
     
     public static KnownClients knownClients = new KnownClients();
     /**
@@ -61,8 +64,9 @@ public class Client extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+    	this.setTitle("MultiCom Messenger: " + Misc.processID);
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+//        jLabel2 = new javax.swing.JLabel();
         ConnectToServerButton = new javax.swing.JButton();
         UsernameTextField = new javax.swing.JTextField();
 //        PortTextField = new javax.swing.JTextField();
@@ -70,11 +74,40 @@ public class Client extends javax.swing.JFrame {
         MainPanelTextArea = new javax.swing.JTextPane();
         this.MainPanelTextArea.setContentType("text/html");
         this.MainPanelTextArea.setEditable(false);
+        this.MainPanelTextArea.setAutoscrolls(true);
         jLabel3 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        EnterTextArea = new javax.swing.JTextArea();
-        this.EnterTextArea.setLineWrap(true);
-        this.EnterTextArea.setWrapStyleWord(true);
+        EnterTextArea = new javax.swing.JTextField();
+//        this.EnterTextArea.setLineWrap(true);
+        Border border = new EmptyBorder(0,0,0,0);
+        this.EnterTextArea.setBorder(border);
+//        this.EnterTextArea.setWrapStyleWord(true);
+        this.EnterTextArea.setBorder(BorderFactory.createCompoundBorder(
+                this.EnterTextArea.getBorder(), 
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        
+        this.EnterTextArea.addKeyListener(new KeyListener() {
+			
+			@Override
+			public void keyTyped(KeyEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void keyReleased(KeyEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+					sendMessage();
+				}
+				
+			}
+		});
         SendMessageButton = new javax.swing.JButton();
         ServerStatusLabel = new javax.swing.JLabel();
 
@@ -85,18 +118,18 @@ public class Client extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setText("Username:");
+        jLabel1.setText("Nickname:");
 
-        jLabel2.setText("Port:");
+//        jLabel2.setText("Port:");
 
-        ConnectToServerButton.setText("Connect to server");
+        ConnectToServerButton.setText(this.connectButtonText);
         ConnectToServerButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ConnectToServerButtonActionPerformed(evt);
             }
         });
 
-        UsernameTextField.setText("username");
+        UsernameTextField.setText("user");
 
 //        MainPanelTextArea.setC(20);
 //        MainPanelTextArea.setRows(5);
@@ -105,7 +138,7 @@ public class Client extends javax.swing.JFrame {
         jLabel3.setText("Enter your text here:");
 
         EnterTextArea.setColumns(20);
-        EnterTextArea.setRows(5);
+//        EnterTextArea.setRows(5);
         jScrollPane2.setViewportView(EnterTextArea);
 
         SendMessageButton.setText("Send message");
@@ -131,8 +164,8 @@ public class Client extends javax.swing.JFrame {
                         .addGap(3, 3, 3)
                         .addComponent(UsernameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
-                        .addComponent(jLabel2)
-                        .addGap(6, 6, 6)
+/*                        .addComponent(jLabel2)
+*/                        .addGap(6, 6, 6)
 //                        .addComponent(PortTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(ConnectToServerButton))
@@ -154,8 +187,8 @@ public class Client extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jLabel2)
-                    .addComponent(ConnectToServerButton)
+/*                    .addComponent(jLabel2)
+*/                    .addComponent(ConnectToServerButton)
                     .addComponent(UsernameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
 //                    .addComponent(PortTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -210,6 +243,7 @@ public class Client extends javax.swing.JFrame {
         
         //RerouteAttempt is true when a client changes hosts
         if(!this.rerouteAttempt && !this.attemptConnection(clientToMHost, oneToManyListener)) {
+        	this.ConnectToServerButton.setText(this.connectButtonText);
             return;
         }
 
@@ -239,6 +273,8 @@ public class Client extends javax.swing.JFrame {
         
         sendFirstConnectMessageToHost();
         this.ConnectToServerButton.setEnabled(false);
+        
+        this.ConnectToServerButton.setText("Connected");
     }
     
     /**
@@ -265,7 +301,9 @@ public class Client extends javax.swing.JFrame {
      * @param oneToManyListener
      */
     private boolean attemptConnection(ClientToMHost clientToMHost, OneToManyListener oneToManyListener) {
+    	this.ConnectToServerButton.setText("Connecting...");
         if(this.tryingToConnect) return false;
+        this.repaint();
         if(this.holdbackQueueMonitor!=null) this.unloadHoldbackQueue();
         this.tryingToConnect = true; // multiple places to false
         //First attempt
@@ -276,7 +314,9 @@ public class Client extends javax.swing.JFrame {
             Thread.sleep(250);
         } catch (InterruptedException e1) {
             // TODO Auto-generated catch block
-            e1.printStackTrace();
+//            e1.printStackTrace();
+        	System.out.println("Stop attempt to make a connection");
+        	return false;
         }
         
         //No response (in time) start sending request again from time to time (max 3 times)
@@ -337,7 +377,12 @@ public class Client extends javax.swing.JFrame {
     }
     
     private void SendMessageButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SendMessageButtonActionPerformed
-        if(clientToHost==null || clientToHost.getSocket()==null) {
+        this.sendMessage();
+
+    }//GEN-LAST:event_SendMessageButtonActionPerformed
+    
+    private void sendMessage() {
+    	if(clientToHost==null || clientToHost.getSocket()==null) {
             this.showErrorMessage("You are not connected.");
             return;
         }
@@ -354,9 +399,7 @@ public class Client extends javax.swing.JFrame {
         message.setTimeSent(new Date().getTime());
         messageController.queueSentMessagesByClient.push(message);
     	if(success) this.EnterTextArea.setText("");
-
-    }//GEN-LAST:event_SendMessageButtonActionPerformed
-    
+    }
 	private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         try {
         	if(clientToHost!=null && clientToHost.getSocket() != null) {
@@ -414,7 +457,7 @@ public class Client extends javax.swing.JFrame {
         setServerStatus("Connection failed..", false);
 
     }
-    public static String getUserName(){
+    public String getUserName(){
         return UsernameTextField.getText();
     }
     
@@ -463,14 +506,14 @@ public class Client extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton ConnectToServerButton;
-    private javax.swing.JTextArea EnterTextArea;
+    private javax.swing.JTextField EnterTextArea;
     private static javax.swing.JTextField UsernameTextField;
     private JTextPane MainPanelTextArea;
 //    private javax.swing.JTextField PortTextField;
     private javax.swing.JButton SendMessageButton;
     private javax.swing.JLabel ServerStatusLabel;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
+//    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
