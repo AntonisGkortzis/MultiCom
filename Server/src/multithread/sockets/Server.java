@@ -55,7 +55,7 @@ public class Server {
         
         System.out.println("############# Host Up & Running #############");
         System.out.println("##### Process ID: " + Misc.processID );
-		System.out.println("##### Local Mulicast port: " + Server.port);
+		System.out.println("##### Local Multicast port: " + Server.port);
 		System.out.println("#############################################");
 		System.out.println("\n");
         

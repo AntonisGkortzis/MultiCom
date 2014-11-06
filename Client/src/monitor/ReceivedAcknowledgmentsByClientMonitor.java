@@ -43,8 +43,9 @@ public class ReceivedAcknowledgmentsByClientMonitor implements Runnable {
 			    long currentTime = new Date().getTime();
 			    if(currentTime-message.getTimeSent() > this.timeToWait) {
 			    	message.setTimeSent(currentTime);
-			    	//Remove the message if it has been re-sent more than 2 times
-	                if(message.getTimesSent() > 2){
+			    	//Remove the message if it has been re-sent more than 3 times
+	                if(message.getTimesSent() > 3){
+                        System.out.println("%ACK%-- Stop sending the message to Host because of too many retries --%ACK%");
 	                    iterator.remove();
 	                } else {
 	                    flag = client.clientToHost.sendMessage(message);
