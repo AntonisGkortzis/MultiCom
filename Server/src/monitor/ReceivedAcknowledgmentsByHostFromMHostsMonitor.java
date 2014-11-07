@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Iterator;
 
 import multithread.sockets.Server;
+import sharedresources.Commands;
 import sharedresources.ForwardMessage;
 import sharedresources.HostAmountSendPair;
 import sharedresources.Message;
@@ -56,7 +57,16 @@ public class ReceivedAcknowledgmentsByHostFromMHostsMonitor implements Runnable 
 	                        }
 	                        continue;
 	                    }
-	                    
+	                    if(Commands.messageIsOfCommand(message, Commands.forwardMessage)) {
+	                    	message.setText(Commands.getParseMessageText(message));
+	                    }
+	                    //Set the message text as the first time it is a raw message, but the second time a command
+	                    String messageText = message.getText();
+	                    if(Commands.messageIsOfCommand(message, Commands.targetedResentMessage)) {
+	                        messageText = Commands.getTextParseTargetedMessageText(message);
+	                    }
+	                    String command = Commands.constructCommand(Commands.targetedResentMessage, hostPair.getHost().getProcessID(), messageText);
+	                    message.setText(command);				        
 	                    //adding the message to the Send queue for immediate re-sending
 	                    Server.messageController.queueSend.push(message);
 	                    hostPair.incNrOfRetries();

@@ -21,7 +21,7 @@ import sharedresources.Message.MessageType;
  */
 public class HostToMClient implements Runnable {
 
-    private final int DELAY = 250;
+    private final int DELAY = 100;
     private DatagramSocket socket;
 
     public static int counter = 0;

@@ -18,6 +18,8 @@ public  class HostsList {
 	public static void addHost(Host host){
 	    host.setLastUpdate(new Date());
         hosts.add(host);
+        if(!host.getProcessID().equals(Misc.processID))
+        	System.out.println("##-- Discovered new Host "+host.getProcessID() + "/"+host.getPort()+" --##");
     }
     
     /**

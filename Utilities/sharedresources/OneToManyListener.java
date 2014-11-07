@@ -9,6 +9,8 @@ import java.net.MulticastSocket;
 import java.util.Date;
 import java.util.Iterator;
 
+import com.sun.corba.se.spi.activation.Server;
+
 import utils.CRC32Calculator;
 
 /**
@@ -80,8 +82,10 @@ public class OneToManyListener implements Runnable {
 	}
 	
 	private void handleMessage(Message message) {
-		//If you are a client then ignore all messages except form the HostIsFound
-		if(!Commands.messageIsOfCommand(message, Commands.hostFound) && !isHost){
+		//If you are a client then ignore all messages except from the HostIsFound
+		if(!Commands.messageIsOfCommand(message, Commands.hostFound) 
+				&& !Commands.messageIsOfCommand(message, Commands.connectRequest) 
+				&& !isHost){
 			return;
 		}
 		
@@ -105,6 +109,23 @@ public class OneToManyListener implements Runnable {
 		    removeResendMessageToHost(message);
 		}
 		
+		//if this message is a targeted retry message and you are not the target the ignore it
+		if(Commands.messageIsOfCommand(message, Commands.targetedResentMessage) 
+				&& isHost 
+				&& !Commands.getStarterProcessID(message).equals(Misc.processID)){
+			return;
+		}
+		else if(Commands.messageIsOfCommand(message, Commands.targetedResentMessage) 
+				&& isHost 
+				&& Commands.getStarterProcessID(message).equals(Misc.processID)){
+			String command = Commands.constructCommand(Commands.forwardMessage, Commands.getTextParseTargetedMessageText(message));
+			message.setText(command);
+			message.setMessageType(Message.MessageType.mHostChat);
+			messageController.queueHostChat.push(message);
+			return;
+		}
+			
+		
 		//For forwarding messages to clients
 		if(message.getMessageType().equals(Message.MessageType.mHostChat) 
 				&& isHost 
@@ -113,8 +134,10 @@ public class OneToManyListener implements Runnable {
 		    //Creating acknowledgment for the received mHostChat message
 		    String command = Commands.constructCommand(Commands.acknowledgement, message.getProcessID(), Long.toString(message.getId()));
 		    Message ack = new Message(Message.MessageType.acknowledgement, command);
+		    
+		    //TODO DEMO: Test Host Retries
 		    //Adding acknowledgment to the Send queue for immediate sending
-		    messageController.queueSend.push(ack); //comment this to check the resending of message to MHost
+		    messageController.queueSend.push(ack);
 		    
             //Hold back queue
             message.setTimeReceived(new Date().getTime());
@@ -124,6 +147,7 @@ public class OneToManyListener implements Runnable {
 		    return;
 		}
 		
+//		System.out.println("********** Received message: " + message.toString());
 		messageController.pushMessageInCorrectQueue(message);
 	}
 	

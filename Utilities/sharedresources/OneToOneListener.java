@@ -74,7 +74,8 @@ public class OneToOneListener implements Runnable {
 				    String command = Commands.constructCommand(Commands.acknowledgement, message.getProcessID(), Long.toString(message.getId()));
 				    Message ack = new Message(Message.MessageType.acknowledgement, command);
 				    ack.setSocket(socket);
-				    messageController.queueAcknowledgements.push(ack); //Comment this if you want to test client retries
+				    //TODO DEMO: Test Messenger Retries
+				    messageController.queueAcknowledgements.push(ack);
 				    
 				    //Must be after ack
 					if(!Commands.messageIsOfCommand(message, Commands.targetedResentMessage)){

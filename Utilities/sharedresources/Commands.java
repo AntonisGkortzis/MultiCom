@@ -199,4 +199,5 @@ public class Commands {
     public static long getOriginalIdOfHostForwardMessage(Message message) {
         return Long.parseLong(getMessagePart(message, 2));
     }
+
 }

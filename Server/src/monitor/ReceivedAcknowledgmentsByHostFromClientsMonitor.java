@@ -67,7 +67,7 @@ public class ReceivedAcknowledgmentsByHostFromClientsMonitor implements Runnable
 	                    clientPair.incNrOfRetries();
 	                    
 	                    try {
-	                        Thread.sleep(500); //!!!! bigger than popper delay of HostToMClient
+	                        Thread.sleep(200); //!!!! bigger than popper delay of HostToMClient
 	                    } catch (InterruptedException e) {
 	                        e.printStackTrace();
 	                    }
