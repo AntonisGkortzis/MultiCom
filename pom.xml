@@ -11,8 +11,8 @@
 	<description>A client-server messaging application with scalability, reliability and balancing features</description>
 
 	<modules>
-		<module>server</module>
-		<module>client</module>
-		<module>utilities</module>
+		<module>Server</module>
+		<module>Client</module>
+		<module>Utilities</module>
 	</modules>
 </project>
